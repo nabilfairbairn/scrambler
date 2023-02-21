@@ -1,0 +1,222 @@
+
+<div className='pageheader'>
+  <button name="openmodalbutton" type="button" data-modal-target="#modal">
+    <i>
+      <span>.</span>
+      <br></br>
+    </i>
+  </button>
+  <h1>Scrambler</h1>
+  <button id="modalbutton" name="openmodalbutton" type="button" data-modal-target="#modal">
+    ?
+  </button>
+  <div
+    id="modal"
+  >
+    <div id="modal-header" className={styles['container03']}>
+      <button
+        type="button"
+      >
+        <span className={styles['text03']}>
+          <span>x</span>
+          <br></br>
+        </span>
+      </button>
+      <div id="modal-title">
+        <span>HOW TO PLAY</span>
+      </div>
+      <button
+        id="closemodalbutton"
+        type="button"
+      >
+        <span>
+          <span>Y</span>
+          <br></br>
+        </span>
+      </button>
+    </div>
+    <div>
+      <span>
+        <span>
+          Solve the puzzle by entering letters to complete the hidden
+          words.
+        </span>
+        <br></br>
+        <br></br>
+        <span>
+          Between any word and the next one, the order of letters may be
+          rearranged, and
+          <span
+            dangerouslySetInnerHTML={{
+              __html: ' ',
+            }}
+          />
+        </span>
+        <span>
+          1 letter
+          <span
+            dangerouslySetInnerHTML={{
+              __html: ' ',
+            }}
+          />
+        </span>
+        <span>
+          will always be swapped out for a different one. 
+        </span>
+        <br></br>
+      </span>
+    </div>
+    <div>
+      <span>
+        <span>
+          One letter will always be swapped between each word and the
+          next:
+        </span>
+        <br></br>
+      </span>
+      <div className={projectStyles['row-holder']}>
+        <div className={projectStyles['word-row']}>
+          <VisibleLetter
+            text="T"
+            rootClassName="root-class-name4"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="O"
+            rootClassName="root-class-name7"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="U"
+            rootClassName="root-class-name6"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="C"
+            rootClassName="root-class-name5"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="H"
+            rootClassName="root-class-name3"
+          ></VisibleLetter>
+        </div>
+        <div className={projectStyles['word-row']}>
+          <VisibleLetter
+            text="C"
+            rootClassName="root-class-name13"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="O"
+            rootClassName="root-class-name14"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="U"
+            rootClassName="root-class-name15"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="C"
+            rootClassName="root-class-name16"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="H"
+            rootClassName="root-class-name17"
+          ></VisibleLetter>
+        </div>
+      </div>
+      <span>
+        <span>
+          Along with swapping, the order of the letters may be scrambled:
+        </span>
+        <br></br>
+      </span>
+      <div
+        className={` ${styles['container10']} ${projectStyles['row-holder']} `}
+      >
+        <div className={projectStyles['word-row']}>
+          <VisibleLetter
+            text="S"
+            rootClassName="root-class-name18"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="P"
+            rootClassName="root-class-name19"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="O"
+            rootClassName="root-class-name20"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="R"
+            rootClassName="root-class-name21"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="T"
+            rootClassName="root-class-name22"
+          ></VisibleLetter>
+        </div>
+        <div className={projectStyles['word-row']}>
+          <VisibleLetter
+            text="S"
+            rootClassName="root-class-name23"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="T"
+            rootClassName="root-class-name24"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="O"
+            rootClassName="root-class-name25"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="R"
+            rootClassName="root-class-name26"
+          ></VisibleLetter>
+          <VisibleLetter
+            text="M"
+            rootClassName="root-class-name27"
+          ></VisibleLetter>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="overlay" className={styles['container13']}></div>
+</div>
+<div id="gameBox" className={styles['container14']}>
+  <div id="rowHolder" className={styles['container15']}></div>
+  <div className={styles['container16']}>
+    <button
+      id="answerBtn"
+      name="answerPuzzleButton"
+      type="button"
+      className={` ${styles['button4']} ${projectStyles['button']} `}
+    >
+      Guess
+    </button>
+  </div>
+  <div className={styles['container17']}>
+    <span id="button_response" className={styles['text24']}>
+      You will be notified. Thank you!
+    </span>
+  </div>
+</div>
+<form
+  name="contact_form"
+  action="https://getform.io/f/c893c2ee-547d-4948-99c0-6bd4556aa14b"
+  method="POST"
+  enctype="application/x-www-form-urlencoded"
+  className={styles['form']}
+>
+  <input
+    type="email"
+    name="email"
+    required
+    placeholder="youremail@provider.com"
+    className={` ${styles['textinput']} ${projectStyles['input']} `}
+  />
+  <button
+    id="email_button"
+    type="submit"
+    className={` ${styles['button5']} ${projectStyles['button']} `}
+  >
+    <label htmlFor="email_button" className={styles['text25']}>
+      Tell me when this is ready to play.
+    </label>
+  </button>
+</form>
