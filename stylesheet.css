@@ -1,3 +1,5 @@
+@import url(//fonts.googleapis.com/css?family=Nunito);
+
 html * {
   font-family: Nunito !important;
 }
@@ -11,8 +13,6 @@ body {
   align-items: center;
   justify-content: space-around;
   margin: auto;
-  border: 1px solid black;
-  
 }
 .button.square {
   width: 48px;
