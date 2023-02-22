@@ -9,8 +9,11 @@
 .button.square {
   width: 48px;
   height: 48px;
-  opacity: 0;
   padding: 0px;
+  line-height: 0;
+}
+.invisible {
+  opacitiy: 0
 }
 .text {
   font-size: 48px;
@@ -45,12 +48,20 @@
 .container02:active {
   transform: translate(-50%, -50%) scale(1);
 }
-.container03 {
+.modal {
   border: 1px solid black;
-  display: flex;
+  display: none;
   padding: 10px;
   align-items: center;
   justify-content: space-between;
+  max-width: 1200px;
+  z-index: 10;
+  background-color: white;
+  width: 100%;
+  height: auto;
+  top: 0;
+  overflow: auto;
+  position: fixed;
 }
 .button2 {
   opacity: 0;
@@ -151,15 +162,15 @@
   height: min(4vh, 48px);
   font-size: 2vmax;
   align-self: center;
-  margin-top: var(--dl-space-space-unit);
+  margin-top: 16px;
+  margin-bottom: 16px;
   text-align: center;
   border-width: 0px;
   padding-left: 0px;
-  margin-bottom: var(--dl-space-space-unit);
   padding-right: 0px;
-  background-color: var(--dl-color-gray-900);
+  background-color: #D9D9D9;
 }
-.button5 {
+.emailbutton {
   color: rgb(0, 0, 0);
   width: 192px;
   height: 70px;
@@ -173,11 +184,12 @@
   font-weight: 600;
   line-height: 1.25rem;
   border-width: 0px;
+  border-radius: 4px;
   flex-direction: row;
   justify-content: center;
   background-color: rgba(28, 175, 60, 0.85);
 }
-.text25 {
+.emailbuttontext {
   width: 1 rem;
   height: 1 rem;
   font-size: 16px;
