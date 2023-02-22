@@ -1,3 +1,7 @@
+html * {
+  font-family: Nunito;
+  font-size: calc(15px + 0.390625vw);
+}
 .pageheader {
   width: 100%;
   display: flex;
@@ -5,6 +9,7 @@
   align-items: center;
   justify-content: space-around;
   margin: auto;
+  
 }
 .button.square {
   width: 48px;
@@ -13,7 +18,7 @@
   line-height: 0;
 }
 .invisible {
-  opacity: 0;
+  visibility: hidden;
 }
 .text {
   font-size: 48px;
