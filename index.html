@@ -7,7 +7,7 @@
   
 <div class='pageheader'>
   <button id="fakemodalbutton" type="button" class='button square invisible'>?</button>
-  <h1>Scrambler</h1>
+  <h1>SCRAMBLER</h1>
   <button id="modalbutton" name="openmodalbutton" type="button" class='button square'>?</button>
   <div id="modal", class='modal'>
     <div id="modal-header">
@@ -175,30 +175,26 @@
   </div>
   <div id="overlay" className={styles['container13']}></div>
 </div>
-<div id="gameBox" className={styles['container14']}>
-  <div id="rowHolder" className={styles['container15']}></div>
-  <div className={styles['container16']}>
+<div id="gameBox" class='gameBox'>
+  <div id="rowHolder" class='rowHolder'></div>
+  <div class='answerArea'>
     <button
       id="answerBtn"
       name="answerPuzzleButton"
       type="button"
-      className={` ${styles['button4']} ${projectStyles['button']} `}
+      class='answerButton'}
     >
       Guess
     </button>
   </div>
-  <div className={styles['container17']}>
-    <span id="button_response" className={styles['text24']}>
-      You will be notified. Thank you!
-    </span>
-  </div>
+  <div id="button_response" class='guessResponse'></div>
 </div>
 <form
   name="contact_form"
   action="https://getform.io/f/c893c2ee-547d-4948-99c0-6bd4556aa14b"
   method="POST"
   enctype="application/x-www-form-urlencoded"
-  className={styles['form']}
+  class='form'
 >
   <input
     type="email"
