@@ -99,7 +99,7 @@ html * {
   pointer-events: none;
   background-color: rgba(0, 0, 0, 0.5);
 }
-.container14 {
+.gameBox {
   width: auto;
   display: flex;
   padding: 4vmin;
@@ -110,7 +110,7 @@ html * {
   flex-direction: column;
   justify-content: center;
 }
-.container15 {
+.rowHolder {
   flex: 0 0 auto;
   width: auto;
   border: 2px dashed rgba(120, 120, 120, 0.4);
@@ -119,7 +119,7 @@ html * {
   align-items: flex-start;
   flex-direction: column;
 }
-.container16 {
+.answerArea {
   flex: 0 0 auto;
   width: 100%;
   display: flex;
@@ -129,37 +129,33 @@ html * {
   margin-bottom: var(--dl-space-space-halfunit);
   justify-content: center;
 }
-.button4 {
+.answerButton {
   font-size: 18px;
   box-shadow: rgb(122, 4, 4) 0px 3px 2px 0px;
   transition: 0.3s;
   text-transform: capitalize;
   background-color: rgb(236, 22, 22);
 }
-.button4:active {
+.answerButton:active {
   border-width: 0px;
   background-color: #7a0404;
 }
-.container17 {
+.guessResponse {
   flex: 0 0 auto;
   width: 100%;
   height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.text24 {
   display: none;
-  align-self: center;
-  text-align: center;
 }
 .form {
   width: 462px;
   height: 183px;
   display: flex;
-  margin-top: var(--dl-space-space-oneandhalfunits);
+  margin-top: 24px;
+  margin-bottom: 24px;
   align-items: flex-start;
-  margin-bottom: var(--dl-space-space-oneandhalfunits);
   flex-direction: column;
 }
 .textinput {
@@ -200,38 +196,4 @@ html * {
   font-size: 16px;
   align-self: center;
   line-height: 1.25em;
-}
-@media(max-width: 1200px) {
-  .container17 {
-    width: auto;
-    height: auto;
-    align-self: center;
-  }
-}
-@media(max-width: 479px) {
-  .text03 {
-    display: none;
-    opacity: 0;
-  }
-  .container05 {
-    border-color: var(--dl-color-gray-black);
-    border-width: 1px;
-    border-top-width: 0px;
-    border-left-width: 0px;
-    border-right-width: 0px;
-  }
-  .text15 {
-    font-weight: 700;
-  }
-  .text16 {
-    font-style: normal;
-    font-weight: 500;
-  }
-  .container06 {
-    border-color: var(--dl-color-gray-black);
-    border-width: 1px;
-    border-top-width: 0px;
-    border-left-width: 0px;
-    border-right-width: 0px;
-  }
 }
