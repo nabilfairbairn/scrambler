@@ -1,4 +1,3 @@
-<script type="text/javascript"> 
 var input_id_answer = {}
 var input_id = 0
 var input_id_prefix = "user_input_"
@@ -122,4 +121,3 @@ window.onload = function() {
   }
 
 }
-</script>
