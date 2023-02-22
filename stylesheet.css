@@ -1,5 +1,7 @@
 html * {
-  font-family: Nunito;
+  font-family: Nunito !important;
+}
+body {
   font-size: calc(15px + 0.390625vw);
 }
 .pageheader {
@@ -18,7 +20,7 @@ html * {
   line-height: 0;
 }
 .invisible {
-  visibility: hidden;
+  visibility: visible;
 }
 .text {
   font-size: 48px;
