@@ -20,7 +20,7 @@ body {
   line-height: 0;
 }
 .invisible {
-  visibility: visible;
+  visibility: hidden;
 }
 .text {
   font-size: 48px;
@@ -90,12 +90,12 @@ body {
   align-items: flex-start;
   flex-direction: column;
 }
-.container13 {
+.modaloverlay {
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  opacity: 0;
+  display: none;
   z-index: 5;
   position: fixed;
   pointer-events: none;
