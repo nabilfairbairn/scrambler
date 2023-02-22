@@ -107,7 +107,7 @@ body {
   display: flex;
   padding: 4vmin;
   align-items: center;
-  border-color: var(--dl-color-gray-black);
+  border-color: black;
   border-width: 2px;
   border-radius: 1vw;
   flex-direction: column;
@@ -152,19 +152,17 @@ body {
   justify-content: center;
   display: none;
 }
-.form {
+.emailform {
   width: 462px;
   height: 183px;
   display: flex;
-  margin-top: 24px;
-  margin-bottom: 24px;
-  align-items: flex-start;
+  margin: 24px auto;
+  align-items: center;
   flex-direction: column;
 }
 .textinput {
   width: min(80vw, 400px);
   height: min(4vh, 48px);
-  font-size: 2vmax;
   align-self: center;
   margin-top: 16px;
   margin-bottom: 16px;
