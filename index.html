@@ -2,8 +2,17 @@
 <html>
 <head>
   <link rel="stylesheet" href="stylesheet.css">
+  <script type="text/javascript" src="script.js"></script>
 </head>
 <body>
+  
+<template id='knownLetter'>
+  <div></div>
+</template>
+ 
+<template id='unknownLetter'>
+  <input>
+</template>
   
 <div class='pageheader'>
   <button id="fakemodalbutton" type="button" class='button square invisible'>?</button>
@@ -11,26 +20,13 @@
   <button id="modalbutton" name="openmodalbutton" type="button" class='button square'>?</button>
   <div id="modal", class='modal'>
     <div id="modal-header">
-      <button
-        type="button"
-      >
-        <span className={styles['text03']}>
-          <span>x</span>
-          <br></br>
-        </span>
-      </button>
+      <button type="button", class='invisible'>&times;</button>
       <div id="modal-title">
         <span>HOW TO PLAY</span>
       </div>
       <button
         id="closemodalbutton"
-        type="button"
-      >
-        <span>
-          <span>Y</span>
-          <br></br>
-        </span>
-      </button>
+        type="button">&times;</button>
     </div>
     <div>
       <span>
