@@ -1,0 +1,229 @@
+.container {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  box-shadow: 0px 5px 10px 0px #d4d4d4;
+  min-height: 100vh;
+  align-items: center;
+  flex-direction: column;
+}
+.container01 {
+  flex: 0 0 auto;
+  width: 100%;
+  display: flex;
+  max-width: 800px;
+  align-items: center;
+  justify-content: space-around;
+}
+.button {
+  width: 48px;
+  height: 48px;
+  opacity: 0;
+  padding: 0px;
+}
+.text {
+  font-size: 48px;
+}
+.heading {
+  font-size: 48px;
+  max-width: 60vw;
+  align-self: center;
+  text-align: center;
+  font-family: Nunito;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.button1 {
+  width: 48px;
+  height: 48px;
+  font-size: 32px;
+  align-self: center;
+  text-align: center;
+  padding-top: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  vertical-align: middle;
+  justify-content: center;
+}
+.container02 {
+  display: none;
+  max-width: 1200px;
+  transition: 0.2s;
+}
+.container02:active {
+  transform: translate(-50%, -50%) scale(1);
+}
+.container03 {
+  border: 1px solid black;
+  display: flex;
+  padding: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+.button2 {
+  opacity: 0;
+}
+.text03 {
+  display: none;
+}
+.container05 {
+  padding: 10px;
+}
+.container06 {
+  padding: 10px;
+}
+.container10 {
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.container13 {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  z-index: 5;
+  position: fixed;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.container14 {
+  width: auto;
+  display: flex;
+  padding: 4vmin;
+  align-items: center;
+  border-color: var(--dl-color-gray-black);
+  border-width: 2px;
+  border-radius: 1vw;
+  flex-direction: column;
+  justify-content: center;
+}
+.container15 {
+  flex: 0 0 auto;
+  width: auto;
+  border: 2px dashed rgba(120, 120, 120, 0.4);
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.container16 {
+  flex: 0 0 auto;
+  width: 100%;
+  display: flex;
+  align-self: center;
+  margin-top: var(--dl-space-space-halfunit);
+  align-items: center;
+  margin-bottom: var(--dl-space-space-halfunit);
+  justify-content: center;
+}
+.button4 {
+  font-size: 18px;
+  box-shadow: rgb(122, 4, 4) 0px 3px 2px 0px;
+  transition: 0.3s;
+  text-transform: capitalize;
+  background-color: rgb(236, 22, 22);
+}
+.button4:active {
+  border-width: 0px;
+  background-color: #7a0404;
+}
+.container17 {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.text24 {
+  display: none;
+  align-self: center;
+  text-align: center;
+}
+.form {
+  width: 462px;
+  height: 183px;
+  display: flex;
+  margin-top: var(--dl-space-space-oneandhalfunits);
+  align-items: flex-start;
+  margin-bottom: var(--dl-space-space-oneandhalfunits);
+  flex-direction: column;
+}
+.textinput {
+  width: min(80vw, 400px);
+  height: min(4vh, 48px);
+  font-size: 2vmax;
+  align-self: center;
+  margin-top: var(--dl-space-space-unit);
+  text-align: center;
+  border-width: 0px;
+  padding-left: 0px;
+  margin-bottom: var(--dl-space-space-unit);
+  padding-right: 0px;
+  background-color: var(--dl-color-gray-900);
+}
+.button5 {
+  color: rgb(0, 0, 0);
+  width: 192px;
+  height: 70px;
+  display: flex;
+  padding: 6px;
+  align-self: center;
+  box-shadow: 0px 3px 2px 0px rgba(4, 56, 12, 0.75);
+  font-style: normal;
+  text-align: center;
+  align-items: center;
+  font-weight: 600;
+  line-height: 1.25rem;
+  border-width: 0px;
+  flex-direction: row;
+  justify-content: center;
+  background-color: rgba(28, 175, 60, 0.85);
+}
+.text25 {
+  width: 1 rem;
+  height: 1 rem;
+  font-size: 16px;
+  align-self: center;
+  line-height: 1.25em;
+}
+@media(max-width: 1200px) {
+  .container17 {
+    width: auto;
+    height: auto;
+    align-self: center;
+  }
+}
+@media(max-width: 479px) {
+  .text03 {
+    display: none;
+    opacity: 0;
+  }
+  .container05 {
+    border-color: var(--dl-color-gray-black);
+    border-width: 1px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+  }
+  .text15 {
+    font-weight: 700;
+  }
+  .text16 {
+    font-style: normal;
+    font-weight: 500;
+  }
+  .container06 {
+    border-color: var(--dl-color-gray-black);
+    border-width: 1px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+  }
+}
