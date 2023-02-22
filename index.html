@@ -6,20 +6,11 @@
 <body>
   
 <div className='pageheader'>
-  <button name="openmodalbutton" type="button" data-modal-target="#modal", className='button square'>
-    <i>
-      <span>.</span>
-      <br></br>
-    </i>
-  </button>
+  <button id="fakemodalbutton" type="button" className='button square invisible'>?</button>
   <h1>Scrambler</h1>
-  <button id="modalbutton" name="openmodalbutton" type="button" data-modal-target="#modal">
-    ?
-  </button>
-  <div
-    id="modal"
-  >
-    <div id="modal-header" className={styles['container03']}>
+  <button id="modalbutton" name="openmodalbutton" type="button" className='button square'>?</button>
+  <div id="modal">
+    <div id="modal-header" className='modal'>
       <button
         type="button"
       >
@@ -214,14 +205,14 @@
     name="email"
     required
     placeholder="youremail@provider.com"
-    className={` ${styles['textinput']} ${projectStyles['input']} `}
+    className='textinput'
   />
   <button
     id="email_button"
     type="submit"
-    className={` ${styles['button5']} ${projectStyles['button']} `}
+    className='emailbutton'
   >
-    <label htmlFor="email_button" className={styles['text25']}>
+    <label htmlFor="email_button" className='emailbuttontext'>
       Tell me when this is ready to play.
     </label>
   </button>
