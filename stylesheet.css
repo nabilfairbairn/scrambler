@@ -22,7 +22,7 @@ button {
   margin: auto;
 }
 .header.formodal {
-  justify_content: space-between;
+  justify-content: space-between;
 }
 .button.square {
   width: 48px;
