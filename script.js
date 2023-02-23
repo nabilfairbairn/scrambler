@@ -33,14 +33,14 @@ function one_letter_diff(word1, word2) {
     let net_letters = new Map();
     for (const [key, value] of w1_dict) {
         if (w2_dict.has(key)) {
-            net_letters[key] = (value - w2_dict.get(key))
+            net_letters.set(key, (value - w2_dict.get(key)) )
         } else {
-            net_letters[key] = -value
+            net_letters.set(key, -value)
         }
     }
     for (const [key, value] of w2_dict) {
         if (!(net_letters.has(key))) {
-            net_letters[key] = value
+            net_letters.set(key, value)
         }
     }
     let plus_one = 0
