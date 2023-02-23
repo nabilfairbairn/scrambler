@@ -23,24 +23,9 @@ window.onload = function() {
     overlay.classList.remove('active')
   }
 
-  openModalButtons.onclick = function() {
-
-    modal.style.display = "block"
-    overlay.style.display = "block"
-    overlay.style.pointerEvents = "all"
-  }
-
-  overlay.onclick = function() {
-    modal.style.display = "none"
-    overlay.style.opacity = "0"
-    overlay.style.pointerEvents = 'none'
-  }
-
-  closeModalButtons.onclick = function() {
-    modal.style.display = "none"
-    overlay.style.display = "none"
-    overlay.style.pointerEvents = "none"
-  }
+  openModalButtons.onclick = openModal 
+  overlay.onclick = closeModal 
+  closeModalButtons.onclick = closeModal 
 
   document.getElementById("answerBtn").onclick = function() {
     var printing = ''
