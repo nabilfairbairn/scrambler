@@ -43,7 +43,7 @@ function one_letter_diff(word1, word2) {
     }
     let plus_one = 0
     let minus_one = 0
-    for (const value of Object.values(net_letters)) {
+    for (const [key, value] of Object.entries(net_letters)) {
         if (value > 0) {
             plus_one += value
         }
@@ -51,6 +51,7 @@ function one_letter_diff(word1, word2) {
             minus_one += value
         }
     }
+    console.log(net_letters)
     return (plus_one == 1 && minus_one == -1)
 }
 
