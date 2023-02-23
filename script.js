@@ -51,7 +51,7 @@ function one_letter_diff(word1, word2) {
             minus_one += value
         }
     }
-    return (plus_one == 1 && minus_one == 1)
+    return (plus_one == 1 && minus_one == -1)
 }
 
 let word1 = 'sport'
