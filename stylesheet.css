@@ -7,7 +7,7 @@ body {
   font-size: calc(15px + 0.390625vw);
 }
 button {
-  border-radius: 1px;
+  border-radius: 0.5rem;
   justify-content: center;
   padding: 0.5rem 1rem;
   outline: 0;
@@ -24,7 +24,7 @@ button {
 .button.square {
   width: 48px;
   height: 48px;
-  text-size: 6vmin;
+  text-size: 2rem;
   font-weight: bold;
   padding: 0px;
   line-height: 0;
@@ -33,8 +33,8 @@ button {
   visibility: hidden;
 }
 .minimal {
-  background-color: none !important;
-  border: none !important;
+  background-color: transparent !important;
+  border: 0 !important;
 }
 .highlight {
   background-color: gold;
@@ -93,7 +93,7 @@ button {
   justify-content: space-between;
   z-index: 10;
   background-color: white;
-  width: max(100%, 800px);
+  width: min(100%, 800px);
   max-height: 100%;
   top: 0;
   overflow: auto;
@@ -126,6 +126,8 @@ button {
 }
 .gameBox {
   display: flex;
+  height: auto;
+  width: auto;
   padding: 4vmin;
   align-items: center;
   border: 2px solid black;
@@ -133,6 +135,7 @@ button {
   flex-direction: column;
   justify-content: center;
   margin: auto;
+  
 }
 .rowHolder {
   flex: 0 0 auto;
@@ -154,8 +157,12 @@ button {
   background-color: #7a0404;
 }
 .guessResponse {
+  width: auto;
   visibility: hidden;
-  height: 
+  display: flex;
+  height: 3rem;
+  text-align: center;
+  align-items: center;
 }
 .emailform {
   width: 462px;
