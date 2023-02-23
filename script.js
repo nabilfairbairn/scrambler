@@ -98,24 +98,19 @@ window.onload = function() {
     for (j = 0; j < rowWord.length; j++) {
       var letter = rowWord[j]
       if (letter === "_") {
-        var input_letter = document.createElement("LetterBox")
         var input = document.createElement("input")
-        input.className = "letterInput"
+        input.classList.add("letterInput")
+        input.classList.add("letterBox")
         input.placeholder = "?"
 
         input.id = input_id_prefix + input_id.toString();
         input_id_answer[input.id] = answers[i][j]
         input_id++;
-        input_letter.appendChild(input)
-        input_letter.className = "letterBox"
-        row.appendChild(input_letter)
+        row.appendChild(input)
       } else {
-        var letter_holder = document.createElement("VisibleLetter")
+        var letter_holder = document.createElement("div")
         letter_holder.className = "letterBox"
-        letter_text = document.createElement("span")
-        letter_text.className = "letterStatic"
-        letter_text.innerText = letter
-        letter_holder.appendChild(letter_text)
+        letter_holder.innerText = letter
         row.appendChild(letter_holder)
       }
     }
