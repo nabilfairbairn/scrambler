@@ -91,14 +91,16 @@ button {
   padding: 10px;
   align-items: center;
   justify-content: space-between;
-  max-width: 1200px;
   z-index: 10;
   background-color: white;
-  width: 100%;
-  height: auto;
+  width: max(100%, 800px);
+  max-height: 100%;
   top: 0;
   overflow: auto;
   position: fixed;
+}
+.modal:active {
+  display:block
 }
 .container10 {
   flex: 0 0 auto;
@@ -117,6 +119,10 @@ button {
   position: fixed;
   pointer-events: none;
   background-color: rgba(0, 0, 0, 0.5);
+}
+.modaloverlay:active {
+  display: block;
+  pointer-events: all;
 }
 .gameBox {
   display: flex;
