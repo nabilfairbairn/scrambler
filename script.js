@@ -24,17 +24,44 @@ function create_count_map(str) {
     }
     return ans;   
 }
-     
-// test string
-let test =  "helloworld";
-console.log(count_letters(test));
-
 
 function one_letter_diff(word1, word2) {
-    let w1_dict = count_letters(word1)
-    let w2_dict = count_letters(word2)
-    
+    let w1_dict = count_letters(word1);
+    let w2_dict = count_letters(word2);
+    net_letters = new Map();
+    for (const [key, value] of Object.entries(w1_dict)) {
+        if (key in w2_dict) {
+            net_letters.set(key, value - w2_dict[key])
+        } else {
+            net_letters.set(key, -1)
+        }
+    }
+    for (const [key, value] of Object.entries(w2_dict)) {
+        if (!(key in net_letters)) {
+            net_letters.set(key, 1)
+        }
+    }
+    let plus_one = 0
+    let minus_one = 0
+    for (const value of Object.values(net_letters)) {
+        if (value > 0) {
+            plus_one += value
+        }
+        if (value < 0) {
+            minus_one += value
+        }
+    }
+    return (plus_one == 1 && minus_one == 1)
 }
+
+let word1 = 'sport'
+let word2 = 'storm'
+let word3 = 'spark'
+
+console.log(one_letter_diff(word1, word2))
+console.log(one_letter_diff(word2, word1))
+console.log(one_letter_diff(word1, word3))
+console.log(one_letter_diff(word3, word2))
 
 window.onload = function() {
   var input_id_answer = {}
