@@ -25,150 +25,47 @@
       <button
         id="closemodalbutton"
         type="button", class='button square minimal'>&times;</button>
-    </div>
+    </div> <!-- modal header close -->
     <div>
+      <hr>
+      <br></br>
       <span>
-        <span>
-          Solve the puzzle by entering letters to complete the hidden
-          words.
-        </span>
+        Solve the puzzle by entering letters to complete the hidden words.
         <br></br>
         <br></br>
-        <span>
-          Between any word and the next one, the order of letters may be
-          rearranged, and
-          <span
-            dangerouslySetInnerHTML={{
-              __html: ' ',
-            }}
-          />
-        </span>
-        <span>
-          1 letter
-          <span
-            dangerouslySetInnerHTML={{
-              __html: ' ',
-            }}
-          />
-        </span>
-        <span>
-          will always be swapped out for a different one. 
-        </span>
-        <br></br>
+        Between any word and the next one, the order of letters may be rearranged, and <b>1 letter</b> will always be swapped out for a different one.
       </span>
-    </div>
-    <div>
+      <br></br>
+      <hr>
+      <br></br>
       <span>
-        <span>
-          One letter will always be swapped between each word and the
-          next:
-        </span>
-        <br></br>
+        One letter will always be swapped between each word and the
+        next:
       </span>
-      <div className={projectStyles['row-holder']}>
-        <div className={projectStyles['word-row']}>
-          <VisibleLetter
-            text="T"
-            rootClassName="root-class-name4"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="O"
-            rootClassName="root-class-name7"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="U"
-            rootClassName="root-class-name6"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="C"
-            rootClassName="root-class-name5"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="H"
-            rootClassName="root-class-name3"
-          ></VisibleLetter>
-        </div>
-        <div className={projectStyles['word-row']}>
-          <VisibleLetter
-            text="C"
-            rootClassName="root-class-name13"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="O"
-            rootClassName="root-class-name14"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="U"
-            rootClassName="root-class-name15"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="C"
-            rootClassName="root-class-name16"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="H"
-            rootClassName="root-class-name17"
-          ></VisibleLetter>
-        </div>
+      <br></br>
+      <div class='rowHolder minimal'>
+        <div class='wordRow'> <div class='letterBox highlight'>T</div> <div class='letterBox'>O</div> <div class='letterBox'>U</div>
+        <div class='letterBox'>C</div> <div class='letterBox'>H</div> </div>
+        
+        <div class='wordRow'> <div class='letterBox highlight'>C</div> <div class='letterBox'>O</div> <div class='letterBox'>U</div>
+        <div class='letterBox'>C</div> <div class='letterBox'>H</div> </div>
       </div>
+      <br></br>
       <span>
-        <span>
-          Along with swapping, the order of the letters may be scrambled:
-        </span>
-        <br></br>
+        Along with swapping, the order of the letters may be scrambled:
       </span>
-      <div
-        className={` ${styles['container10']} ${projectStyles['row-holder']} `}
-      >
-        <div className={projectStyles['word-row']}>
-          <VisibleLetter
-            text="S"
-            rootClassName="root-class-name18"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="P"
-            rootClassName="root-class-name19"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="O"
-            rootClassName="root-class-name20"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="R"
-            rootClassName="root-class-name21"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="T"
-            rootClassName="root-class-name22"
-          ></VisibleLetter>
-        </div>
-        <div className={projectStyles['word-row']}>
-          <VisibleLetter
-            text="S"
-            rootClassName="root-class-name23"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="T"
-            rootClassName="root-class-name24"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="O"
-            rootClassName="root-class-name25"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="R"
-            rootClassName="root-class-name26"
-          ></VisibleLetter>
-          <VisibleLetter
-            text="M"
-            rootClassName="root-class-name27"
-          ></VisibleLetter>
-        </div>
-      </div>
-    </div>
-  </div>
+      <br></br>
+      <div class='rowHolder minimal'>
+        <div class='wordRow'> <div class='letterBox'>S</div> <div class='letterBox highlight'>P</div> <div class='letterBox'>O</div>
+        <div class='letterBox'>R</div> <div class='letterBox'>T</div> </div>
+        
+        <div class='wordRow'> <div class='letterBox'>S</div> <div class='letterBox'>T</div> <div class='letterBox'>O</div>
+        <div class='letterBox'>R</div> <div class='letterBox highlight'>M</div> </div>
+      </div> 
+    </div> <!-- modal body div close -->
+  </div> <!-- modal close -->
   <div id="overlay" class='modaloverlay'></div>
-</div>
+</div> <!-- page header close -->
 <div id="gameBox" class='gameBox'>
   <div id="rowHolder" class='rowHolder'></div>
   <button id="answerBtn" name="answerPuzzleButton" type="button" class='button answerButton'}>Guess</button>
