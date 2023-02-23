@@ -129,7 +129,7 @@ button {
 }
 .gameBox {
   display: flex;
-  flex: 1;
+  flex-basis: content;
   padding: 4vmin;
   align-items: center;
   border: 2px solid black;
