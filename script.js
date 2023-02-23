@@ -5,6 +5,37 @@ function limit(element) {
     }
 }
 
+function count_letters(str){
+    outp_map = create_count_map(str);
+    for (let i = 0 ; i < str.length ;i++) {
+        let k = outp_map.get(str[i]);
+        outp_map.set(str[i], k+1);
+    }
+    return outp_map;
+}
+     
+    //function create map to count character
+function create_count_map(str) {
+    // map for storing count values
+    let ans = new Map();
+    for(let i = 0 ; i < str.length; i++)
+    {
+      ans.set(str[i], 0);
+    }
+    return ans;
+    }     
+}
+     
+// test string
+let test =  "helloworld";
+console.log(count_letters(test));
+
+
+function one_letter_diff(word1, word2) {
+    let w1_dict = count_letters(word1)
+    let w2_dict = count_letters(word2)
+}
+
 window.onload = function() {
   var input_id_answer = {}
   var input_id = 0
