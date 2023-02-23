@@ -100,6 +100,8 @@ window.onload = function() {
         input.classList.add("letterInput")
         input.classList.add("letterBox")
         input.placeholder = "?"
+        input.onkeydown = function() {limit(input)};
+        input.onkeyup = function() {limit(input)});
 
         input.id = input_id_prefix + input_id.toString();
         input_id_answer[input.id] = answers[i][j]
