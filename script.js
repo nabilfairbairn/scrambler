@@ -14,7 +14,7 @@ function count_letters(str){
     return outp_map;
 }
      
-    //function create map to count character
+//function create map to count character
 function create_count_map(str) {
     // map for storing count values
     let ans = new Map();
@@ -25,6 +25,7 @@ function create_count_map(str) {
     return ans;   
 }
 
+//function return true or false if word1 and word2 have only 1 letter difference
 function one_letter_diff(word1, word2) {
     let w1_dict = count_letters(word1);
     let w2_dict = count_letters(word2);
@@ -32,7 +33,6 @@ function one_letter_diff(word1, word2) {
     for (const [key, value] of w1_dict) {
         if (w2_dict.has(key)) {
             let difference = value - w2_dict.get(key)
-            console.log(difference)
             net_letters.set(key, difference)
         } else {
             net_letters.set(key, -value)
@@ -53,18 +53,8 @@ function one_letter_diff(word1, word2) {
             minus_one += value
         }
     }
-    console.log(net_letters)
     return (plus_one == 1 && minus_one == -1)
 }
-
-let word1 = 'sport'
-let word2 = 'storm'
-let word3 = 'spark'
-
-console.log(one_letter_diff(word1, word2))
-console.log(one_letter_diff(word2, word1))
-console.log(one_letter_diff(word1, word3))
-console.log(one_letter_diff(word3, word2))
 
 window.onload = function() {
   var input_id_answer = {}
