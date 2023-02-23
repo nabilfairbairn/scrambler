@@ -28,7 +28,7 @@ function create_count_map(str) {
 function one_letter_diff(word1, word2) {
     let w1_dict = count_letters(word1);
     let w2_dict = count_letters(word2);
-    net_letters = new Map();
+    let net_letters = new Map();
     for (const [key, value] of Object.entries(w1_dict)) {
         if (key in w2_dict) {
             net_letters.set(key, value - w2_dict[key])
