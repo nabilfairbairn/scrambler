@@ -136,6 +136,7 @@ button {
   border-radius: 1vw;
   flex-direction: column;
   justify-content: center;
+  margin: auto;
 }
 .rowHolder {
   flex: 0 0 auto;
