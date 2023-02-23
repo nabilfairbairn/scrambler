@@ -36,6 +36,9 @@ button {
   background-color: none !important;
   border: none !important;
 }
+.highlight {
+  background-color: gold;
+}
 .wordRow{
   display: flex;
   align-self: center;
