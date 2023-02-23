@@ -11,13 +11,13 @@ window.onload = function() {
 
   var modal = document.getElementById('modal')
 
-  function openModal(modal) {
+  function openModal() {
     if (modal == null) return
     modal.classList.add('active')
     overlay.classList.add('active')
   }
 
-  function closeModal(modal) {
+  function closeModal() {
     if (modal == null) return
     modal.classList.remove('active')
     overlay.classList.remove('active')
