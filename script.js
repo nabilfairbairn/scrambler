@@ -28,12 +28,12 @@ function create_count_map(str) {
 function one_letter_diff(word1, word2) {
     let w1_dict = count_letters(word1);
     let w2_dict = count_letters(word2);
-    console.log(w1_dict)
-    console.log(w2_dict)
     let net_letters = new Map();
     for (const [key, value] of w1_dict) {
         if (w2_dict.has(key)) {
-            net_letters.set(key, (value - w2_dict.get(key)) )
+            let difference = value - w2_dict.get(key)
+            console.log(difference)
+            net_letters.set(key, difference)
         } else {
             net_letters.set(key, -value)
         }
