@@ -6,6 +6,16 @@ html * {
 body {
   font-size: calc(15px + 0.390625vw);
 }
+input{
+  box-sizing: border-box;
+} 
+button {
+  border-radius: 4px;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  outline: 0;
+}
+
 .pageheader {
   width: 100%;
   display: flex;
@@ -14,20 +24,19 @@ body {
   justify-content: space-around;
   margin: auto;
 }
-.button {
-  border-radius: 4px;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  outline: 0;
-}
 .button.square {
   width: 48px;
   height: 48px;
+  text-size: 4vmin;
   padding: 0px;
   line-height: 0;
 }
 .invisible {
   visibility: hidden;
+}
+.minimal {
+  background-color: none;
+  border: none;
 }
 .heading {
   font-size: 48px;
@@ -39,22 +48,44 @@ body {
   text-transform: uppercase;
 }
 
+.wordRow{
+  flex: 1;
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
 .letterBox{
   width: 12vmin;
   border: 0.5px solid black;
   height: 12vmin;
   font-size: 8vmin;
-  margin: 0px 2.5vmin;
+  margin: 2.5vmin;
   text-transform: uppercase;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 .letterInput{
   cursor: pointer;
   box-shadow: 0px 3px 1px 0px #D4D4D4;
   text-align: center;
   caret-color: transparent;
+}
+.letterInput::placeholder {
+  color: black
+  opacity: 1
+}
+.letterInput:focus{
+  outline: none !important;
+  border-color: gold;
+}
+.letterInput:focus::placeholder {
+  color: transparent;
 }
 
 .container02 {
@@ -99,7 +130,7 @@ body {
   background-color: rgba(0, 0, 0, 0.5);
 }
 .gameBox {
-  width: auto;
+  width: max(100%, 1400px);
   display: flex;
   padding: 4vmin;
   align-items: center;
