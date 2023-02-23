@@ -33,12 +33,12 @@ function one_letter_diff(word1, word2) {
         if (key in w2_dict) {
             net_letters.set(key, value - w2_dict[key])
         } else {
-            net_letters.set(key, -1)
+            net_letters.set(key, -value)
         }
     }
     for (const [key, value] of Object.entries(w2_dict)) {
         if (!(key in net_letters)) {
-            net_letters.set(key, 1)
+            net_letters.set(key, value)
         }
     }
     let plus_one = 0
