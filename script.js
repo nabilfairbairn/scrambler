@@ -29,21 +29,21 @@ function one_letter_diff(word1, word2) {
     let w1_dict = count_letters(word1);
     let w2_dict = count_letters(word2);
     let net_letters = new Map();
-    for (const [key, value] of Object.entries(w1_dict)) {
+    for (const [key, value] of w1_dict) {
         if (key in w2_dict) {
-            net_letters.set(key, value - w2_dict[key])
+            net_letters[key] = value - w2_dict[key]
         } else {
-            net_letters.set(key, -value)
+            net_letters[key] = -value
         }
     }
-    for (const [key, value] of Object.entries(w2_dict)) {
+    for (const [key, value] of w2_dict) {
         if (!(key in net_letters)) {
-            net_letters.set(key, value)
+            net_letters[key] = value
         }
     }
     let plus_one = 0
     let minus_one = 0
-    for (const [key, value] of Object.entries(net_letters)) {
+    for (const [key, value] of net_letters) {
         if (value > 0) {
             plus_one += value
         }
