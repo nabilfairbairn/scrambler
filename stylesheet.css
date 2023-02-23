@@ -6,9 +6,6 @@ html * {
 body {
   font-size: calc(15px + 0.390625vw);
 }
-input{
-  box-sizing: border-box;
-} 
 button {
   border-radius: 4px;
   justify-content: center;
@@ -59,9 +56,11 @@ button {
   flex-direction: row;
 }
 .letterBox{
-  width: 12vmin;
+  width: 12vmin !important;
   border: 0.5px solid black;
-  height: 12vmin;
+  box-sizing: border-box;
+  outline: none !important;
+  height: 12vmin !important;
   font-size: 8vmin;
   margin: 2.5vmin;
   text-transform: uppercase;
@@ -77,11 +76,10 @@ button {
   caret-color: transparent;
 }
 .letterInput::placeholder {
-  color: black
-  opacity: 1
+  color: black;
+  opacity: 1;
 }
 .letterInput:focus{
-  outline: none !important;
   border-color: gold;
 }
 .letterInput:focus::placeholder {
@@ -130,7 +128,7 @@ button {
   background-color: rgba(0, 0, 0, 0.5);
 }
 .gameBox {
-  width: max(100%, 1400px);
+  width: max(90%, 800px);
   display: flex;
   padding: 4vmin;
   align-items: center;
