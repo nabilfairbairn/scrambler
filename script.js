@@ -12,15 +12,21 @@ window.onload = function() {
   var modal = document.getElementById('modal')
 
   function openModal() {
-    if (modal == null) return
-    modal.classList.add('active')
-    overlay.classList.add('active')
+    if (modal == null) {
+      console.log('Couldnt find modal?')
+      return
+    }
+    modal.classList.add('open')
+    overlay.classList.add('open')
   }
 
   function closeModal() {
-    if (modal == null) return
-    modal.classList.remove('active')
-    overlay.classList.remove('active')
+    if (modal == null) {
+      console.log('Couldnt find modal?')
+      return
+    }
+    modal.classList.remove('open')
+    overlay.classList.remove('open')
   }
 
   openModalButtons.onclick = openModal 
