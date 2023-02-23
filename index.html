@@ -13,82 +13,84 @@
 <template id='unknownLetter'>
   <input>
 </template>
-  
-<div class='header'>
-  <button id="fakemodalbutton" type="button" class='button square invisible'>?</button>
-  <h1>SCRAMBLER</h1>
-  <button id="modalbutton" name="openmodalbutton" type="button" class='button square'>?</button>
-  <div id="modal", class='modal'>
-    <div id="modal-header" class='header formodal'>
-      <button type="button", class='invisible'>&times;</button>
-      <div id="modal-title">HOW TO PLAY</div>
-      <button
-        id="closemodalbutton"
-        type="button", class='button square minimal'>&times;</button>
-    </div> <!-- modal header close -->
-    <div>
-      <hr>
-      <span>
-        Solve the puzzle by entering letters to complete the hidden words.
+
+<div id='containall'>
+  <div class='header'>
+    <button id="fakemodalbutton" type="button" class='button square invisible'>?</button>
+    <h1>SCRAMBLER</h1>
+    <button id="modalbutton" name="openmodalbutton" type="button" class='button square'>?</button>
+    <div id="modal", class='modal'>
+      <div id="modal-header" class='header formodal'>
+        <button type="button", class='invisible'>&times;</button>
+        <div id="modal-title">HOW TO PLAY</div>
+        <button
+          id="closemodalbutton"
+          type="button", class='button square minimal'>&times;</button>
+      </div> <!-- modal header close -->
+      <div>
+        <hr>
+        <span>
+          Solve the puzzle by entering letters to complete the hidden words.
+          <br></br>
+          Between any word and the next one, the order of letters may be rearranged, and <b>1 letter</b> will always be swapped out for a different one.
+        </span>
+        <hr>
+        <span>
+          One letter will always be swapped between each word and the
+          next:
+        </span>
+        <div class='rowHolder minimal'>
+          <div class='wordRow'> <div class='letterBox highlight'>T</div> <div class='letterBox'>O</div> <div class='letterBox'>U</div>
+          <div class='letterBox'>C</div> <div class='letterBox'>H</div> </div>
+
+          <div class='wordRow'> <div class='letterBox highlight'>C</div> <div class='letterBox'>O</div> <div class='letterBox'>U</div>
+          <div class='letterBox'>C</div> <div class='letterBox'>H</div> </div>
+        </div>
+        <span>
+          Along with swapping, the order of the letters may be scrambled:
+        </span>
+        <div class='rowHolder minimal'>
+          <div class='wordRow'> <div class='letterBox'>S</div> <div class='letterBox highlight'>P</div> <div class='letterBox'>O</div>
+          <div class='letterBox'>R</div> <div class='letterBox'>T</div> </div>
+
+          <div class='wordRow'> <div class='letterBox'>S</div> <div class='letterBox'>T</div> <div class='letterBox'>O</div>
+          <div class='letterBox'>R</div> <div class='letterBox highlight'>M</div> </div>
+        </div> 
         <br></br>
-        Between any word and the next one, the order of letters may be rearranged, and <b>1 letter</b> will always be swapped out for a different one.
-      </span>
-      <hr>
-      <span>
-        One letter will always be swapped between each word and the
-        next:
-      </span>
-      <div class='rowHolder minimal'>
-        <div class='wordRow'> <div class='letterBox highlight'>T</div> <div class='letterBox'>O</div> <div class='letterBox'>U</div>
-        <div class='letterBox'>C</div> <div class='letterBox'>H</div> </div>
-        
-        <div class='wordRow'> <div class='letterBox highlight'>C</div> <div class='letterBox'>O</div> <div class='letterBox'>U</div>
-        <div class='letterBox'>C</div> <div class='letterBox'>H</div> </div>
-      </div>
-      <span>
-        Along with swapping, the order of the letters may be scrambled:
-      </span>
-      <div class='rowHolder minimal'>
-        <div class='wordRow'> <div class='letterBox'>S</div> <div class='letterBox highlight'>P</div> <div class='letterBox'>O</div>
-        <div class='letterBox'>R</div> <div class='letterBox'>T</div> </div>
-        
-        <div class='wordRow'> <div class='letterBox'>S</div> <div class='letterBox'>T</div> <div class='letterBox'>O</div>
-        <div class='letterBox'>R</div> <div class='letterBox highlight'>M</div> </div>
-      </div> 
-      <br></br>
-    </div> <!-- modal body div close -->
-  </div> <!-- modal close -->
-  <div id="overlay" class='modaloverlay'></div>
-</div> <!-- page header close -->
-<div id="gameBox" class='gameBox'>
-  <div id="rowHolder" class='rowHolder'></div>
-  <button id="answerBtn" name="answerPuzzleButton" type="button" class='button answerButton'}>Guess</button>
-  <div id="button_response" class='guessResponse'></div>
-</div>
-<form
-  name="contact_form"
-  action="https://getform.io/f/c893c2ee-547d-4948-99c0-6bd4556aa14b"
-  method="POST"
-  enctype="application/x-www-form-urlencoded"
-  class='emailform'
->
-  <input
-    type="email"
-    name="email"
-    required
-    placeholder="youremail@provider.com"
-    class='textinput'
-  />
-  <button
-    id="email_button"
-    type="submit"
-    class='button emailbutton'
+      </div> <!-- modal body div close -->
+    </div> <!-- modal close -->
+    <div id="overlay" class='modaloverlay'></div>
+  </div> <!-- page header close -->
+  <div id="gameBox" class='gameBox'>
+    <div id="rowHolder" class='rowHolder'></div>
+    <button id="answerBtn" name="answerPuzzleButton" type="button" class='button answerButton'}>Guess</button>
+    <div id="button_response" class='guessResponse'></div>
+  </div>
+  <form
+    name="contact_form"
+    action="https://getform.io/f/c893c2ee-547d-4948-99c0-6bd4556aa14b"
+    method="POST"
+    enctype="application/x-www-form-urlencoded"
+    class='emailform'
   >
-    <label htmlFor="email_button" class='emailbuttontext'>
-      Tell me when this is ready to play.
-    </label>
-  </button>
-</form>
+    <input
+      type="email"
+      name="email"
+      required
+      placeholder="youremail@provider.com"
+      class='textinput'
+    />
+    <button
+      id="email_button"
+      type="submit"
+      class='button emailbutton'
+    >
+      <label htmlFor="email_button" class='emailbuttontext'>
+        Tell me when this is ready to play.
+      </label>
+    </button>
+  </form>
+ </div>
 
 </body>
 </html>
