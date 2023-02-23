@@ -99,7 +99,7 @@ button {
   overflow: auto;
   position: fixed;
 }
-.modal:active {
+.modal.open {
   display:block
 }
 .container10 {
@@ -120,7 +120,7 @@ button {
   pointer-events: none;
   background-color: rgba(0, 0, 0, 0.5);
 }
-.modaloverlay:active {
+.modaloverlay.open {
   display: block;
   pointer-events: all;
 }
