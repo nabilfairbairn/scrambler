@@ -96,10 +96,9 @@ window.onload = function() {
     for (j = 0; j < rowWord.length; j++) {
       var letter = rowWord[j]
       if (letter === "_") {
-        var input = document.createElement("input")
+        let input = document.createElement("input")
         input.classList.add("letterInput")
         input.classList.add("letterBox")
-        input.placeholder = "?"
         input.onkeydown = function() {limit(input)};
         input.onkeyup = function() {limit(input)};
 
