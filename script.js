@@ -22,8 +22,7 @@ function create_count_map(str) {
     {
       ans.set(str[i], 0);
     }
-    return ans;
-    }     
+    return ans;   
 }
      
 // test string
@@ -34,6 +33,7 @@ console.log(count_letters(test));
 function one_letter_diff(word1, word2) {
     let w1_dict = count_letters(word1)
     let w2_dict = count_letters(word2)
+    
 }
 
 window.onload = function() {
