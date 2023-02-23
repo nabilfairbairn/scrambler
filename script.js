@@ -62,8 +62,8 @@ window.onload = function() {
     var right_wrong = (printing === actual_answer) ? "That's right!" : "Try again.";
 
     var hiding = document.getElementById("button_response")
-    hiding.innerHTML = right_wrong;
-    hiding.style.display = "block";
+    hiding.innerText = right_wrong;
+    hiding.style.visibility = "visible";
   }
 
   function limitText(limitField, limitNum) {
