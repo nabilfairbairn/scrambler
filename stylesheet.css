@@ -21,10 +21,13 @@ button {
   justify-content: space-around;
   margin: auto;
 }
+.header.formodal {
+  justify_content: space-between;
+}
 .button.square {
   width: 48px;
   height: 48px;
-  text-size: 2rem;
+  font-size: 2rem;
   font-weight: bold;
   padding: 0px;
   line-height: 0;
@@ -126,8 +129,7 @@ button {
 }
 .gameBox {
   display: flex;
-  height: auto;
-  width: auto;
+  flex: 1;
   padding: 4vmin;
   align-items: center;
   border: 2px solid black;
