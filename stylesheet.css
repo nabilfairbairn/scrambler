@@ -14,6 +14,12 @@ body {
   justify-content: space-around;
   margin: auto;
 }
+.button {
+  border-radius: 4px;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  outline: 0;
+}
 .button.square {
   width: 48px;
   height: 48px;
@@ -22,9 +28,6 @@ body {
 }
 .invisible {
   visibility: hidden;
-}
-.text {
-  font-size: 48px;
 }
 .heading {
   font-size: 48px;
@@ -35,19 +38,25 @@ body {
   font-weight: 500;
   text-transform: uppercase;
 }
-.button1 {
-  width: 48px;
-  height: 48px;
-  font-size: 32px;
-  align-self: center;
-  text-align: center;
-  padding-top: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
-  padding-bottom: 0px;
-  vertical-align: middle;
+
+.letterBox{
+  width: 12vmin;
+  border: 0.5px solid black;
+  height: 12vmin;
+  font-size: 8vmin;
+  margin: 0px 2.5vmin;
+  text-transform: uppercase;
+  display: flex;
   justify-content: center;
+  align-items: center;
 }
+.letterInput{
+  cursor: pointer;
+  box-shadow: 0px 3px 1px 0px #D4D4D4;
+  text-align: center;
+  caret-color: transparent;
+}
+
 .container02 {
   display: none;
   max-width: 1200px;
@@ -94,8 +103,7 @@ body {
   display: flex;
   padding: 4vmin;
   align-items: center;
-  border-color: black;
-  border-width: 2px;
+  border: 2px solid black;
   border-radius: 1vw;
   flex-direction: column;
   justify-content: center;
@@ -109,34 +117,18 @@ body {
   align-items: flex-start;
   flex-direction: column;
 }
-.answerArea {
-  flex: 0 0 auto;
-  width: 100%;
-  display: flex;
-  align-self: center;
-  margin-top: var(--dl-space-space-halfunit);
-  align-items: center;
-  margin-bottom: var(--dl-space-space-halfunit);
-  justify-content: center;
-}
-.answerButton {
+.button.answerButton {
   font-size: 18px;
   box-shadow: rgb(122, 4, 4) 0px 3px 2px 0px;
-  transition: 0.3s;
   text-transform: capitalize;
   background-color: rgb(236, 22, 22);
 }
-.answerButton:active {
-  border-width: 0px;
+.button.answerButton:active {
   background-color: #7a0404;
 }
 .guessResponse {
-  width: 100%;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  display: none;
+  visibility: hidden;
+  height: 
 }
 .emailform {
   width: 462px;
