@@ -52,6 +52,9 @@ button {
 .highlight {
   background-color: gold;
 }
+.correct {
+  background-color: green;
+}
 .wordRow{
   display: flex;
   align-self: center;
