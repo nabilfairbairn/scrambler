@@ -55,6 +55,12 @@ button {
 .correct {
   background-color: green;
 }
+.wrong {
+  background-color: orange
+}
+.missing {
+  background-color: orange
+}
 .wordRow{
   display: flex;
   align-self: center;
