@@ -149,7 +149,7 @@ function word_attempted(wordrow) {
     if (!(letter == null || letter == '')) {
         return true
     }
-  }
+  })
   return false
 }
                         
