@@ -135,10 +135,11 @@ window.onload = function() {
 
   var n_words = words.length
 
-  var i;
-  for (i = 0; i < n_words; i++) {
+  for (let i = 0; i < n_words; i++) {
     var row = document.createElement("div");
-    row.className = "wordRow"
+    row.className = "wordRow";
+    row.setAttribute('word_number', i)
+    
 
     rowHolder.appendChild(row)
     var rowWord = words[i]
