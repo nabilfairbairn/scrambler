@@ -197,7 +197,7 @@ function is_word_valid(guess_word, guess_received, answer_words, valid_depths) {
         i--;
     }
     let valid_word = get_word(nearest_valid_depth)
-    if (reaches_word(valid_word, nearest_valid_depth, guess_received, depth) {
+    if (reaches_word(valid_word, nearest_valid_depth, guess_received, depth)) {
         return 1
     }
     return 0
