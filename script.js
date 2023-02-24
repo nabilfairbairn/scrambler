@@ -142,7 +142,7 @@ function word_depth(wordrow) {
 }
 
 function word_attempted(wordrow) {
-  const guess_letters = guess_word.querySelectorAll('.letterInput')
+  const guess_letters = wordrow.querySelectorAll('.letterInput')
 
   guess_letters.forEach((letter_box) => {
     let letter = letter_box.value
