@@ -61,7 +61,7 @@ window.onload = function() {
   var input_id = 0
   var input_id_prefix = "user_input_"
   var words = ["TOUCH", "T_U__", "CO___"];
-  var answers = ["TOUCH", "TOUGH", "COUGH"]
+  var answers = [["TOUCH"], ["TOUGH"], ["COUGH"]]
 
   var openModalButtons = document.getElementById('modalbutton')
   var closeModalButtons = document.getElementById('closemodalbutton')
@@ -98,6 +98,24 @@ window.onload = function() {
 
     var w;
     for (w = 0; w < words.length; w++) {
+      let guessid = 'guess_number_' + w.toString()
+      let guess_word = document.getElementById(guessid)
+      const answer_words = answers[w]
+      const guess_letters = guess_word.querySelectorAll('.letterBox')
+      var guess_received = ''
+      
+      guess_letters.forEach((letter_box) => {
+          if (letter_box.classList.contains('letterInput')) {
+            guess_received += letter_box.value
+          } else {
+            guess_received += letter_box.innerText
+          }
+      })
+      if (answer_words.includes(guess_received)) {
+        guess_word.classList.add('correct')
+      }
+
+      
       var w_word = words[w]
       var l;
       for (l = 0; l < w_word.length; l++) {
@@ -138,7 +156,7 @@ window.onload = function() {
   for (let i = 0; i < n_words; i++) {
     var row = document.createElement("div");
     row.className = "wordRow";
-    row.setAttribute('word_number', i)
+    row.id = 'guess_number_' + i.toString()
     
 
     rowHolder.appendChild(row)
