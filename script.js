@@ -84,10 +84,10 @@ function one_letter_diff(word1, word2) {
     return (plus_one == 1 && minus_one == -1)
 }
 
-function get_depth(word_number) {
-  let guessid = wordrow_id_prefix + w.toString()
+function get_depth(d) {
+  let guessid = wordrow_id_prefix + d.toString()
   let guess_word = document.getElementById(guessid)
-  const answer_words = answers[w]
+  const answer_words = answers[d]
   const guess_letters = guess_word.querySelectorAll('.letterBox')
   var guess_received = ''
 
