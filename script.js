@@ -2,23 +2,66 @@ const wordrow_id_prefix = 'guess_number_'
 const words = ["TOUCH", "T_U__", "CO___"];
 const answers = [["TOUCH"], ["TOUGH"], ["COUGH"]]
 
+// TODO: Pressing Enter triggers Guess
+// Typing a letter focuses the next letterInput
+// Typing a letter keeps the last letter
+
 function limit(element) {
     var max_chars = 1;
-    if(element.value.length > max_chars) {
-        element.value = element.value.substr(0, max_chars);
+    var val_len = element.value.length
+    if(val_len > max_chars) {
+        element.value = element.value.substr(val_len-1, val_len);
     }
 }
 
-function process_input(element) {
+function focus_next_letter(element, event) {
+    if (event.which < 65 || event.which > 90) {
+        return
+    }
+
+    var depth = element.getAttribute('depth')
+    var order = element.getAttribute('order')
+    var word = document.getElementById(wordrow_id_prefix + depth.toString())
+    var next_letter;
+
+    var word_letters = Array.from(word.querySelectorAll(`.letterInput`))
+    .filter(el => Number(el.getAttribute('order')) > order)
+    console.log('d:', depth, 'order:', order, 'remaining letters:', word_letters.length)
+    if (word_letters.length > 0) {
+        next_letter = word_letters[0]
+    } 
+    depth++;
+    word = document.getElementById(wordrow_id_prefix + depth.toString())
+    while (!next_letter && word) {
+        
+        word_letters = word.querySelectorAll(`.letterInput`)
+        if (word_letters) {
+            next_letter = word_letters.item(0) //nodelist accessor 
+        }
+        
+        depth++;
+        let next_word_id = wordrow_id_prefix + depth.toString()
+        word = document.getElementById(next_word_id)
+    }
+    if (next_letter) {
+        next_letter.focus()    
+    }
+}
+
+function process_input(element, event) {
     // Remove extra letters
     limit(element)
+    
+    
+
     
     // Remove letter styling if 'missing'
     remove_letter_style(element)
     
     // Get parent word
-    var depth = element.depth
-    const word = document.getElementById(wordrow_id_prefix + depth.toString())
+    var depth = element.getAttribute('depth')
+    var word = document.getElementById(wordrow_id_prefix + depth.toString())
+
     
     // remove word style
     remove_word_style(word)
@@ -93,7 +136,7 @@ function get_depth(d) {
 
   guess_letters.forEach((letter_box) => {
     if (letter_box.classList.contains('letterInput')) {
-      guess_received += letter_box.value
+      guess_received += letter_box.value.toUpperCase()
     } else {
       guess_received += letter_box.innerText
     }
@@ -115,6 +158,7 @@ function reaches_word(thisword, thisdepth, wuc, wuc_depth) {
         joined_words.forEach((word) => {
             if (!reaches_word(word, thisdepth+1, wuc, wuc_depth)) {
                 reaches = false
+                return false
             }
         })
         return reaches
@@ -143,14 +187,18 @@ function word_depth(wordrow) {
 
 function word_attempted(wordrow) {
   const guess_letters = wordrow.querySelectorAll('.letterInput')
+  if (guess_letters.length == 0) {return true}
+
+  var attempted = false
 
   guess_letters.forEach((letter_box) => {
     let letter = letter_box.value
     if (!(letter == null || letter == '')) {
-        return true
+        attempted = true
+        return false
     }
   })
-  return false
+  return attempted
 }
                         
 
@@ -169,6 +217,7 @@ function is_word_valid(guess_word, guess_received, answer_words, valid_depths) {
     }
     
     let depth = word_depth(guess_word)
+    console.log('d', depth)
     
     // (word complete, and in answers)
     // first word
@@ -208,6 +257,7 @@ function puzzle_done(valid_words) {
     valid_words.forEach((validity) => {
         if (!validity) {
             done = false
+            return false
         }
     })
     return done
@@ -283,7 +333,13 @@ window.onload = function() {
   overlay.onclick = closeModal 
   closeModalButtons.onclick = closeModal 
 
-  document.getElementById("answerBtn").onclick = function() {
+  document.addEventListener("keyup", function(event) {
+    if (event.key === 'Enter' && document.activeElement.id != 'email_input') {
+        process_guess()
+    }
+  })
+
+  function process_guess() {
     remove_all_word_style()
     var printing = ''
     var actual_answer = ''
@@ -297,7 +353,9 @@ window.onload = function() {
     
     for (w = 0; w < words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
+      console.log('word:', guess_received)
       let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
+      console.log('validity:', validity_status)
       valid_depths.push(validity_status == 1 ? true : false)
       style_guessword(guess_word, validity_status)
       
@@ -320,10 +378,8 @@ window.onload = function() {
     hiding.style.visibility = "visible";
   }
 
-  function limitText(limitField, limitNum) {
-      if (limitField.value.length > limitNum) {
-          limitField.value = limitField.value.substring(0, limitNum);
-      }
+  document.getElementById("answerBtn").onclick = function() {
+    process_guess()
   }
 
 
@@ -340,16 +396,21 @@ window.onload = function() {
     rowHolder.appendChild(row)
     var rowWord = words[i]
 
-    var j;
-    for (j = 0; j < rowWord.length; j++) {
+    for (let j = 0; j < rowWord.length; j++) {
       var letter = rowWord[j]
       if (letter === "_") {
         let input = document.createElement("input")
         input.classList.add("letterInput")
         input.classList.add("letterBox")
-        input.onkeydown = function() {limit(input)};
-        input.onkeyup = function() {limit(input)};
+        input.addEventListener('keydown', function myfunc(event) {
+            process_input(this, event)
+        })
+        input.addEventListener('keyup', function myfunc(event) {
+            process_input(this, event)
+            focus_next_letter(this, event)
+        })
         input.setAttribute('depth', i)
+        input.setAttribute('order', j)
 
         row.appendChild(input)
       } else {
