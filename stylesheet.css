@@ -142,10 +142,10 @@ button {
   }
   
   .keyboard-button {
-    font-size: min(7vw, 32px);
+    font-size: min(12vw, 32px);
     font-weight: 700;
     padding: min(0.5vw, 6px);
-    margin: min(0.1vw, 2px);
+    margin: min(0.3vw, 4px);
     cursor: pointer;
     text-transform: uppercase;
   }
