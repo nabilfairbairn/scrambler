@@ -6,12 +6,12 @@ const answers = [["TOUCH"], ["TOUGH"], ["COUGH"]]
 // Typing a letter focuses the next letterInput
 // Typing a letter keeps the last letter
 
-function limit(element) {
-    var max_chars = 1;
-    var val_len = element.value.length
-    if(val_len > max_chars) {
-        element.value = element.value.substr(val_len-1, val_len);
-    }
+function limit(element, key) {
+    element.innerText = key.toUpperCase()
+}
+
+function delete_letter(element) {
+    element.innerText = ''
 }
 
 function focus_next_letter(element, event) {
@@ -26,7 +26,6 @@ function focus_next_letter(element, event) {
 
     var word_letters = Array.from(word.querySelectorAll(`.letterInput`))
     .filter(el => Number(el.getAttribute('order')) > order)
-    console.log('d:', depth, 'order:', order, 'remaining letters:', word_letters.length)
     if (word_letters.length > 0) {
         next_letter = word_letters[0]
     } 
@@ -50,7 +49,15 @@ function focus_next_letter(element, event) {
 
 function process_input(element, event) {
     // Remove extra letters
-    limit(element)
+    if (65 <= event.which && event.which <= 90) {
+        let key = event.key
+        limit(element, key)
+        
+        element.blur()
+    }
+    if (event.code === 'Backspace' || event.code === 'Delete') {
+        delete_letter(element)
+    }
     
     
 
@@ -135,11 +142,9 @@ function get_depth(d) {
   var guess_received = ''
 
   guess_letters.forEach((letter_box) => {
-    if (letter_box.classList.contains('letterInput')) {
-      guess_received += letter_box.value.toUpperCase()
-    } else {
-      guess_received += letter_box.innerText
-    }
+    
+      guess_received += letter_box.innerText.toUpperCase()
+    
   })
   return [guess_word, guess_received, answer_words]
 }
@@ -192,7 +197,7 @@ function word_attempted(wordrow) {
   var attempted = false
 
   guess_letters.forEach((letter_box) => {
-    let letter = letter_box.value
+    let letter = letter_box.innerText
     if (!(letter == null || letter == '')) {
         attempted = true
         return false
@@ -217,7 +222,6 @@ function is_word_valid(guess_word, guess_received, answer_words, valid_depths) {
     }
     
     let depth = word_depth(guess_word)
-    console.log('d', depth)
     
     // (word complete, and in answers)
     // first word
@@ -274,7 +278,7 @@ function style_guessword(wordrow, validity) {
         case -1:
             const guess_letters = wordrow.querySelectorAll('.letterInput')
             guess_letters.forEach((letterbox) => {
-                if (letterbox.value == null || letterbox.value == '') {
+                if (letterbox.innerText == null || letterbox.innerText == '') {
                     letterbox.classList.add('missing')
                 }
             })
@@ -353,9 +357,8 @@ window.onload = function() {
     
     for (w = 0; w < words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
-      console.log('word:', guess_received)
       let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
-      console.log('validity:', validity_status)
+      console.log(guess_received)
       valid_depths.push(validity_status == 1 ? true : false)
       style_guessword(guess_word, validity_status)
       
@@ -399,15 +402,16 @@ window.onload = function() {
     for (let j = 0; j < rowWord.length; j++) {
       var letter = rowWord[j]
       if (letter === "_") {
-        let input = document.createElement("input")
+        let input = document.createElement("div")
         input.classList.add("letterInput")
         input.classList.add("letterBox")
+        input.tabIndex = i*1 + j
+        input.onclick = function() {
+            input.focus()
+        }
         input.addEventListener('keydown', function myfunc(event) {
-            process_input(this, event)
-        })
-        input.addEventListener('keyup', function myfunc(event) {
-            process_input(this, event)
-            focus_next_letter(this, event)
+            process_input(input, event)
+            setTimeout(function(){focus_next_letter(input, event)},80)
         })
         input.setAttribute('depth', i)
         input.setAttribute('order', j)
