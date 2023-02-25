@@ -4,7 +4,8 @@ html * {
   font-family: Nunito;
 }
 body {
-  font-size: calc(15px + 0.390625vw);
+  font-size: 1rem;
+  holder: calc(15px + 0.390625vw);
 }
 button {
   border-radius: 0.5rem;
