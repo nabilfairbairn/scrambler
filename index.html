@@ -3,6 +3,7 @@
 <head>
   <link rel="stylesheet" href="stylesheet.css">
   <script type="text/javascript" src="script.js"></script>
+  <script src="https://kit.fontawesome.com/678876f118.js" crossorigin="anonymous"></script>
 </head>
 <body>
   
@@ -16,7 +17,7 @@
 
 <div id='containall'>
   <div class='header'>
-    <button id="fakemodalbutton" type="button" class='button square invisible'>?</button>
+    <button id="keyboardbutton" type="button" class='button square'><i class="fa-solid fa-keyboard"></i></button>
     <h1>SCRAMBLER</h1>
     <button id="modalbutton" name="openmodalbutton" type="button" class='button square'>?</button>
     <div id="modal", class='modal'>
@@ -92,6 +93,44 @@
     </button>
   </form>
  </div>
+
+ <div id="keyboard-cont">
+    <div class="first-row">
+        <button class="keyboard-button">q</button>
+        <button class="keyboard-button">w</button>
+        <button class="keyboard-button">e</button>
+        <button class="keyboard-button">r</button>
+        <button class="keyboard-button">t</button>
+        <button class="keyboard-button">y</button>
+        <button class="keyboard-button">u</button>
+        <button class="keyboard-button">i</button>
+        <button class="keyboard-button">o</button>
+        <button class="keyboard-button">p</button>
+    </div>
+    <div class="second-row">
+        <button class="keyboard-button">a</button>
+        <button class="keyboard-button">s</button>
+        <button class="keyboard-button">d</button>
+        <button class="keyboard-button">f</button>
+        <button class="keyboard-button">g</button>
+        <button class="keyboard-button">h</button>
+        <button class="keyboard-button">j</button>
+        <button class="keyboard-button">k</button>
+        <button class="keyboard-button">l</button>
+    </div>
+    <div class="third-row">
+        <button class="keyboard-button">Del</button>
+        <button class="keyboard-button">z</button>
+        <button class="keyboard-button">x</button>
+        <button class="keyboard-button">c</button>
+        <button class="keyboard-button">v</button>
+        <button class="keyboard-button">b</button>
+        <button class="keyboard-button">n</button>
+        <button class="keyboard-button">m</button>
+        <button class="keyboard-button">Enter</button>
+    </div>
+</div>
+<div class="keyboardbuffer"></div>
 
 </body>
 </html>
