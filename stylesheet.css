@@ -4,8 +4,9 @@ html * {
   font-family: Nunito;
 }
 body {
-  font-size: 1rem;
-  holder: calc(15px + 0.390625vw);
+  font-size: calc(15px + 0.390625vw);
+  
+  font-size: clamp(1.5rem, 1vw + 1.25rem, 2.5rem);
 }
 button {
   border-radius: 0.5rem;
@@ -70,14 +71,14 @@ button {
   flex-direction: row;
 }
 .letterBox{
-  width: 12vmin !important;
+  width: 4rem !important;
+  height: 4rem !important;
   background-color: white;
   border: 0.5px solid black;
   box-sizing: border-box;
   outline: none !important;
-  height: 12vmin !important;
-  font-size: 8vmin;
-  margin: 2.5vmin;
+  font-size: 3rem;
+  margin: 0.75rem;
   text-transform: uppercase;
   display: flex;
   justify-content: center;
@@ -126,21 +127,27 @@ button {
   #keyboard-cont div {
     display: flex;
   }
-  
+  .first-row {
+    display: flex;
+  }
+  .third-row {
+    display: flex;
+  }
   .second-row {
+    display: flex;
     margin: 0.5rem 0;
   }
   
   .keyboard-button {
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 700;
     padding: 0.5rem;
-    margin: 0 2px;
+    margin: 0.1rem;
     cursor: pointer;
     text-transform: uppercase;
   }
 .keyboardbuffer {
-    height: 8rem;
+    height: 12rem;
 }
 
 .modal {
@@ -206,7 +213,7 @@ button {
   flex-direction: column;
 }
 .button.answerButton {
-  font-size: 18px;
+  font-size: 1.5rem;
   box-shadow: rgb(122, 4, 4) 0px 3px 2px 0px;
   text-transform: capitalize;
   background-color: rgb(236, 22, 22);
@@ -220,25 +227,26 @@ button {
   visibility: hidden;
   display: flex;
   flex-wrap: wrap;
-  height: 3rem;
+  min-height: 4rem;
   text-align: center;
   align-items: center;
   justify-content: center;
+  font-size: 1.5rem;
 }
 .emailform {
-  width: 462px;
-  height: 183px;
+  width: 20rem;
+  height: 8rem;
+  margin: 1rem;
   display: flex;
-  margin: 24px auto;
+  justify-content: space-around;
   align-items: center;
   flex-direction: column;
 }
 .textinput {
-  width: min(80vw, 400px);
-  height: min(4vh, 48px);
+  width: 20rem;
+  height: 1.5rem;
+  font-size: 1rem;
   align-self: center;
-  margin-top: 16px;
-  margin-bottom: 16px;
   text-align: center;
   border-width: 0px;
   padding-left: 0px;
@@ -247,10 +255,11 @@ button {
 }
 .emailbutton {
   color: rgb(0, 0, 0);
-  width: 192px;
-  height: 70px;
+  width: 12rem;
+  height: 4rem;
+  font-size: 1rem;
   display: flex;
-  padding: 6px;
+  padding: 0.5rem;
   align-self: center;
   box-shadow: 0px 3px 2px 0px rgba(4, 56, 12, 0.75);
   font-style: normal;
@@ -265,9 +274,6 @@ button {
   background-color: rgba(28, 175, 60, 0.85);
 }
 .emailbuttontext {
-  width: 1 rem;
-  height: 1 rem;
-  font-size: 16px;
   align-self: center;
   line-height: 1.25em;
 }
