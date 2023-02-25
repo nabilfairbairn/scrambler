@@ -1,6 +1,7 @@
 const wordrow_id_prefix = 'guess_number_'
 const words = ["TOUCH", "T_U__", "CO___"];
 const answers = [["TOUCH"], ["TOUGH"], ["COUGH"]]
+var blurred;
 
 // TODO: Pressing Enter triggers Guess
 // Typing a letter focuses the next letterInput
@@ -15,7 +16,7 @@ function delete_letter(element) {
 }
 
 function focus_next_letter(element, event) {
-    if (event.which < 65 || event.which > 90) {
+    if (event && (event.which < 65 || event.which > 90)) {
         return
     }
 
@@ -49,17 +50,30 @@ function focus_next_letter(element, event) {
 
 function process_input(element, event) {
     // Remove extra letters
-    if (65 <= event.which && event.which <= 90) {
-        let key = event.key
-        limit(element, key)
-        
-        element.blur()
+    if (typeof event === "string") {
+        switch(event) {
+            case 'DEL':
+                delete_letter(element);
+                break;
+            case 'ENTER':
+                process_guess();
+                return;
+            default:
+                limit(element, event)
+                focus_next_letter(element)
+                break
+        }
+    } else {
+        if (65 <= event.which && event.which <= 90) {
+            let key = event.key
+            limit(element, key)
+            
+            element.blur()
+        }
+        if (event.code === 'Backspace' || event.code === 'Delete') {
+            delete_letter(element)
+        }
     }
-    if (event.code === 'Backspace' || event.code === 'Delete') {
-        delete_letter(element)
-    }
-    
-    
 
     
     // Remove letter styling if 'missing'
@@ -304,46 +318,7 @@ function remove_all_word_style() {
     })
 }
 
-window.onload = function() {
-  var input_id_answer = {}
-  var input_id = 0
-  var input_id_prefix = "user_input_"
-
-  var openModalButtons = document.getElementById('modalbutton')
-  var closeModalButtons = document.getElementById('closemodalbutton')
-  var overlay = document.getElementById('overlay')
-
-  var modal = document.getElementById('modal')
-
-  function openModal() {
-    if (modal == null) {
-      console.log('Couldnt find modal?')
-      return
-    }
-    modal.classList.add('open')
-    overlay.classList.add('open')
-  }
-
-  function closeModal() {
-    if (modal == null) {
-      console.log('Couldnt find modal?')
-      return
-    }
-    modal.classList.remove('open')
-    overlay.classList.remove('open')
-  }
-
-  openModalButtons.onclick = openModal 
-  overlay.onclick = closeModal 
-  closeModalButtons.onclick = closeModal 
-
-  document.addEventListener("keyup", function(event) {
-    if (event.key === 'Enter' && document.activeElement.id != 'email_input') {
-        process_guess()
-    }
-  })
-
-  function process_guess() {
+function process_guess() {
     remove_all_word_style()
     var printing = ''
     var actual_answer = ''
@@ -381,6 +356,66 @@ window.onload = function() {
     hiding.style.visibility = "visible";
   }
 
+window.onload = function() {
+  var input_id_answer = {}
+  var input_id = 0
+  var input_id_prefix = "user_input_"
+
+  var openModalButtons = document.getElementById('modalbutton')
+  var closeModalButtons = document.getElementById('closemodalbutton')
+  var overlay = document.getElementById('overlay')
+
+  var modal = document.getElementById('modal')
+
+  var keyboardbutton = document.getElementById('keyboardbutton')
+  keyboardbutton.onclick = function() {
+    var keyboard = document.getElementById('keyboard-cont')
+    if (keyboard.style.display == 'none') {
+        keyboard.style.display = 'flex'
+    } else {
+        keyboard.style.display = 'none'
+    }
+  }
+
+  const keyboard_keys = document.querySelectorAll('.keyboard-button')
+  keyboard_keys.forEach((key) => {
+    key.onclick = function(event) {
+        event.preventDefault();
+        const key_val = key.innerText
+        blurred.focus()
+        process_input(blurred, key_val)
+    }
+  })
+
+  function openModal() {
+    if (modal == null) {
+      console.log('Couldnt find modal?')
+      return
+    }
+    modal.classList.add('open')
+    overlay.classList.add('open')
+  }
+
+  function closeModal() {
+    if (modal == null) {
+      console.log('Couldnt find modal?')
+      return
+    }
+    modal.classList.remove('open')
+    overlay.classList.remove('open')
+  }
+
+  openModalButtons.onclick = openModal 
+  overlay.onclick = closeModal 
+  closeModalButtons.onclick = closeModal 
+
+  document.addEventListener("keyup", function(event) {
+    if (event.key === 'Enter' && document.activeElement.id != 'email_input') {
+        process_guess()
+    }
+  })
+
+
   document.getElementById("answerBtn").onclick = function() {
     process_guess()
   }
@@ -405,11 +440,10 @@ window.onload = function() {
         let input = document.createElement("div")
         input.classList.add("letterInput")
         input.classList.add("letterBox")
-
-        let dummy_in = document.createElement('input')
-        dummy_in.className = 'outside'
-        input.appendChild(dummy_in)
         input.tabIndex = i*1 + j
+        input.onblur = function() {
+            blurred = this;
+        }
         input.onclick = function() {
             input.focus()
         }
