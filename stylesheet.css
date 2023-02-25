@@ -142,7 +142,7 @@ button {
   }
   
   .keyboard-button {
-    font-size: min(12vw, 32px);
+    font-size: min(12vw, 52px);
     font-weight: 700;
     padding: min(0.5vw, 6px);
     margin: min(0.3vw, 4px);
