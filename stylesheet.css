@@ -36,9 +36,9 @@ button {
   justify-content: space-between;
 }
 .button.square {
-  width: min(6vw, 72px);
-  height: min(6vw, 72px);
-  font-size: min(4vw, 36px);
+  width: min(12vw, 72px);
+  height: min(12vw, 72px);
+  font-size: min(8vw, 36px);
   font-weight: bold;
   padding: 0px;
   line-height: 0;
