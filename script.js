@@ -356,6 +356,27 @@ function process_guess() {
     hiding.style.visibility = "visible";
   }
 
+function style_letterBox(element) {
+    var max_wordlength = 0;
+    words.forEach((word) => {
+        max_wordlength = Math.max(max_wordlength, word.length)
+    })
+    let optimal_game_w = 85; //vw
+    let w_per_word = optimal_game_w / max_wordlength;
+    let word_buffer = w_per_word / 8;
+    let word_w = word_buffer * 6;
+    element.style.width = `${word_w}vw`
+    element.style.height = `${word_w}vw`
+
+    let max_px = 500;
+    let w_per_word_px = max_px / max_wordlength;
+    let word_buffer_px = w_per_word_px / 8;
+    let word_w_px = word_buffer_px * 6
+    element.style.maxWidth = `${word_w_px}px`
+    element.style.maxHeight = `${word_w_px}px`
+    element.style.margin = `min(${word_buffer}vw, ${word_buffer_px}px)` 
+}
+
 window.onload = function() {
   var input_id_answer = {}
   var input_id = 0
@@ -440,6 +461,7 @@ window.onload = function() {
         let input = document.createElement("div")
         input.classList.add("letterInput")
         input.classList.add("letterBox")
+        style_letterBox(input)
         input.tabIndex = i*1 + j
         input.onblur = function() {
             blurred = this;
@@ -457,6 +479,7 @@ window.onload = function() {
         row.appendChild(input)
       } else {
         var letter_holder = document.createElement("div")
+        style_letterBox(letter_holder)
         letter_holder.className = "letterBox"
         letter_holder.innerText = letter
         row.appendChild(letter_holder)
