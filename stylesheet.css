@@ -115,7 +115,8 @@ button {
     align-items: center;
     background-color:rgba(80, 80, 80);
   }
-  @media (min-width:600px) {
+  @media screen and ((max-device-pixel-ratio: 2) or (-webkit-max-device-pixel-ratio: 2) 
+  or (-moz-max-device-pixel-ratio: 2) ){
     #keyboard-cont {
         display: none;
     }
