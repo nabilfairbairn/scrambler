@@ -405,6 +405,10 @@ window.onload = function() {
         let input = document.createElement("div")
         input.classList.add("letterInput")
         input.classList.add("letterBox")
+
+        let dummy_in = document.createElement('input')
+        dummy_in.className = 'outside'
+        input.appendChild(dummy_in)
         input.tabIndex = i*1 + j
         input.onclick = function() {
             input.focus()
