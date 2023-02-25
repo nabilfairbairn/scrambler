@@ -368,7 +368,7 @@ function style_letterBox(element) {
     element.style.width = `${word_w}vw`
     element.style.height = `${word_w}vw`
 
-    let max_px = 13;
+    let max_px = 19;
     let w_per_word_px = max_px / max_wordlength;
     let word_buffer_px = w_per_word_px / 8;
     let word_w_px = word_buffer_px * 6
