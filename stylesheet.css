@@ -100,6 +100,10 @@ button {
 .letterInput:focus::placeholder {
   color: transparent;
 }
+.outside {
+    position: fixed;
+    left: 120%;
+}
 
 .container02 {
   display: none;
