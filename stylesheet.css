@@ -56,10 +56,10 @@ button {
   background-color: green;
 }
 .wrong {
-  background-color: orange
+  background-color: orange ;
 }
 .missing {
-  background-color: orange
+  background-color: orange !important;
 }
 .wordRow{
   display: flex;
@@ -70,6 +70,7 @@ button {
 }
 .letterBox{
   width: 12vmin !important;
+  background-color: white;
   border: 0.5px solid black;
   box-sizing: border-box;
   outline: none !important;
@@ -188,6 +189,7 @@ button {
   height: 3rem;
   text-align: center;
   align-items: center;
+  justify-content: center;
 }
 .emailform {
   width: 462px;
