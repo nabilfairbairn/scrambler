@@ -52,10 +52,10 @@ function process_input(element, event) {
     // Remove extra letters
     if (typeof event === "string") {
         switch(event) {
-            case 'DEL':
+            case 'backspace':
                 delete_letter(element);
                 break;
-            case 'ENTER':
+            case 'keyboard_return':
                 process_guess();
                 return;
             default:
