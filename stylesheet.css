@@ -2,6 +2,7 @@
 
 html * {
   font-family: Nunito;
+  color: black;
 }
 body {
   font-size: calc(15px + 0.390625vw);
@@ -43,6 +44,10 @@ button {
   padding: 0px;
   line-height: 0;
 }
+.material-icons-round {
+    font-size: min(7vw, 56px) !important;
+}
+
 .invisible {
   visibility: hidden;
 }
@@ -205,16 +210,28 @@ button {
   }
   
   .keyboard-button {
+    width: min(17vw, 78px);
     font-size: min(14vw, 64px);
     font-weight: 700;
     padding: min(0.5vw, 6px);
     margin: min(0.3vw, 4px);
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    justify-self: center;
+    text-align: center;
     cursor: pointer;
     text-transform: uppercase;
+  }
+  .keyboard-button.square {
+    width: min(22vw, 102px);
+    
   }
 .keyboardbuffer {
     height: min(40vw, 400px);
 }
+
 
 .modal {
   border: 1px solid black;
