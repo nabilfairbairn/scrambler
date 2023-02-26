@@ -2,6 +2,13 @@
 <html>
 <head>
   <link rel="stylesheet" href="stylesheet.css">
+  <!-- Google Icons
+  <link rel="stylesheet" 
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" /> -->
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+      rel="stylesheet">
+
   <script type="text/javascript" src="script.js"></script>
   <script src="https://kit.fontawesome.com/678876f118.js" crossorigin="anonymous"></script>
 </head>
@@ -17,16 +24,23 @@
 
 <div id='containall'>
   <div class='header'>
-    <button id="keyboardbutton" type="button" class='button square'><i class="fa-solid fa-keyboard"></i></button>
-    <h2>SCRAMBLER</h2>
-    <button id="modalbutton" name="openmodalbutton" type="button" class='button square'>?</button>
+    <button id="keyboardbutton" type="button" class='button square'><span class="material-icons-round">
+        keyboard
+        </span>
+        </button>
+    <h1>SCRAMBLER</h1>
+    <button id="modalbutton" name="openmodalbutton" type="button" class='button square'><span class="material-icons-round">
+        question_mark
+        </span></button>
     <div id="modal", class='modal'>
       <div id="modal-header" class='header formodal'>
         <button type="button", class='invisible'>&times;</button>
         <div id="modal-title">HOW TO PLAY</div>
         <button
           id="closemodalbutton"
-          type="button", class='button square minimal'>&times;</button>
+          type="button", class='button square minimal'><span class="material-icons-round">
+            close
+            </span></button>
       </div> <!-- modal header close -->
       <div>
         <hr>
@@ -119,7 +133,7 @@
         <button class="keyboard-button">l</button>
     </div>
     <div class="third-row">
-        <button class="keyboard-button">Del</button>
+        <button class="keyboard-button square material-icons-round">keyboard_return</button>
         <button class="keyboard-button">z</button>
         <button class="keyboard-button">x</button>
         <button class="keyboard-button">c</button>
@@ -127,7 +141,7 @@
         <button class="keyboard-button">b</button>
         <button class="keyboard-button">n</button>
         <button class="keyboard-button">m</button>
-        <button class="keyboard-button">Enter</button>
+        <button class="keyboard-button square material-icons-round">backspace</button>
     </div>
 </div>
 <div class="keyboardbuffer"></div>
