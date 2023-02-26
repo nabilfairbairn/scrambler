@@ -58,10 +58,11 @@ button {
 .highlight {
   background-color: gold !important;
 }
-.correct {
-    background: radial-gradient(66.5% 66.5% at 50% 50%,
-       rgba(7, 238, 3, 0.5),
-        rgba(255, 255, 255, 0) 60%);
+
+.wordRow.correct {
+    border: 2px solid #04D000;
+    box-shadow: inset 0 0 0.5vw 0 #04D000, 
+    0 0 0.5vw 0 #04D000;
 }
 .wordRow.correct .letterInput {
     color: green;
@@ -136,6 +137,8 @@ button {
   align-items: center;
   justify-content: center;
   flex-direction: row;
+  border: 2px solid transparent;
+  margin: min(2vw, 12px)
 }
 .letterBox{
   background-color: white;
