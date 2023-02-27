@@ -1,11 +1,28 @@
-const wordrow_id_prefix = 'guess_number_'
-const words = ["TOUCH", "T_U__", "CO___"];
-const answers = [["TOUCH"], ["TOUGH"], ["COUGH"]]
+import {puzzles} from "./puzzles.js";
+
+const wordrow_id_prefix = 'guess_number_';
 var blurred;
+const start_date = new Date('2023-02-26')
+const date_today = new Date()
+const oneDay = 1000 * 60 * 60 * 24;
 
 // TODO: Pressing Enter triggers Guess
 // Typing a letter focuses the next letterInput
 // Typing a letter keeps the last letter
+function days_between(StartDate, EndDate) {
+    // The number of milliseconds in all UTC days (no DST)
+    
+  
+    // A day in UTC always lasts 24 hours (unlike in other time formats)
+    const start = Date.UTC(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate());
+    const end = Date.UTC(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate());
+  
+    // so it's safe to divide by 24 hours
+    return (start - end) / oneDay;
+  }
+
+var puzzle_index = days_between(start_date, date_today) - 1
+var [words, answers] = puzzles[puzzle_index]
 
 function limit(element, key) {
     element.innerText = key.toUpperCase()
@@ -98,7 +115,7 @@ function process_input(element, event) {
 }
 
 function count_letters(str){
-    outp_map = create_count_map(str);
+    let outp_map = create_count_map(str);
     for (let i = 0 ; i < str.length ;i++) {
         let k = outp_map.get(str[i]);
         outp_map.set(str[i], k+1);
@@ -333,7 +350,6 @@ function process_guess() {
     for (w = 0; w < words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
       let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
-      console.log(guess_received)
       valid_depths.push(validity_status == 1 ? true : false)
       style_guessword(guess_word, validity_status)
       
