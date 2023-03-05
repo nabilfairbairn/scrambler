@@ -1,5 +1,22 @@
 @import url(//fonts.googleapis.com/css?family=Nunito);
 
+:root {
+    --wrongglow: 0px 0px 24.192px rgb(247, 107, 26), 
+    0px 0px 13.824px rgb(247, 107, 26), 
+    0px 0px 8.064px rgb(247, 107, 26), 
+    0px 0px 4.032px rgb(247, 107, 26), 
+    0px 0px 1.152px rgb(247, 107, 26), 
+    0px 0px 0.576px rgb(247, 107, 26);
+
+    --rightglow: 0px 0px 24.192px #04D000, 
+    0px 0px 13.824px #04D000, 
+    0px 0px 8.064px #04D000, 
+    0px 0px 4.032px #04D000, 
+    0px 0px 1.152px #04D000, 
+    0px 0px 0.576px #04D000;
+}
+
+
 html * {
   font-family: Nunito;
   color: black;
@@ -59,21 +76,14 @@ button {
   background-color: gold !important;
 }
 
-.wordRow.correct {
-    border: 2px solid #04D000;
-    box-shadow: inset 0 0 0.5vw 0 #04D000, 
-    0 0 0.5vw 0 #04D000;
+.wordRow.correct .letterBox{
+    box-shadow: var(--rightglow)
 }
 .wordRow.correct .letterInput {
     color: green;
 }
 .wordRow.wrong .letterBox {
-    box-shadow: 0px 0px 24.192px rgb(247, 107, 26), 
-    0px 0px 13.824px rgb(247, 107, 26), 
-    0px 0px 8.064px rgb(247, 107, 26), 
-    0px 0px 4.032px rgb(247, 107, 26), 
-    0px 0px 1.152px rgb(247, 107, 26), 
-    0px 0px 0.576px rgb(247, 107, 26);
+    box-shadow: var(--wrongglow);
     border: 2px solid black;
 }
 .wordRow.wrong .letterInput {
@@ -129,7 +139,6 @@ button {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
-    /* background-color: whitesmoke; */
   }
 .wordRow{
   display: flex;
@@ -138,7 +147,6 @@ button {
   justify-content: center;
   flex-direction: row;
   border: 2px solid transparent;
-  margin: min(2vw, 12px)
 }
 .letterBox{
   background-color: white;
