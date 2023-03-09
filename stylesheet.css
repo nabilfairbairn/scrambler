@@ -298,7 +298,7 @@ button {
 
 .modal {
   border: 1px solid black;
-  display: none;
+  display: block;
   padding: 10px;
   align-items: center;
   justify-content: space-between;
@@ -310,8 +310,8 @@ button {
   overflow: auto;
   position: fixed;
 }
-.modal.open {
-  display:block
+.modal.closed {
+  display: none
 }
 .container10 {
   flex: 0 0 auto;
@@ -325,15 +325,15 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  display: none;
+  display: block;
   z-index: 5;
   position: fixed;
-  pointer-events: none;
+  pointer-events: nall;
   background-color: rgba(0, 0, 0, 0.5);
 }
-.modaloverlay.open {
-  display: block;
-  pointer-events: all;
+.modaloverlay.closed {
+  display: none;
+  pointer-events: none;
 }
 .button.answerButton {
   font-size: min(8vw, 38px);
