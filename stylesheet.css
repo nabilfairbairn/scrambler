@@ -217,7 +217,11 @@ button {
     max-width: 75px;
     height: 12.75vw;
     max-height: 75px;
-    margin: min(12px, 2.4vw)
+    margin: min(12px, 2.4vw);
+    --stroke-width: 2px;
+    font-size: min(4vw, 63px);
+    border-width: 2px;
+    color: limegreen;
 }
 .letterInput{
     border-radius: 24px;
