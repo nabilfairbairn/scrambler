@@ -250,6 +250,7 @@ function determine_changed_letters(depth) {
         let next_letters_count = count_letters(next_word)
         var removed_letters = new Map();
         var total_letters = 0;
+        console.log('')
 
         // This word has all its letters, next was has min n-1. 
         // Calc difference between counts of each letter in this to next
@@ -258,7 +259,7 @@ function determine_changed_letters(depth) {
             for (const [letter, val] of this_letters_count) {
                 let net_val = next_letters_count.has(letter) ? val - next_letters_count.get(letter) : val
                 removed_letters.set(letter, net_val)
-                total_letters += letter != '_' ? net_val : 0
+                total_letters += letter != '_' ? Math.max(net_val, 0) : 0
             } 
         }
         else if (!next_letters_count.has('_')) {
@@ -269,7 +270,7 @@ function determine_changed_letters(depth) {
                 }
             }   
         }
-        
+        console.log(`total_letters 3: ${total_letters} (${this_word})`)
         for (let [letter, val] of removed_letters) {
             add_changed_letter_styling(this_element, letter, val, 'letterRemoved')
             if (total_letters > 1) {
