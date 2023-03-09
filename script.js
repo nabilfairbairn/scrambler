@@ -590,8 +590,8 @@ window.onload = function() {
       console.log('Couldnt find modal?')
       return
     }
-    modal.classList.add('open')
-    overlay.classList.add('open')
+    modal.classList.remove('closed')
+    overlay.classList.remove('closed')
   }
 
   function closeModal() {
@@ -599,8 +599,8 @@ window.onload = function() {
       console.log('Couldnt find modal?')
       return
     }
-    modal.classList.remove('open')
-    overlay.classList.remove('open')
+    modal.classList.add('closed')
+    overlay.classList.add('closed')
   }
 
   openModalButtons.onclick = openModal 
