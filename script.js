@@ -6,6 +6,49 @@ const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
+var puzzle_index = (days_between(start_date, date_today) - 1) % puzzles.length
+var [words, answers] = puzzles[puzzle_index]
+
+var max_wordlength = 0;
+    words.forEach((word) => {
+        max_wordlength = Math.max(max_wordlength, word.length)
+    })
+let optimal_game_w = 85; //vw
+let w_per_word = optimal_game_w / max_wordlength;
+let word_buffer = w_per_word / 8;
+let word_w = word_buffer * 6;
+
+let max_px = 22;
+let w_per_word_px = max_px / max_wordlength;
+let word_buffer_px = w_per_word_px / 8;
+let word_w_px = word_buffer_px * 6
+
+var r = document.querySelector(':root')
+r.style.setProperty('--letterBoxHeight', `min(${word_w}vw, ${word_w_px}cm)`)
+const letterBoxHeight = getComputedStyle(r).getPropertyValue('--letterBoxHeight')
+const letterBoxMargin = `min(${word_buffer}vw, ${word_buffer_px}cm)` 
+
+
+/*
+text-shadow from smooth-16 was created with steps = 16
+*/
+function calculateStrokeTextCSS(steps) {
+    var css = "";
+    for (var i = 0; i < steps; i++) {
+      var angle = (i * 2 * Math.PI) / steps;
+      var cos = Math.round(10000 * Math.cos(angle)) / 10000;
+      var sin = Math.round(10000 * Math.sin(angle)) / 10000;
+      css +=
+        `calc(var(--stroke-width) * ` +
+        cos +
+        ") calc(var(--stroke-width) * " +
+        sin +
+        ") 0 var(--stroke-color),";
+    }
+  
+    return css;
+  }
+
 // TODO: Pressing Enter triggers Guess
 // Typing a letter focuses the next letterInput
 // Typing a letter keeps the last letter
@@ -21,18 +64,19 @@ function days_between(StartDate, EndDate) {
     return (start - end) / oneDay;
   }
 
-var puzzle_index = days_between(start_date, date_today) - 1
-var [words, answers] = puzzles[puzzle_index]
-
 function limit(element, key) {
     element.innerText = key.toUpperCase()
+    determine_local_changed_letters(element)
+    setTimeout(function(){focus_next_letter(element)},80)
 }
 
 function delete_letter(element) {
     element.innerText = ''
+    determine_local_changed_letters(element)
 }
 
 function focus_next_letter(element, event) {
+    // If event wasn't a letter input, don't focus next letter
     if (event && (event.which < 65 || event.which > 90)) {
         return
     }
@@ -77,7 +121,7 @@ function process_input(element, event) {
                 return;
             default:
                 limit(element, event)
-                focus_next_letter(element)
+                /*focus_next_letter(element)*/
                 break
         }
     } else {
@@ -85,7 +129,7 @@ function process_input(element, event) {
             let key = event.key
             limit(element, key)
             
-            element.blur()
+            /*element.blur()*/
         }
         if (event.code === 'Backspace' || event.code === 'Delete') {
             delete_letter(element)
@@ -141,7 +185,7 @@ function one_letter_diff(word1, word2) {
     let net_letters = new Map();
     for (const [key, value] of w1_dict) {
         if (w2_dict.has(key)) {
-            let difference = value - w2_dict.get(key)
+            let difference = w2_dict.get(key) - value
             net_letters.set(key, difference)
         } else {
             net_letters.set(key, -value)
@@ -165,6 +209,123 @@ function one_letter_diff(word1, word2) {
     return (plus_one == 1 && minus_one == -1)
 }
 
+function determine_all_changed_letters() {
+    for (let i = 0; i < words.length; i++) {
+        determine_changed_letters(i)
+    }
+}
+
+function determine_local_changed_letters(element) {
+    var el_depth = element.getAttribute('depth')
+
+    // function already ignored depths out of range of prev and next words
+    // remove removed from above
+    // remove all from this
+    // remove added from below
+    var prev = document.getElementById(wordrow_id_prefix + (el_depth-1).toString())
+    if (prev) {
+        remove_changed_styling(prev, 'removed')
+        determine_changed_letters(el_depth-1)
+    }
+
+    remove_changed_styling(document.getElementById(wordrow_id_prefix + (el_depth).toString()))
+    determine_changed_letters(el_depth)
+
+    var next = document.getElementById(wordrow_id_prefix + (el_depth+1).toString())
+    if (next) {
+        remove_changed_styling(prev, 'added')
+        determine_changed_letters(el_depth+1)
+    }
+
+}
+
+function determine_changed_letters(depth) {
+    // TODO: Remove letterAdded letterRemoved styling
+    let [this_element, this_word, _] = get_depth(depth)
+    let prev_word = depth - 1 < 0 ? null : get_word(depth-1)
+    let next_word = depth + 1 >= words.length ? null : get_word(depth+1)
+    //console.log(prev_word, this_word, next_word)
+    let this_letters_count = count_letters(this_word)
+    if (next_word) {
+        let next_letters_count = count_letters(next_word)
+        var removed_letters = new Map();
+        var total_letters = 0;
+
+        // This word has all its letters, next was has min n-1. 
+        // Calc difference between counts of each letter in this to next
+        // Letters with a positive score have that many of that letter highlighted as removed
+        if ((!next_letters_count.has('_') || next_letters_count['_' == 1]) && !this_letters_count.has('_')) {
+            for (const [letter, val] of this_letters_count) {
+                let net_val = next_letters_count.has(letter) ? val - next_letters_count.get(letter) : val
+                removed_letters.set(letter, net_val)
+                total_letters += letter != '_' ? net_val : 0
+            } 
+        }
+        else if (!next_letters_count.has('_')) {
+            for (const [letter, val] of this_letters_count) {
+                if (!next_letters_count.has(letter)) {
+                    removed_letters.set(letter, val)
+                    total_letters += letter != '_' ? val : 0
+                }
+            }   
+        }
+        
+        for (let [letter, val] of removed_letters) {
+            add_changed_letter_styling(this_element, letter, val, 'letterRemoved')
+            if (total_letters > 1) {
+                add_changed_letter_styling(this_element, letter, val, 'bad')
+            }
+        }
+    }
+
+    if (prev_word) {
+        let prev_letters_count = count_letters(prev_word)
+        // prev word has all letters
+        var added_letters = new Map()
+        var total_letters = 0
+        if (!prev_letters_count.has('_')) {
+            for (const [letter, val] of this_letters_count) {
+                if (!prev_letters_count.has(letter)) {
+                    added_letters.set(letter, val)
+                    total_letters += letter != '_' ? val : 0
+                }
+            }
+        }
+        for (let [letter, val] of added_letters) {
+            add_changed_letter_styling(this_element, letter, val, 'letterAdded')
+            if (total_letters > 1) {
+                add_changed_letter_styling(this_element, letter, val, 'bad')
+            }
+        }
+
+    }
+    
+}
+
+function add_changed_letter_styling(element, letter, val, classToAdd) {
+    var word_letters = element.querySelectorAll('.letterBox')
+    word_letters.forEach((word_letter) => {
+        if (word_letter.innerText == letter && val > 0) {
+            word_letter.classList.add(classToAdd)
+            val--;
+        }
+    })
+}
+
+function remove_changed_styling(wordrow, changetype) {
+    //added removed
+    var word_letters = wordrow.querySelectorAll('.letterBox')
+    word_letters.forEach((word_letter) => {
+        if (!changetype || changetype == 'removed') {
+            word_letter.classList.remove('letterRemoved')
+        } 
+        if (!changetype || changetype == 'added') {
+            word_letter.classList.remove('letterAdded')
+        }
+        word_letter.classList.remove('bad')
+    })
+}
+
 function get_depth(d) {
   let guessid = wordrow_id_prefix + d.toString()
   let guess_word = document.getElementById(guessid)
@@ -173,8 +334,9 @@ function get_depth(d) {
   var guess_received = ''
 
   guess_letters.forEach((letter_box) => {
-    
-      guess_received += letter_box.innerText.toUpperCase()
+
+    let letter_text = letter_box.innerText.toUpperCase()
+    guess_received += letter_text ? letter_text : '_'
     
   })
   return [guess_word, guess_received, answer_words]
@@ -211,7 +373,7 @@ function word_exists(word, answer_list) {
 }
 
 function word_complete(word, answer_list) {
-    return (word.length == answer_list[0].length)
+    return (word.length == answer_list[0].length && !word.includes('_'))
 }
 
 function word_depth(wordrow) {
@@ -336,6 +498,16 @@ function remove_all_word_style() {
 }
 
 function process_guess() {
+    var focused_element = null;
+    if (
+        document.hasFocus() &&
+        document.activeElement !== document.body &&
+        document.activeElement !== document.documentElement
+    ) {
+        focused_element = document.activeElement;
+    }
+    focused_element.blur()
+
     remove_all_word_style()
     var printing = ''
     var actual_answer = ''
@@ -373,24 +545,12 @@ function process_guess() {
   }
 
 function style_letterBox(element) {
-    var max_wordlength = 0;
-    words.forEach((word) => {
-        max_wordlength = Math.max(max_wordlength, word.length)
-    })
-    let optimal_game_w = 85; //vw
-    let w_per_word = optimal_game_w / max_wordlength;
-    let word_buffer = w_per_word / 8;
-    let word_w = word_buffer * 6;
-    element.style.width = `${word_w}vw`
-    element.style.height = `${word_w}vw`
+    
+    element.style.width = letterBoxHeight
+    element.style.height = letterBoxHeight
+    element.style.margin = letterBoxMargin
 
-    let max_px = 22;
-    let w_per_word_px = max_px / max_wordlength;
-    let word_buffer_px = w_per_word_px / 8;
-    let word_w_px = word_buffer_px * 6
-    element.style.maxWidth = `${word_w_px}cm`
-    element.style.maxHeight = `${word_w_px}cm`
-    element.style.margin = `min(${word_buffer}vw, ${word_buffer_px}cm)` 
+
 }
 
 window.onload = function() {
@@ -487,7 +647,7 @@ window.onload = function() {
         }
         input.addEventListener('keydown', function myfunc(event) {
             process_input(input, event)
-            setTimeout(function(){focus_next_letter(input, event)},80)
+            /*setTimeout(function(){focus_next_letter(input, event)},80)*/
         })
         input.setAttribute('depth', i)
         input.setAttribute('order', j)
@@ -502,4 +662,5 @@ window.onload = function() {
       }
     }
   }
+  determine_all_changed_letters()
 }
