@@ -14,6 +14,10 @@
     0px 0px 4.032px #04D000, 
     0px 0px 1.152px #04D000, 
     0px 0px 0.576px #04D000;
+
+    --stroke-width: 4px;
+    --stroke-color: black;
+    --diffColor: #a500b7;
 }
 
 
@@ -77,27 +81,21 @@ button {
 }
 
 .wordRow.correct .letterBox{
-    box-shadow: var(--rightglow)
-}
-.wordRow.correct .letterInput {
-    color: green;
+    /*box-shadow: var(--rightglow)*/
+    color: limegreen;
 }
 .wordRow.wrong .letterBox {
-    box-shadow: var(--wrongglow);
-    border: 2px solid black;
+    color: orange;
 }
-.wordRow.wrong .letterInput {
-    color:rgb(247, 107, 26);
-}
-.wordRow.wrong .letterInput:focus {
+.letterInput:focus {
     box-shadow: 0px 0px 24.192px violet, 
     0px 0px 13.824px violet, 
     0px 0px 8.064px violet, 
     0px 0px 4.032px violet, 
     0px 0px 1.152px violet, 
     0px 0px 0.576px violet;
-    color: purple;
 }
+/*
 .missing {
     box-shadow: 0px 0px 24.192px rgb(247, 107, 26), 
     0px 0px 13.824px rgb(247, 107, 26), 
@@ -115,7 +113,7 @@ button {
     0px 0px 1.152px violet, 
     0px 0px 0.576px violet !important;
     color: violet;
-}
+} */
 
 .gameBox {
     display: flex;
@@ -150,7 +148,7 @@ button {
 }
 .letterBox{
   background-color: white;
-  border: 2px solid black;
+  border: 3px solid black;
   box-sizing: border-box;
   outline: none !important;
   font-size: min(6vw, 84px);
@@ -159,7 +157,61 @@ button {
   justify-content: center;
   align-items: center;
   text-align: center;
+
+  color: lightgrey;
+
+  text-shadow: 
+    var(--stroke-width) 0 0 var(--stroke-color),
+        calc(var(--stroke-width) * -1) 0 0 var(--stroke-color),
+        0 var(--stroke-width) 0 var(--stroke-color),
+        0 calc(var(--stroke-width) * -1) 0 var(--stroke-color);
+        text-shadow: calc(var(--stroke-width) * 1) calc(var(--stroke-width) * 0) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.9239) calc(var(--stroke-width) * 0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.7071) calc(var(--stroke-width) * 0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.3827) calc(var(--stroke-width) * 0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0) calc(var(--stroke-width) * 1) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.3827) calc(var(--stroke-width) * 0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.7071) calc(var(--stroke-width) * 0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.9239) calc(var(--stroke-width) * 0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -1) calc(var(--stroke-width) * 0) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.9239) calc(var(--stroke-width) * -0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.7071) calc(var(--stroke-width) * -0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.3827) calc(var(--stroke-width) * -0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0) calc(var(--stroke-width) * -1) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.3827) calc(var(--stroke-width) * -0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.7071) calc(var(--stroke-width) * -0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.9239) calc(var(--stroke-width) * -0.3827) 0
+        var(--stroke-color);
 }
+
+.letterBox.letterAdded {
+    box-shadow: inset 0px calc(var(--letterBoxHeight) * 0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
+}
+.letterBox.letterRemoved {
+    box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
+}
+.letterBox.bad {
+  --diffColor: orange;
+}
+
+
 .letterBox.ex {
     width: 12.75vw;
     max-width: 75px;
@@ -168,17 +220,17 @@ button {
     margin: min(12px, 2.4vw)
 }
 .letterInput{
+    border-radius: 24px;
   cursor: pointer;
-  border: 4px solid black;
+  border: 4px solid black;  
   text-align: center;
   caret-color: transparent;
   text-transform: uppercase;
+  
 }
+
 .letterInput:focus{
   border-color: violet;
-}
-.letterInput:focus::placeholder {
-  color: transparent;
 }
 
 
