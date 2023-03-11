@@ -5,6 +5,7 @@ var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
+var guesses_made = 0;
 
 var puzzle_index = (days_between(start_date, date_today) - 1) % puzzles.length
 var [words, answers] = puzzles[puzzle_index]
@@ -231,10 +232,11 @@ function determine_local_changed_letters(element) {
     remove_changed_styling(document.getElementById(wordrow_id_prefix + (el_depth).toString()))
     determine_changed_letters(el_depth)
 
-    var next = document.getElementById(wordrow_id_prefix + (el_depth+1).toString())
+    var next = document.getElementById(wordrow_id_prefix + (parseFloat(el_depth)+1).toString())
     if (next) {
-        remove_changed_styling(prev, 'added')
-        determine_changed_letters(el_depth+1)
+        let next_word = get_word(parseFloat(el_depth)+1)
+        remove_changed_styling(next, 'added')
+        determine_changed_letters(parseFloat(el_depth)+1)
     }
 
 }
@@ -250,7 +252,6 @@ function determine_changed_letters(depth) {
         let next_letters_count = count_letters(next_word)
         var removed_letters = new Map();
         var total_letters = 0;
-        console.log('')
 
         // This word has all its letters, next was has min n-1. 
         // Calc difference between counts of each letter in this to next
@@ -270,7 +271,6 @@ function determine_changed_letters(depth) {
                 }
             }   
         }
-        console.log(`total_letters 3: ${total_letters} (${this_word})`)
         for (let [letter, val] of removed_letters) {
             add_changed_letter_styling(this_element, letter, val, 'letterRemoved')
             if (total_letters > 1) {
@@ -293,6 +293,7 @@ function determine_changed_letters(depth) {
             }
         }
         for (let [letter, val] of added_letters) {
+            console.log(`Adding (letterAdded) to ${letter} of "${this_word}"`)
             add_changed_letter_styling(this_element, letter, val, 'letterAdded')
             if (total_letters > 1) {
                 add_changed_letter_styling(this_element, letter, val, 'bad')
@@ -499,6 +500,9 @@ function remove_all_word_style() {
 }
 
 function process_guess() {
+    guesses_made++;
+    document.getElementById('guesses_made').innerText = guesses_made
+
     var focused_element = null;
     if (
         document.hasFocus() &&
@@ -538,6 +542,11 @@ function process_guess() {
       }
       
     }
+    // If all words are valid and correct
+    if (!valid_depths.some(x => x === false)) {
+        document.getElementById('rowHolder').classList.add('finished')
+    }
+
     var right_wrong = (puzzle_done(valid_depths)) ? "That's right!" : "Try again.";
 
     var hiding = document.getElementById("button_response")
@@ -555,6 +564,7 @@ function style_letterBox(element) {
 }
 
 window.onload = function() {
+  document.getElementById('guesses_made').innerText = guesses_made
   var input_id_answer = {}
   var input_id = 0
   var input_id_prefix = "user_input_"
