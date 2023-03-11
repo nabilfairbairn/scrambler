@@ -16,15 +16,22 @@
     0px 0px 0.576px #04D000;
 
     --stroke-width: min(0.35vw, 4px);
-    --stroke-color: black;
-    --diffColor: #a500b7;
+    --diffColor: indigo;
     --finishedColor: gold;
+    --correct-color: greenyellow;
+    --correct-color-darker: seagreen;
+    --wrong-color: orange;
+    --wrong-color-darker: chocolate;
+    --almost-black: #212427;
+    --almost-white: #f5f5f5;
+    --stroke-color: var(--almost-black);
+    --box-focus: mediumorchid;
 }
 
 
 html * {
   font-family: Nunito;
-  color: black;
+  color: var(--almost-black);
 }
 body {
   font-size: calc(15px + 0.390625vw);
@@ -92,7 +99,7 @@ button {
   justify-self: left;
   align-self: flex-start;
   margin: 0 1vw 1vw 2vw;
-  border-left: 3px solid black;
+  border-left: 3px solid var(--almost-black);
   padding-left: 0.5vw;
   width: 20vw;
 }
@@ -102,10 +109,12 @@ button {
 }
 .wordRow.correct .letterBox{
     /*box-shadow: var(--rightglow)*/
-    color: limegreen;
+    color: var(--correct-color);
+    border-color: var(--correct-color-darker);
 }
 .wordRow.wrong .letterBox {
-    color: orange;
+    color: var(--wrong-color);
+    border-color: var(--wrong-color-darker)
 }
 .rowHolder.finished .wordRow .letterBox {
   box-shadow: 0px 0px 24.192px var(--finishedColor), 
@@ -122,13 +131,15 @@ button {
   pointer-events: None;
 }
 .letterInput:focus {
-    box-shadow: 0px 0px 24.192px violet, 
-    0px 0px 13.824px violet, 
-    0px 0px 8.064px violet, 
-    0px 0px 4.032px violet, 
-    0px 0px 1.152px violet, 
-    0px 0px 0.576px violet;
+    box-shadow: 0px 0px 24.192px var(--box-focus), 
+    0px 0px 13.824px var(--box-focus), 
+    0px 0px 8.064px var(--box-focus), 
+    0px 0px 4.032px var(--box-focus), 
+    0px 0px 1.152px var(--box-focus), 
+    0px 0px 0.576px var(--box-focus);
+    border-color: lightslategray;
 }
+
 /*
 .missing {
     box-shadow: 0px 0px 24.192px rgb(247, 107, 26), 
@@ -156,7 +167,7 @@ button {
     width: max-content;
     padding: 4vmin;
     align-items: center;
-    border: 2px solid black;
+    border: 2px solid var(--almost-black);
     border-radius: 1vw;
     flex-direction: column;
     justify-content: center;
@@ -181,8 +192,8 @@ button {
   border: 2px solid transparent;
 }
 .letterBox{
-  background-color: white;
-  border: min(3px, 0.5vw) solid black;
+  background-color: var(--almost-white);
+  border: min(3px, 0.5vw) solid var(--almost-black);
   box-sizing: border-box;
   outline: none !important;
   font-size: min(7vw, 70px);
@@ -237,16 +248,51 @@ button {
     box-shadow: inset 0px calc(var(--letterBoxHeight) * 0.25)
     calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
 }
+.letterBox.letterAdded:focus {
+  box-shadow: inset 0px calc(var(--letterBoxHeight) * 0.25)
+  calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor),
+  0px 0px 24.192px var(--box-focus), 
+    0px 0px 13.824px var(--box-focus), 
+    0px 0px 8.064px var(--box-focus), 
+    0px 0px 4.032px var(--box-focus), 
+    0px 0px 1.152px var(--box-focus), 
+    0px 0px 0.576px var(--box-focus);
+}
+
 .letterBox.letterRemoved {
     box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
     calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
 }
+.letterBox.letterRemoved:focus {
+  box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor),
+    0px 0px 24.192px var(--box-focus), 
+    0px 0px 13.824px var(--box-focus), 
+    0px 0px 8.064px var(--box-focus), 
+    0px 0px 4.032px var(--box-focus), 
+    0px 0px 1.152px var(--box-focus), 
+    0px 0px 0.576px var(--box-focus);
+}
+
 .letterBox.letterRemoved.letterAdded {
   box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
     calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor),
     inset 0px calc(var(--letterBoxHeight) * 0.25)
     calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
 }
+.letterBox.letterRemoved.letterAdded:focus {
+  box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor),
+    inset 0px calc(var(--letterBoxHeight) * 0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor),
+    0px 0px 24.192px var(--box-focus), 
+    0px 0px 13.824px var(--box-focus), 
+    0px 0px 8.064px var(--box-focus), 
+    0px 0px 4.032px var(--box-focus), 
+    0px 0px 1.152px var(--box-focus), 
+    0px 0px 0.576px var(--box-focus);
+}
+
 .letterBox.bad {
   --diffColor: orange;
 }
@@ -266,16 +312,13 @@ button {
 .letterInput{
     border-radius: 24px;
   cursor: pointer;
-  border: min(4px, 0.75vw) solid black;  
+  border: min(4px, 0.75vw) solid var(--almost-black);  
   text-align: center;
   caret-color: transparent;
   text-transform: uppercase;
   
 }
 
-.letterInput:focus{
-  border-color: violet;
-}
 
 
 
@@ -341,13 +384,13 @@ button {
 
 
 .modal {
-  border: 1px solid black;
+  border: 1px solid var(--almost-black);
   display: block;
   padding: 3vw;
   align-items: center;
   justify-content: space-between;
   z-index: 10;
-  background-color: white;
+  background-color: var(--almost-white);
   width: min(100%, 800px);
   max-height: 100%;
   top: 0;
