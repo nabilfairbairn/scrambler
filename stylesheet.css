@@ -15,9 +15,10 @@
     0px 0px 1.152px #04D000, 
     0px 0px 0.576px #04D000;
 
-    --stroke-width: 4px;
+    --stroke-width: min(0.35vw, 4px);
     --stroke-color: black;
     --diffColor: #a500b7;
+    --finishedColor: gold;
 }
 
 
@@ -66,6 +67,10 @@ button {
   padding: 0px;
   line-height: 0;
 }
+.formodal .button {
+  width: fit-content;
+  height: fit-content;
+}
 .material-icons-round {
     font-size: min(7vw, 56px) !important;
 }
@@ -81,12 +86,40 @@ button {
   background-color: gold !important;
 }
 
+
+#guesses{
+  display: flex;
+  justify-self: left;
+  align-self: flex-start;
+  margin: 0 1vw 1vw 2vw;
+  border-left: 3px solid black;
+  padding-left: 0.5vw;
+  width: 20vw;
+}
+#guesses_made {
+  margin-left: 0.5vw;
+  font-weight: bold;
+}
 .wordRow.correct .letterBox{
     /*box-shadow: var(--rightglow)*/
     color: limegreen;
 }
 .wordRow.wrong .letterBox {
     color: orange;
+}
+.rowHolder.finished .wordRow .letterBox {
+  box-shadow: 0px 0px 24.192px var(--finishedColor), 
+    0px 0px 13.824px var(--finishedColor), 
+    0px 0px 8.064px var(--finishedColor), 
+    0px 0px 4.032px var(--finishedColor), 
+    0px 0px 1.152px var(--finishedColor), 
+    0px 0px 0.576px var(--finishedColor);
+  border-color: goldenrod;
+  pointer-events: None;
+}
+.rowHolder.finished + button {
+  background-color: hsl(43, 55%, 49%);
+  pointer-events: None;
 }
 .letterInput:focus {
     box-shadow: 0px 0px 24.192px violet, 
@@ -149,10 +182,10 @@ button {
 }
 .letterBox{
   background-color: white;
-  border: 3px solid black;
+  border: min(3px, 0.5vw) solid black;
   box-sizing: border-box;
   outline: none !important;
-  font-size: min(6vw, 84px);
+  font-size: min(7vw, 70px);
   text-transform: uppercase;
   display: flex;
   justify-content: center;
@@ -208,6 +241,12 @@ button {
     box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
     calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
 }
+.letterBox.letterRemoved.letterAdded {
+  box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor),
+    inset 0px calc(var(--letterBoxHeight) * 0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
+}
 .letterBox.bad {
   --diffColor: orange;
 }
@@ -227,7 +266,7 @@ button {
 .letterInput{
     border-radius: 24px;
   cursor: pointer;
-  border: 4px solid black;  
+  border: min(4px, 0.75vw) solid black;  
   text-align: center;
   caret-color: transparent;
   text-transform: uppercase;
@@ -304,7 +343,7 @@ button {
 .modal {
   border: 1px solid black;
   display: block;
-  padding: 10px;
+  padding: 3vw;
   align-items: center;
   justify-content: space-between;
   z-index: 10;
