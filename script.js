@@ -463,7 +463,6 @@ function puzzle_done(valid_words) {
     
 function style_guessword(wordrow, validity) {
     // 0: unattempted, 1: correct, -1: incomplete, -2: wrong
-    console.log(`Validity styling value: ${validity}}`)
     switch(validity) {
         case 1:
             wordrow.classList.add('correct')
@@ -511,7 +510,10 @@ function process_guess() {
     ) {
         focused_element = document.activeElement;
     }
-    focused_element.blur()
+    if (focused_element) {
+        
+        focused_element.blur()
+    }
 
     remove_all_word_style()
     var printing = ''
@@ -520,12 +522,10 @@ function process_guess() {
     
     var valid_depths = []
 
-    var w;
     var one_letter_diff_shown = false
     var rule_break_notice;
     
-    for (w = 0; w < words.length; w++) {
-      console.log(`Word ${w}`)
+    for (let w = 0; w < words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
       let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
       valid_depths.push(validity_status == 1 ? true : false)
@@ -550,12 +550,11 @@ function process_guess() {
     }
 
     var right_wrong = (puzzle_done(valid_depths)) ? "That's right!" : "Try again.";
-    console.log(right_wrong)
+
 
     var hiding = document.getElementById("button_response")
     hiding.innerText = rule_break_notice ? rule_break_notice : right_wrong;
     hiding.style.visibility = "visible";
-    console.log('Finished Process_guess script.')
   }
 
 function style_letterBox(element) {
