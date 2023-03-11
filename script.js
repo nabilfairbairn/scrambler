@@ -234,7 +234,6 @@ function determine_local_changed_letters(element) {
 
     var next = document.getElementById(wordrow_id_prefix + (parseFloat(el_depth)+1).toString())
     if (next) {
-        let next_word = get_word(parseFloat(el_depth)+1)
         remove_changed_styling(next, 'added')
         determine_changed_letters(parseFloat(el_depth)+1)
     }
@@ -245,7 +244,7 @@ function determine_changed_letters(depth) {
     // TODO: Remove letterAdded letterRemoved styling
     let [this_element, this_word, _] = get_depth(depth)
     let prev_word = depth - 1 < 0 ? null : get_word(depth-1)
-    let next_word = depth + 1 >= words.length ? null : get_word(depth+1)
+    let next_word = parseFloat(depth) + 1 >= words.length ? null : get_word(parseFloat(depth)+1)
     //console.log(prev_word, this_word, next_word)
     let this_letters_count = count_letters(this_word)
     if (next_word) {
@@ -256,20 +255,31 @@ function determine_changed_letters(depth) {
         // This word has all its letters, next was has min n-1. 
         // Calc difference between counts of each letter in this to next
         // Letters with a positive score have that many of that letter highlighted as removed
-        if ((!next_letters_count.has('_') || next_letters_count['_' == 1]) && !this_letters_count.has('_')) {
+        if (!next_letters_count.has('_') && !this_letters_count.has('_')) {
             for (const [letter, val] of this_letters_count) {
                 let net_val = next_letters_count.has(letter) ? val - next_letters_count.get(letter) : val
-                removed_letters.set(letter, net_val)
+                removed_letters.set(letter, letter != '_' ? net_val : 0)
                 total_letters += letter != '_' ? Math.max(net_val, 0) : 0
             } 
-        }
-        else if (!next_letters_count.has('_')) {
+        } else if (!this_letters_count.has('_') && next_letters_count.has('_') && next_letters_count.get('_') == 1) {
+            // if next letter has only 1 _, any letters from this not found in next are changed
             for (const [letter, val] of this_letters_count) {
                 if (!next_letters_count.has(letter)) {
                     removed_letters.set(letter, val)
-                    total_letters += letter != '_' ? val : 0
+                    total_letters += parseFloat(val)
+                }
+            }
+        } else if (!next_letters_count.has('_')) {
+            for (const [letter, val] of this_letters_count) {
+                if (!next_letters_count.has(letter) && letter != '_') {
+                    removed_letters.set(letter, val)
+                    total_letters += parseFloat(val)
                 }
             }   
+            if (total_letters == 0 && this_letters_count.get('_') == 1) {
+                removed_letters.set('_', 1)
+                total_letters += 1
+            }
         }
         for (let [letter, val] of removed_letters) {
             add_changed_letter_styling(this_element, letter, val, 'letterRemoved')
@@ -282,13 +292,14 @@ function determine_changed_letters(depth) {
     if (prev_word) {
         let prev_letters_count = count_letters(prev_word)
         // prev word has all letters
-        var added_letters = new Map()
+        var added_letters = new Map() 
         var total_letters = 0
         if (!prev_letters_count.has('_')) {
             for (const [letter, val] of this_letters_count) {
-                if (!prev_letters_count.has(letter)) {
-                    added_letters.set(letter, val)
-                    total_letters += letter != '_' ? val : 0
+                if ((!prev_letters_count.has(letter) || this_letters_count.get(letter) > prev_letters_count.get(letter)) && letter != '_') {
+                    let net_val = prev_letters_count.has(letter) ? val - prev_letters_count.get(letter) : val
+                    added_letters.set(letter, net_val)
+                    total_letters += letter != '_' ? Math.max(net_val, 0) : 0
                 }
             }
         }
@@ -306,7 +317,7 @@ function determine_changed_letters(depth) {
 function add_changed_letter_styling(element, letter, val, classToAdd) {
     var word_letters = element.querySelectorAll('.letterBox')
     word_letters.forEach((word_letter) => {
-        if (word_letter.innerText == letter && val > 0) {
+        if ((word_letter.innerText == letter || (word_letter.innerText == '' && letter == '_')) && val > 0) {
             word_letter.classList.add(classToAdd)
             val--;
         }
@@ -511,7 +522,6 @@ function process_guess() {
         focused_element = document.activeElement;
     }
     if (focused_element) {
-        
         focused_element.blur()
     }
 
