@@ -43,9 +43,9 @@
       <div>
         <hr>
         <span>
-          Solve the puzzle by entering letters to complete the hidden words.
+          Solve the puzzle by entering letters to complete the hidden words in as few guesses as possible. To make it easier, you can make a guess with an only partially complete puzzle.
           <br></br>
-          Between any word and the next one, the order of letters may be rearranged, and <b>1 letter</b> will always be swapped out for a different one.
+          Between any word and the next one, <b>1 letter</b> will always be swapped out for a different one. However, the order of letters may be rearranged.
         </span>
         <hr>
         <span>
@@ -75,6 +75,7 @@
     <div id="overlay" class='modaloverlay'></div>
   </div> <!-- page header close -->
   <div id="gameBox" class='gameBox'>
+    <div id="guesses">Guesses: <span id="guesses_made"></span></div>
     <div id="rowHolder" class='rowHolder'></div>
     <button id="answerBtn" name="answerPuzzleButton" type="button" class='button answerButton'}>Guess</button>
     <div id="button_response" class='guessResponse'></div>
@@ -100,7 +101,7 @@
       class='button emailbutton'
     >
       <label htmlFor="email_button" class='emailbuttontext'>
-        Tell me when this is ready to play.
+        Tell me when the next feature is released.
       </label>
     </button>
   </form>
