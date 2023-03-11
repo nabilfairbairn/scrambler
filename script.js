@@ -261,14 +261,6 @@ function determine_changed_letters(depth) {
                 removed_letters.set(letter, letter != '_' ? net_val : 0)
                 total_letters += letter != '_' ? Math.max(net_val, 0) : 0
             } 
-        } else if (!this_letters_count.has('_') && next_letters_count.has('_') && next_letters_count.get('_') == 1) {
-            // if next letter has only 1 _, any letters from this not found in next are changed
-            for (const [letter, val] of this_letters_count) {
-                if (!next_letters_count.has(letter)) {
-                    removed_letters.set(letter, val)
-                    total_letters += parseFloat(val)
-                }
-            }
         } else if (!next_letters_count.has('_')) {
             for (const [letter, val] of this_letters_count) {
                 if (!next_letters_count.has(letter) && letter != '_') {
