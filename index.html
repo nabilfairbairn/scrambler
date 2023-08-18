@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-838JQ0L110"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-838JQ0L110');
+  </script>
+
+  <link rel="stylesheet" href="stylesheet.css">
+  <!-- Google Icons -->
+  
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+      rel="stylesheet">
+
+  <script type="module" src="script.js"></script>
+  <script type="module" src="puzzles.js"></script>
+</head>
+<body>
+  
+
+<div id='containall'>
+  <div class='header'>
+    <button id="keyboardbutton" type="button" class='button square'><span class="material-icons-round">
+        keyboard
+        </span>
+        </button>
+    <h1>SCRAMBLER</h1>
+    <button id="modalbutton" name="openmodalbutton" type="button" class='button square'><span class="material-icons-round">
+        question_mark
+        </span></button>
+    <div id="modal", class='modal'>
+      <div id="modal-header" class='header formodal'>
+        <button type="button", class='invisible'>&times;</button>
+        <div id="modal-title">HOW TO PLAY</div>
+        <button
+          id="closemodalbutton"
+          type="button", class='button square minimal'><span class="material-icons-round">
+            close
+            </span></button>
+      </div> <!-- modal header close -->
+      <div>
+        <hr>
+        <hr>
+        <span>
+          Your goal is to solve the puzzle in as few guesses as possible. You can make guesses one row at a time, or try to solve multiple rows with one guess.
+          <hr>
+          Between any word and the next one, <b>1 letter</b> will always be swapped out for a different one.
+        </span>
+        <div class='rowHolder minimal'>
+          <div class='wordRow'> <div class='letterBox letterRemoved ex'>T</div> <div class='letterBox ex below'>O</div> <div class='letterBox ex below'>U</div>
+          <div class='letterBox ex below'>C</div> <div class='letterBox ex below'>H</div> </div>
+
+          <div class='wordRow'> <div class='letterBox letterAdded ex'>C</div> <div class='letterBox ex above'>O</div> <div class='letterBox ex above'>U</div>
+          <div class='letterBox ex above'>C</div> <div class='letterBox ex above'>H</div> </div>
+        </div>
+        <span>
+          Blue markings inside the boxes show which letters have repeated between one word and the next.
+        </span>
+        <hr>
+        <span>
+          Along with swapping, the order of the letters might be <i>scrambled.</i>
+        </span>
+        <div class='rowHolder minimal'>
+          <div class='wordRow'> <div class='letterBox ex below'>S</div> <div class='letterBox letterRemoved ex'>P</div> <div class='letterBox ex below'>O</div>
+          <div class='letterBox ex below'>R</div> <div class='letterBox ex below'>T</div> </div>
+
+          <div class='wordRow'> <div class='letterBox ex above'>S</div> <div class='letterBox ex above'>T</div> <div class='letterBox ex above'>O</div>
+          <div class='letterBox ex above'>R</div> <div class='letterBox letterAdded ex'>M</div> </div>
+        </div> 
+        <hr>
+        <span>
+          When you make a guess, correct words will be coloured <span style="color: var(--correct-color);">green</span>, and incorrect words will be coloured <span style="color: var(--wrong-color)">orange</span>. 
+        </span>
+        <div class='rowHolder minimal'>
+          <div class='wordRow correct'> <div class='letterBox ex below'>C</div> <div class='letterBox letterRemoved ex'>H</div> <div class='letterBox ex below'>E</div>
+          <div class='letterBox ex below'>S</div> <div class='letterBox ex below'>T</div> </div>
+
+          <div class='wordRow correct'> <div class='letterBox letterInput ex above below'>S</div> <div class='letterBox ex above'>C</div> <div class='letterBox ex above below'>E</div>
+          <div class='letterBox ex below'>N</div> <div class='letterBox letterAdded above ex below'>T</div> </div>
+
+          <div class='wordRow wrong'> <div class='letterBox letterInput ex '>D</div> <div class='letterBox letterInput ex above'>E</div> <div class='letterBox letterInput ex above'>N</div>
+          <div class='letterBox ex above'>T</div> <div class='letterBox letterAdded ex above below'>S</div> </div>
+
+          <div class='wordRow'> <div class='letterBox letterInput ex'></div> <div class='letterBox letterInput ex'></div> <div class='letterBox ex'>L</div>
+          <div class='letterBox letterInput ex'></div> <div class='letterBox letterAdded ex above'>S</div> </div>
+        </div> 
+        <br></br>
+      </div> <!-- modal body div close -->
+    </div> <!-- modal close -->
+    <div id="overlay" class='modaloverlay'></div>
+  </div> <!-- page header close -->
+
+  <div id="gameBox" class='gameBox'>
+    <div class="vertical_header">
+      <div class="horizontal_header">
+
+
+        <form id="login_form" class="vertical_header">
+          <div class="horizontal_header">
+            <input type="text" id="uname" name="uname" placeholder="Username"/>
+          </div>
+
+          <div class="horizontal_header">
+            <input type="text" id="pword" name="pword" placeholder="Password"/>
+            <input type="submit" value="Login">
+          </div>
+        </form>
+        
+        <div class="vertical_header">
+          <div><span id="username">Not logged in...</span></div>
+          <div id="points_holder" class="invisible">Points: <span id="points"></span></div>
+        </div>
+      </div>
+
+
+      <div id="game_header" class="horizontal_header">
+        <div id="guesses">Guesses: <span id="guesses_made"></span></div>
+        <div id="next_game_box">Next Game: <span id="next_game"></span></div>
+      </div>
+    </div>
+    <div id="rowHolder" class='rowHolder'></div>
+    <button id="answerBtn" name="answerPuzzleButton" type="button" class='button answerButton'}>Guess</button>
+    <div id="button_response" class='guessResponse'></div>
+  </div>
+  <form
+    name="contact_form"
+    action="https://getform.io/f/c893c2ee-547d-4948-99c0-6bd4556aa14b"
+    method="POST"
+    enctype="application/x-www-form-urlencoded"
+    class='emailform'
+  >
+    <input
+      type="email"
+      name="email"
+      id="email_input"
+      required
+      placeholder="youremail@provider.com"
+      class='textinput'
+    />
+    <button
+      id="email_button"
+      type="submit"
+      class='button emailbutton'
+    >
+      <label htmlFor="email_button" class='emailbuttontext'>
+        Tell me when the next feature is released.
+      </label>
+    </button>
+  </form>
+ </div>
+
+ <div id="keyboard-cont">
+    <div class="first-row">
+        <button class="keyboard-button">q</button>
+        <button class="keyboard-button">w</button>
+        <button class="keyboard-button">e</button>
+        <button class="keyboard-button">r</button>
+        <button class="keyboard-button">t</button>
+        <button class="keyboard-button">y</button>
+        <button class="keyboard-button">u</button>
+        <button class="keyboard-button">i</button>
+        <button class="keyboard-button">o</button>
+        <button class="keyboard-button">p</button>
+    </div>
+    <div class="second-row">
+        <button class="keyboard-button">a</button>
+        <button class="keyboard-button">s</button>
+        <button class="keyboard-button">d</button>
+        <button class="keyboard-button">f</button>
+        <button class="keyboard-button">g</button>
+        <button class="keyboard-button">h</button>
+        <button class="keyboard-button">j</button>
+        <button class="keyboard-button">k</button>
+        <button class="keyboard-button">l</button>
+    </div>
+    <div class="third-row">
+        <button class="keyboard-button square material-icons-round">keyboard_return</button>
+        <button class="keyboard-button">z</button>
+        <button class="keyboard-button">x</button>
+        <button class="keyboard-button">c</button>
+        <button class="keyboard-button">v</button>
+        <button class="keyboard-button">b</button>
+        <button class="keyboard-button">n</button>
+        <button class="keyboard-button">m</button>
+        <button class="keyboard-button square material-icons-round">backspace</button>
+    </div>
+</div>
+<div class="keyboardbuffer"></div>
+
+</body>
+</html>

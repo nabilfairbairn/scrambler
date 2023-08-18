@@ -1,0 +1,619 @@
+@import url(//fonts.googleapis.com/css?family=Nunito);
+
+:root {
+    --wrongglow: 0px 0px 24.192px rgb(247, 107, 26), 
+    0px 0px 13.824px rgb(247, 107, 26), 
+    0px 0px 8.064px rgb(247, 107, 26), 
+    0px 0px 4.032px rgb(247, 107, 26), 
+    0px 0px 1.152px rgb(247, 107, 26), 
+    0px 0px 0.576px rgb(247, 107, 26);
+
+    --rightglow: 0px 0px 24.192px #04D000, 
+    0px 0px 13.824px #04D000, 
+    0px 0px 8.064px #04D000, 
+    0px 0px 4.032px #04D000, 
+    0px 0px 1.152px #04D000, 
+    0px 0px 0.576px #04D000;
+
+    --stroke-width: min(0.35vw, 4px);
+    --diffColor: seagreen;
+    --finishedColor: gold;
+    --correct-color: hwb(85 10% 10%);
+    /*--correct-color-darker: seagreen;*/
+    --correct-color-darker: hsl(85, 50%, 30%); 
+    --correct-color-lighter: hwb(85 40% 10%);
+    --wrong-color: hwb(40 10% 0%);
+    --wrong-color-darker: hsl(40, 50%, 30%);
+    --wrong-color-lighter: hwb(40 40% 10%);
+    --almost-black: hsl(210, 8%, 14%);
+    --lighter-border: hwb(0 67% 33%);
+    --almost-white: #F6F6F6;
+    --stroke-color: var(--almost-black);
+    --letterSquare-border-width: min(3px, 0.5vw);
+    --letterInput-border-width: min(4px, 0.75vw);
+    --letterInput-border-radius: min(42px, 3.5vw);
+    --same-letter-color-hwb: rgb(26, 97, 230);
+    --same-letter-color: 26, 97, 230;
+}
+
+
+html * {
+  font-family: Nunito;
+  color: var(--almost-black);
+}
+body {
+  font-size: calc(15px + 0.390625vw);
+  
+  font-size: clamp(1.5rem, 1vw + 1.25rem, 2.5rem);
+  background-color: var(--almost-white);
+}
+button {
+  border-radius: 1rem;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  outline: 0;
+  cursor: pointer;
+}
+
+#containall {
+  display: flex;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: auto;
+}
+.header.formodal {
+  justify-content: space-between;
+}
+.button.square {
+  width: min(10vw, 84px);
+  height: min(10vw, 84px);
+  font-size: min(6vw, 52px);
+  font-weight: bold;
+  padding: 0px;
+  line-height: 0;
+}
+.formodal .button {
+  width: fit-content;
+  height: fit-content;
+}
+.material-icons-round {
+    font-size: min(7vw, 56px) !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+.minimal {
+  background-color: transparent !important;
+  border: 0 !important;
+}
+.highlight {
+  background-color: gold !important;
+}
+
+.vertical_header {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  width: 100%;
+  height: max-content;
+}
+.horizontal_header {
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  
+  width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);
+  padding-bottom: var(--letterBoxMargin);
+}
+
+#game_header {
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  
+  width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);
+  padding-bottom: var(--letterBoxMargin);
+}
+#next_game_box {
+  border-right: 3px solid var(--almost-black);
+  padding-right: 0.5vw;
+}
+#next_game {
+  font-weight: bold;
+}
+#guesses{
+  display: flex;
+  justify-self: left;
+  align-self: flex-start;
+  border-left: 3px solid var(--almost-black);
+  padding-left: 0.5vw;
+  width: 20vw;
+}
+#guesses_made {
+  margin-left: 0.5vw;
+  font-weight: bold;
+}
+.wordRow.correct .letterBox{
+    /*box-shadow: var(--rightglow)*/
+    color: var(--correct-color);
+    border-color: var(--correct-color-lighter);
+}
+.wordRow.correct .letterInput{
+  border-color: var(--correct-color-darker) !important;
+}
+.wordRow.wrong .letterBox {
+    color: var(--wrong-color);
+    border-color: var(--wrong-color-lighter)
+}
+.wordRow.wrong .letterInput {
+  border-color: var(--wrong-color-darker)
+}
+.rowHolder.finished .wordRow .letterBox {
+  box-shadow: 0px 0px 24.192px var(--finishedColor), 
+    0px 0px 13.824px var(--finishedColor), 
+    0px 0px 8.064px var(--finishedColor), 
+    0px 0px 4.032px var(--finishedColor), 
+    0px 0px 1.152px var(--finishedColor), 
+    0px 0px 0.576px var(--finishedColor);
+  border-color: goldenrod !important;
+  pointer-events: None;
+}
+.rowHolder.finished + button {
+  background-color: hsl(43, 55%, 49%);
+  pointer-events: None;
+}
+.letterInput:focus {
+    background-color: #FBFBFB;
+    /*
+    box-shadow: 0px 0px 24.192px var(--box-focus), 
+    0px 0px 13.824px var(--box-focus), 
+    0px 0px 8.064px var(--box-focus), 
+    0px 0px 4.032px var(--box-focus), 
+    0px 0px 1.152px var(--box-focus), 
+    0px 0px 0.576px var(--box-focus);*/
+    transform: scale(1.1);
+    border-color: #040404;
+    box-shadow: 0 0 8px 4px darkgray;
+}
+
+/*
+.missing {
+    box-shadow: 0px 0px 24.192px rgb(247, 107, 26), 
+    0px 0px 13.824px rgb(247, 107, 26), 
+    0px 0px 8.064px rgb(247, 107, 26), 
+    0px 0px 4.032px rgb(247, 107, 26), 
+    0px 0px 1.152px rgb(247, 107, 26), 
+    0px 0px 0.576px rgb(247, 107, 26) !important;
+    border: 2px solid black !important;
+}
+.missing:focus {
+    box-shadow: 0px 0px 24.192px violet, 
+    0px 0px 13.824px violet, 
+    0px 0px 8.064px violet, 
+    0px 0px 4.032px violet, 
+    0px 0px 1.152px violet, 
+    0px 0px 0.576px violet !important;
+    color: violet;
+} */
+
+.gameBox {
+    display: flex;
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+    padding: 4vmin;
+    align-items: center;
+    border: 2px solid var(--almost-black);
+    border-radius: 1vw;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    
+  }
+  .rowHolder {
+    width: auto;
+    border: 2px dashed rgba(120, 120, 120, 0.4);
+    border-radius: 1vw;
+    height: auto;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+.wordRow{
+  display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  border: 2px solid transparent;
+}
+
+.letterBox{
+  position: relative;
+  background-color: var(--almost-white);
+  border: var(--letterSquare-border-width) solid var(--lighter-border);
+
+  box-sizing: border-box;
+  outline: none !important;
+  font-size: min(7vw, 70px);
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  color: lightgrey;
+
+  text-shadow: 
+    var(--stroke-width) 0 0 var(--stroke-color),
+        calc(var(--stroke-width) * -1) 0 0 var(--stroke-color),
+        0 var(--stroke-width) 0 var(--stroke-color),
+        0 calc(var(--stroke-width) * -1) 0 var(--stroke-color);
+        text-shadow: calc(var(--stroke-width) * 1) calc(var(--stroke-width) * 0) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.9239) calc(var(--stroke-width) * 0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.7071) calc(var(--stroke-width) * 0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.3827) calc(var(--stroke-width) * 0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0) calc(var(--stroke-width) * 1) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.3827) calc(var(--stroke-width) * 0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.7071) calc(var(--stroke-width) * 0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.9239) calc(var(--stroke-width) * 0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -1) calc(var(--stroke-width) * 0) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.9239) calc(var(--stroke-width) * -0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.7071) calc(var(--stroke-width) * -0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.3827) calc(var(--stroke-width) * -0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0) calc(var(--stroke-width) * -1) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.3827) calc(var(--stroke-width) * -0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.7071) calc(var(--stroke-width) * -0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.9239) calc(var(--stroke-width) * -0.3827) 0
+        var(--stroke-color);
+}
+
+/*
+.letterBox.letterAdded {
+    box-shadow: inset 0px calc(var(--letterBoxHeight) * 0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
+}
+
+.letterBox.letterRemoved {
+    box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
+}
+
+.letterBox.letterRemoved.letterAdded {
+  box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor),
+    inset 0px calc(var(--letterBoxHeight) * 0.25)
+    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
+} */
+
+.letterBox.bad {
+  --diffColor: var(--wrong-color);
+}
+
+
+.letterBox.ex {
+    width: 12.75vw;
+    max-width: 75px;
+    height: 12.75vw;
+    max-height: 75px;
+    margin: min(12px, 2.4vw);
+    --stroke-width: 2px;
+    font-size: min(4vw, 63px);
+    border-width: 2px;
+}
+.letterInput.ex {
+  --letterInput-border-radius: 24px;
+}
+
+/* 
+
+May need to create above/below pseudo-elements for every box, and animate when class is added.
+Every letterBox has a before and an after, which has a transform of scaleX(0) and a transition
+.letterBox.above:before has a transform of scaleX(1)
+
+*/
+
+
+/*
+.wordRow.wrong .letterBox:before, .wordRow.wrong .letterBox:after {
+  --same-letter-color: 25, 25, 25
+} */
+
+/* FINISHED PUZZLE SHEEN */
+.rowHolder.finished .letterBox:before, .rowHolder.finished .letterBox:after {
+  transform: scaleX(0)
+}
+.rowHolder.finished:before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  height: 200%;
+  width: calc(var(--letterBoxHeight) * 0.3);
+  top: 0;
+  left: 0;
+  background: linear-gradient(to right, rgba(229, 172, 142, 0), rgba(255,255,255,0.5) 50%, rgba(229, 172, 142, 0));
+  transform: rotate(30deg);
+  transform-origin: top right;
+  animation: sheen 6s ease-out 1s infinite;
+}
+@keyframes sheen {
+  
+    0% {transform: translateX(-100%) rotate(30deg) }
+    35%, 100%{transform: translateX(3800%) rotate(30deg)}
+
+  }
+
+.letterBox.letterInput:before, .letterBox.letterInput:after{
+  border-radius: calc(var(--letterInput-border-radius) - var(--letterInput-border-width));
+}
+.letterBox:before {
+  content: "";
+  position: absolute;
+
+  /* Size of box-shadow needs to be dynamic */
+  box-shadow: inset rgba(var(--same-letter-color), 0.3) 0px calc(var(--letterBoxHeight) * 0.04), 
+  inset rgba(var(--same-letter-color), 0.2) 0px calc(var(--letterBoxHeight) * 0.07),
+  inset  rgba(var(--same-letter-color), 0.1) 0px calc(var(--letterBoxHeight) * 0.1);
+  
+  /* sides, top, bottom, radius, etc need to be calculated based on border size */
+  top: 0px;
+  bottom: 0px;
+  left: -0px;
+  right: -0px;
+
+  transform: scaleX(0);
+  transition: ease-in 0.3s;
+}
+.letterBox:after {
+  transform: scaleX(0);
+  transition: ease-in 0.3s;
+
+  content: "";
+    position: absolute;
+    
+    /* Size of box-shadow needs to be dynamic */
+    
+    box-shadow: inset rgba(var(--same-letter-color), 0.4) 0px calc(var(--letterBoxHeight) * -0.04), 
+    inset rgba(var(--same-letter-color), 0.3) 0px calc(var(--letterBoxHeight) * -0.07),
+     inset rgba(var(--same-letter-color), 0.2) 0px calc(var(--letterBoxHeight) * -0.1);
+    
+    /* sides, top, bottom etc need to be calculated based on border size */
+    
+    top: 0px;
+    bottom: 0;
+    left: -0px;
+    right: -0px;
+    /*
+    border-radius: 32px;*/
+}
+.letterBox.below:after {
+  transform: scaleX(1)
+}
+.letterBox.above:before {
+  transform: scaleX(1)
+}
+
+.letterInput{
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  border: var(--letterInput-border-width) solid var(--almost-black);
+  border-radius: var(--letterInput-border-radius);
+  cursor: pointer;
+  text-align: center;
+  caret-color: transparent;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in;
+}
+
+
+
+/*
+.letterInput:hover {
+  border-top: min(4px, 0.75vw) solid var(--almost-black);
+} */
+
+
+
+#keyboard-cont {
+    margin: min(2vw, 22px) 0;
+    padding: min(1.5vw, 12px);
+    border-radius: 2vw;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-self: center;
+    flex-direction: column;
+    align-items: center;
+    background-color:rgba(80, 80, 80);
+  }
+  @media screen and ((max-device-pixel-ratio: 2) or (-webkit-max-device-pixel-ratio: 2) 
+  or (-moz-max-device-pixel-ratio: 2) ){
+    #keyboard-cont {
+        display: none;
+    }
+  }
+  
+  #keyboard-cont div {
+    display: flex;
+  }
+  .first-row {
+    display: flex;
+  }
+  .third-row {
+    display: flex;
+  }
+  .second-row {
+    display: flex;
+    margin: max(1vmin, 16px) 0;
+  }
+  
+  .keyboard-button {
+    width: min(17vw, 78px);
+    font-size: min(14vw, 64px);
+    font-weight: 700;
+    padding: min(0.5vw, 6px);
+    margin: min(0.3vw, 4px);
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    justify-self: center;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .keyboard-button.square {
+    width: min(22vw, 102px);
+    
+  }
+.keyboardbuffer {
+    height: min(40vw, 400px);
+}
+
+
+.modal {
+  border: 1px solid var(--almost-black);
+  display: block;
+  padding: 3vw;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  background-color: var(--almost-white);
+  width: min(100%, 800px);
+  max-height: 100%;
+  top: 0;
+  overflow: auto;
+  position: fixed;
+}
+.modal.closed {
+  display: none
+}
+.container10 {
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+}
+.modaloverlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: block;
+  z-index: 5;
+  position: fixed;
+  pointer-events: nall;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.modaloverlay.closed {
+  display: none;
+  pointer-events: none;
+}
+.button.answerButton {
+  -webkit-tap-highlight-color: transparent;
+  font-size: calc(var(--letterBoxHeight) * 0.4);
+  color: black;  
+  font-weight: bold;
+  width: calc(var(--letterBoxHeight) * 1.7);
+  height: calc(var(--letterBoxHeight) * 0.8);
+  box-shadow: rgb(122, 4, 4) 0px 3px 2px 0px;
+  text-transform: uppercase;
+  background-color: rgb(236, 22, 22);
+  margin: 2vmin;
+}
+.button.answerButton:active {
+  background-color: #7a0404;
+}
+.guessResponse {
+  width: 80vw;
+  max-width: 800px;
+  visibility: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 8rem;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-size: 4.5vw;
+}
+.emailform {
+  margin: 2vw;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+}
+.textinput {
+  width: 60vw;
+  max-width: 600px;
+  height: 2.5rem;
+  margin: 0.75vw;
+  font-size: 1.5rem;
+  align-self: center;
+  text-align: center;
+  border-width: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  background-color: #D9D9D9;
+}
+.emailbutton {
+  color: rgb(0, 0, 0);
+  width: 24vw;
+  height: 12vw;
+  margin: 0.75vw;
+  font-size: 2.5vw;
+  display: flex;
+  padding: 0.5rem;
+  align-self: center;
+  box-shadow: 0px 3px 2px 0px rgba(4, 56, 12, 0.75);
+  font-style: normal;
+  text-align: center;
+  align-items: center;
+  font-weight: 600;
+  line-height: 1.25rem;
+  border-width: 0px;
+  border-radius: 4px;
+  flex-direction: row;
+  justify-content: center;
+  background-color: rgba(28, 175, 60, 0.85);
+}
+.emailbuttontext {
+  align-self: center;
+  line-height: 1.25em;
+}
