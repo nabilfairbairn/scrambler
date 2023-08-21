@@ -115,16 +115,16 @@ button {
   flex-direction: row;
   justify-content: space-between;
   
-  width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);
+  /*width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);*/
   padding-bottom: var(--letterBoxMargin);
 }
 
 #game_header {
-  display:flex;
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
   
-  width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);
+  /*width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);*/
   padding-bottom: var(--letterBoxMargin);
 }
 #next_game_box {
@@ -210,6 +210,7 @@ button {
 } */
 
 .gameBox {
+    position: relative;
     display: flex;
     width: -webkit-max-content;
     width: -moz-max-content;
@@ -514,14 +515,23 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   justify-content: space-between;
   z-index: 10;
   background-color: var(--almost-white);
+  
+}
+.modal.closed {
+  display: none
+}
+#login_modal {
+  z-index: 8;
+  width: min(50%, 400px);
+  position: absolute;
+  top: 25%
+}
+#top_modal {
   width: min(100%, 800px);
   max-height: 100%;
   top: 0;
   overflow: auto;
   position: fixed;
-}
-.modal.closed {
-  display: none
 }
 .container10 {
   flex: 0 0 auto;
@@ -530,21 +540,33 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   display: flex;
   align-items: flex-start;
 }
-.modaloverlay {
+.overlay{
+  display: block;
+  z-index: 5;
+  pointer-events: all;
+  background-color:rgba(0,0,0,0.5);
+  border: none;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  display: block;
-  z-index: 5;
-  position: fixed;
-  pointer-events: nall;
-  background-color: rgba(0, 0, 0, 0.5);
 }
-.modaloverlay.closed {
+#top_overlay {
+  
+  position: fixed;
+}
+#login_overlay {
+  position: absolute;
+  border-radius: inherit;
+
+  /* width: 100%;
+  height: 100% */
+}
+.overlay.closed {
   display: none;
   pointer-events: none;
 }
+
 .button.answerButton {
   -webkit-tap-highlight-color: transparent;
   font-size: calc(var(--letterBoxHeight) * 0.4);

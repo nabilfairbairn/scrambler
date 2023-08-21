@@ -12,6 +12,12 @@ window.onbeforeunload = function(){
       window.scrollTop(0);
 };
 
+let user = {
+    'id': null,
+    'username': null,
+    'points': null
+}
+
 var puzzle_index = (days_between(start_date, date_today) - 1) % puzzles.length
 var [words, answers] = puzzles[puzzle_index]
 
@@ -50,8 +56,15 @@ function fetchLogin(event) {
     http.send(JSON.stringify(params)) // Make sure to stringify
     http.onload = function() {
         // Do whatever with response
-        displayLogin(http.response)
+        setUser(http.response)
+        displayLogin()
     }
+}
+
+function setUser(responseData) {
+    user.id = responseData[0]['id']
+    user.username = responseData[0]["username"]
+    user.points = responseData[0]["points"]
 }
 
 
@@ -59,14 +72,13 @@ const loginForm = document.getElementById("login_form")
 loginForm.addEventListener('submit', fetchLogin)
 
 function displayLogin(responseData) {
-    console.log(typeof responseData)
-    const username = responseData[0]["username"]
-    const userid = responseData[0]["id"]
+    const username = user.username
+    const points = user.points
 
 
-    document.getElementById("username").innerText = `Welcome, ${username}(${userid})!`
+    document.getElementById("username").innerText = `Welcome, ${username}!`
     document.getElementById("points_holder").classList.remove("invisible")
-    document.getElementById("points").innerText = 'Pointless.'
+    document.getElementById("points").innerText = points
     
 }
 
@@ -649,9 +661,9 @@ window.onload = function() {
 
   var openModalButtons = document.getElementById('modalbutton')
   var closeModalButtons = document.getElementById('closemodalbutton')
-  var overlay = document.getElementById('overlay')
+  var overlay = document.getElementById('top_overlay')
 
-  var modal = document.getElementById('modal')
+  var modal = document.getElementById('top_modal')
 
   var keyboardbutton = document.getElementById('keyboardbutton')
   keyboardbutton.onclick = function() {

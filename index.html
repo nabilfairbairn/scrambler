@@ -33,7 +33,7 @@
     <button id="modalbutton" name="openmodalbutton" type="button" class='button square'><span class="material-icons-round">
         question_mark
         </span></button>
-    <div id="modal", class='modal'>
+    <div id="top_modal", class='modal'>
       <div id="modal-header" class='header formodal'>
         <button type="button", class='invisible'>&times;</button>
         <div id="modal-title">HOW TO PLAY</div>
@@ -92,24 +92,25 @@
         <br></br>
       </div> <!-- modal body div close -->
     </div> <!-- modal close -->
-    <div id="overlay" class='modaloverlay'></div>
+    <div id="top_overlay" class='overlay'></div>
   </div> <!-- page header close -->
 
   <div id="gameBox" class='gameBox'>
+    <div id="login_modal" class="modal">
+
+      <form id="login_form" class="vertical_header">
+          <input type="text" id="uname" name="uname" placeholder="Username"/>
+          <input type="text" id="pword" name="pword" placeholder="Password"/>
+          <input type="text" id="email" name="email" placeholder="Email Address">
+        <div class="horizontal_header">
+          <input type="submit" name="login" value="Login">
+          <input type="submit" name="create" value="Create Profile">
+        </div>
+      </form>
+
+    </div>
     <div class="vertical_header">
       <div class="horizontal_header">
-
-
-        <form id="login_form" class="vertical_header">
-          <div class="horizontal_header">
-            <input type="text" id="uname" name="uname" placeholder="Username"/>
-          </div>
-
-          <div class="horizontal_header">
-            <input type="text" id="pword" name="pword" placeholder="Password"/>
-            <input type="submit" value="Login">
-          </div>
-        </form>
         
         <div class="vertical_header">
           <div><span id="username">Not logged in...</span></div>
@@ -126,6 +127,7 @@
     <div id="rowHolder" class='rowHolder'></div>
     <button id="answerBtn" name="answerPuzzleButton" type="button" class='button answerButton'}>Guess</button>
     <div id="button_response" class='guessResponse'></div>
+    <div id="login_overlay" class="overlay"></div>
   </div>
   <form
     name="contact_form"
