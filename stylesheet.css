@@ -54,6 +54,17 @@ button {
   outline: 0;
   cursor: pointer;
 }
+input {
+  margin: 0.25rem;
+}
+#login_modal {
+  font-size: medium;
+  display: flex;
+  flex-direction: column;
+}
+#login_modal span {
+  margin: 0.25rem;
+}
 
 #containall {
   display: flex;
@@ -63,6 +74,20 @@ button {
   flex-direction: column;
   align-items: center;
   margin: auto;
+}
+#loader {
+  visibility: hidden;
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #11191f; /* Blue-black */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  align-self: center;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .header {

@@ -97,25 +97,25 @@
 
   <div id="gameBox" class='gameBox'>
     <div id="login_modal" class="modal">
-
+      <span>Please Login or Create a Profile:</span>
       <form id="login_form" class="vertical_header">
-          <input type="text" id="uname" name="uname" placeholder="Username"/>
-          <input type="text" id="pword" name="pword" placeholder="Password"/>
-          <input type="text" id="email" name="email" placeholder="Email Address">
+          <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username"/>
+          <input type="text" id="pword" name="pword" maxlength="20" placeholder="Password"/>
+          <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address (Optional, when creating profile)">
+          <span>By providing your email, you consent to be asked for feedback.</span>
         <div class="horizontal_header">
           <input type="submit" name="login" value="Login">
           <input type="submit" name="create" value="Create Profile">
         </div>
       </form>
-
+      <div id="loader"></div>
     </div>
     <div class="vertical_header">
       <div class="horizontal_header">
         
-        <div class="vertical_header">
           <div><span id="username">Not logged in...</span></div>
-          <div id="points_holder" class="invisible">Points: <span id="points"></span></div>
-        </div>
+          <div id="points_holder">Points: <span id="points">?</span></div>
+        
       </div>
 
 

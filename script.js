@@ -44,20 +44,49 @@ r.style.setProperty('--letterBoxMargin', `min(${word_buffer}vw, ${word_buffer_px
 
 function fetchLogin(event) {
     event.preventDefault()
-    const params = {
+
+    const submit_type = event.submitter.name
+    console.log(`submit_type: ${submit_type}`)
+
+    var params = {
         uname: document.getElementById('uname').value,
         pword: document.getElementById('pword').value
+    };
+    var url = "https://scrambler-api.onrender.com/login"
+
+
+    if (submit_type == 'create') {
+        params['email'] = document.getElementById('email').value
+        url = "https://scrambler-api.onrender.com/users"
     }
+    console.log(params)
+    document.getElementById('loader').style.visibility = 'visible'
 
     const http = new XMLHttpRequest()
-    http.open("POST", "https://scrambler-api.onrender.com/login")
+    http.open("POST", url)
     http.setRequestHeader('Content-type', 'application/json')
     http.responseType = 'json'
+
+    
+
     http.send(JSON.stringify(params)) // Make sure to stringify
     http.onload = function() {
         // Do whatever with response
-        setUser(http.response)
-        displayLogin()
+
+        // TODO: hide login box and overlay
+        if (http.status >= 400) {
+            document.getElementById('loader').style.visibility = 'hidden'
+            setTimeout(function() {
+                alert(http.response['err'])
+              }, 50);
+            
+        } else {
+            document.getElementById('login_modal').style.display = 'none'
+            document.getElementById('login_overlay').style.display = 'none'
+            setUser(http.response)
+            displayLogin()
+        }
+        
     }
 }
 
@@ -75,9 +104,7 @@ function displayLogin(responseData) {
     const username = user.username
     const points = user.points
 
-
-    document.getElementById("username").innerText = `Welcome, ${username}!`
-    document.getElementById("points_holder").classList.remove("invisible")
+    document.getElementById("username").innerText = `Sup, ${username}!`
     document.getElementById("points").innerText = points
     
 }
