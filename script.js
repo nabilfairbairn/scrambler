@@ -1,3 +1,4 @@
+// import { setgid } from "process";
 import {puzzles} from "./puzzles.js";
 
 const wordrow_id_prefix = 'guess_number_';
@@ -18,31 +19,98 @@ let user = {
     'points': null
 }
 
-var puzzle_index = (days_between(start_date, date_today) - 1) % puzzles.length
-var [words, answers] = puzzles[puzzle_index]
+let puzzle;
+
+fetchPuzzle()
+
+console.log(puzzle)
+
+//var puzzle_index = (days_between(start_date, date_today) - 1) % puzzles.length
+//var [words, answers] = puzzles[puzzle_index]
 
 var max_wordlength = 0;
+let optimal_game_w = 85; //vw
+let w_per_word;
+let word_buffer;
+let word_w;
+
+let max_px = 22;
+let w_per_word_px;
+let word_buffer_px;
+let word_w_px;
+
+var r = document.querySelector(':root')
+var letterBoxHeight;
+var letterBoxMargin;
+
+function set_global_style_variables(words) {
+    
     words.forEach((word) => {
         max_wordlength = Math.max(max_wordlength, word.length)
     })
-let optimal_game_w = 85; //vw
-let w_per_word = optimal_game_w / max_wordlength;
-let word_buffer = w_per_word / 8;
-let word_w = word_buffer * 6;
+    w_per_word = optimal_game_w / max_wordlength;
+    word_buffer = w_per_word / 8;
+    word_w = word_buffer * 6;
 
-let max_px = 22;
-let w_per_word_px = max_px / max_wordlength;
-let word_buffer_px = w_per_word_px / 8;
-let word_w_px = word_buffer_px * 6
+    w_per_word_px = max_px / max_wordlength;
+    word_buffer_px = w_per_word_px / 8;
+    word_w_px = word_buffer_px * 6
 
-var r = document.querySelector(':root')
-r.style.setProperty('--letterBoxHeight', `min(${word_w}vw, ${word_w_px}cm)`)
-const letterBoxHeight = getComputedStyle(r).getPropertyValue('--letterBoxHeight')
-const letterBoxMargin = `min(${word_buffer}vw, ${word_buffer_px}cm)` 
-r.style.setProperty('--letterBoxMargin', `min(${word_buffer}vw, ${word_buffer_px}cm)` )
+    r.style.setProperty('--letterBoxHeight', `min(${word_w}vw, ${word_w_px}cm)`)
+    letterBoxHeight = getComputedStyle(r).getPropertyValue('--letterBoxHeight')
+    letterBoxMargin = `min(${word_buffer}vw, ${word_buffer_px}cm)` 
+    r.style.setProperty('--letterBoxMargin', `min(${word_buffer}vw, ${word_buffer_px}cm)` )
+}
+
+function parseArrayWithSpaces(array) {
+    const result = [];
+  
+    for (let i = 0; i < array.length; i++) {
+      const item = array[i];
+      if (item.includes(' ')) {
+        const words = item.split(' ');
+        result.push(words);
+      } else {
+        result.push([item]);
+      }
+    }
+  
+    return result;
+  }
+
+function declare_puzzle(httpResponse) {
+    
+    let visible = httpResponse['visible'] // ['THORN','__RCH','_O_C_','_RC__','_R_PS']
+
+    let answer = httpResponse['answer'] // ["SWORD","LORDS FORDS CORDS DORMS WARDS","LOADS ROADS","SODAS","DOSES"] -> Needs to become comma separated nested list
+
+    let parsed_answer = parseArrayWithSpaces(answer)
+    
+
+    puzzle = {
+        'id': httpResponse['id'],
+        'words': visible,
+        'answers': parsed_answer,
+        'difficulty': httpResponse['difficulty'],
+        'base_points': httpResponse['base_points']
+    }
+    set_global_style_variables(puzzle['words'])
+    create_puzzle()
+}
+
+function fetchPuzzle() {
+    const url = 'https://scrambler-api.onrender.com/puzzles'
+    const http = new XMLHttpRequest()
+    http.open("GET", url)
+    http.responseType = 'json'
+    http.send() // Make sure to stringify
+    http.onload = function() {
+        declare_puzzle(http.response[0])
+    }
+}
 
 
-function fetchLogin(event) {
+async function fetchLogin(event) {
     event.preventDefault()
 
     const submit_type = event.submitter.name
@@ -52,7 +120,7 @@ function fetchLogin(event) {
         uname: document.getElementById('uname').value,
         pword: document.getElementById('pword').value
     };
-    var url = "https://scrambler-api.onrender.com/login"
+    var url = "https://scrambler-api.onrender.com/users/login"
 
 
     if (submit_type == 'create') {
@@ -67,27 +135,79 @@ function fetchLogin(event) {
     http.setRequestHeader('Content-type', 'application/json')
     http.responseType = 'json'
 
-    
-
     http.send(JSON.stringify(params)) // Make sure to stringify
-    http.onload = function() {
-        // Do whatever with response
+    http.onload = async function() {
 
-        // TODO: hide login box and overlay
         if (http.status >= 400) {
+            // Timeout to allow loader to hide before raising alert.
             document.getElementById('loader').style.visibility = 'hidden'
             setTimeout(function() {
                 alert(http.response['err'])
               }, 50);
             
         } else {
-            document.getElementById('login_modal').style.display = 'none'
-            document.getElementById('login_overlay').style.display = 'none'
             setUser(http.response)
             displayLogin()
+            // Login successful
+            // call startPuzzle
+            await startPuzzle()
+            // loader on overlay
+            // insert guesses
+            document.getElementById('login_modal').style.display = 'none'
+            document.getElementById('login_overlay').style.display = 'none'  
         }
         
     }
+}
+
+async function startPuzzle() {
+    const url = "https://scrambler-api.onrender.com/completed_puzzles/start"
+
+    const params = {
+        user_id: user.id,
+        puzzle_id: puzzle.id
+    }
+
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+      };
+
+    fetch(url, requestOptions)
+    .then(response => {
+        if (!response.ok) {
+          throw response;
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Received response data:', data);
+        loadGuess(data)
+      })
+      .catch(errorResponse => {
+        if (errorResponse.status >= 400 && errorResponse.status < 500) {
+          // Only display the alert for 4XX client errors
+          errorResponse.json().then(errorData => {
+            if (errorData.err) {
+              alert(errorData.err);
+            } else {
+              console.error('An error occurred:', errorData);
+            }
+          });
+        } else {
+          console.error('A server error occurred:', errorResponse.status);
+        }
+      });  
+}
+
+function loadGuess(last_guess) {
+    // update guess number
+    // update attempt -> no reward if > 1
+    // fill inputs with last guess
+    // update input styling
 }
 
 function setUser(responseData) {
@@ -290,7 +410,7 @@ function one_letter_diff(word1, word2) {
 }
 
 function determine_all_changed_letters() {
-    for (let i = 0; i < words.length; i++) {
+    for (let i = 0; i < puzzle.words.length; i++) {
         determine_changed_letters(i)
     }
 }
@@ -323,7 +443,7 @@ function determine_changed_letters(depth) {
     // TODO: Remove letterAdded letterRemoved styling
     let [this_element, this_word, _] = get_depth(depth)
     let prev_word = depth - 1 < 0 ? null : get_word(depth-1)
-    let next_word = parseFloat(depth) + 1 >= words.length ? null : get_word(parseFloat(depth)+1)
+    let next_word = parseFloat(depth) + 1 >= puzzle.words.length ? null : get_word(parseFloat(depth)+1)
     //console.log(prev_word, this_word, next_word)
     let this_letters_count = count_letters(this_word)
     if (next_word) {
@@ -430,7 +550,7 @@ function remove_changed_styling(wordrow, changetype) {
 function get_depth(d) {
   let guessid = wordrow_id_prefix + d.toString()
   let guess_word = document.getElementById(guessid)
-  const answer_words = answers[d]
+  const answer_words = puzzle.answers[d]
   const guess_letters = guess_word.querySelectorAll('.letterBox')
   var guess_received = ''
 
@@ -445,7 +565,7 @@ function get_depth(d) {
 
 function reaches_word(thisword, thisdepth, wuc, wuc_depth) {
     let joined_words = []
-    answers[thisdepth].forEach((word) => {
+    puzzle.answers[thisdepth].forEach((word) => {
         if (one_letter_diff(thisword, word)) {
             joined_words.push(word)
         }
@@ -624,7 +744,7 @@ function process_guess() {
     var one_letter_diff_shown = false
     var rule_break_notice;
     
-    for (let w = 0; w < words.length; w++) {
+    for (let w = 0; w < puzzle.words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
       let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
       valid_depths.push(validity_status == 1 ? true : false)
@@ -632,7 +752,7 @@ function process_guess() {
       style_guessword(guess_word, validity_status)
       
       // If !one-letter-diff-shown and w < words.length-1 and w and w+1 are complete, check one-letter-diff. If violated, one-letter-diff-shown and show rule
-      if (!one_letter_diff_shown && w < words.length -1) {
+      if (!one_letter_diff_shown && w < puzzle.words.length -1) {
         const [next_word, next_received, next_answers] = get_depth(w+1)
         if (word_complete(guess_received, answer_words) && word_complete(next_received, next_answers)) {
             if (!one_letter_diff(guess_received, next_received)) {
@@ -661,8 +781,54 @@ function style_letterBox(element) {
     element.style.width = letterBoxHeight
     element.style.height = letterBoxHeight
     element.style.margin = letterBoxMargin
+}
 
+function create_puzzle() {
+  var rowHolder = document.getElementById("rowHolder")
 
+  var n_words = puzzle.words.length
+
+  for (let i = 0; i < n_words; i++) {
+    var row = document.createElement("div");
+    row.className = "wordRow";
+    row.id = wordrow_id_prefix + i.toString()
+    
+
+    rowHolder.appendChild(row)
+    var rowWord = puzzle.words[i]
+
+    for (let j = 0; j < rowWord.length; j++) {
+      var letter = rowWord[j]
+      if (letter === "_") {
+        let input = document.createElement("div")
+        input.classList.add("letterInput")
+        input.classList.add("letterBox")
+        style_letterBox(input)
+        input.tabIndex = i*1 + j
+        input.onblur = function() {
+            blurred = this;
+        }
+        input.onclick = function() {
+            input.focus()
+        }
+        input.addEventListener('keydown', function myfunc(event) {
+            process_input(input, event)
+            /*setTimeout(function(){focus_next_letter(input, event)},80)*/
+        })
+        input.setAttribute('depth', i)
+        input.setAttribute('order', j)
+
+        row.appendChild(input)
+      } else {
+        var letter_holder = document.createElement("div")
+        style_letterBox(letter_holder)
+        letter_holder.className = "letterBox"
+        letter_holder.innerText = letter
+        row.appendChild(letter_holder)
+      }
+    }
+  }
+  determine_all_changed_letters()
 }
 
 window.onload = function() {
@@ -744,52 +910,5 @@ window.onload = function() {
   document.getElementById("answerBtn").onclick = function() {
     process_guess()
   }
-
-
-  var rowHolder = document.getElementById("rowHolder")
-
-  var n_words = words.length
-
-  for (let i = 0; i < n_words; i++) {
-    var row = document.createElement("div");
-    row.className = "wordRow";
-    row.id = wordrow_id_prefix + i.toString()
-    
-
-    rowHolder.appendChild(row)
-    var rowWord = words[i]
-
-    for (let j = 0; j < rowWord.length; j++) {
-      var letter = rowWord[j]
-      if (letter === "_") {
-        let input = document.createElement("div")
-        input.classList.add("letterInput")
-        input.classList.add("letterBox")
-        style_letterBox(input)
-        input.tabIndex = i*1 + j
-        input.onblur = function() {
-            blurred = this;
-        }
-        input.onclick = function() {
-            input.focus()
-        }
-        input.addEventListener('keydown', function myfunc(event) {
-            process_input(input, event)
-            /*setTimeout(function(){focus_next_letter(input, event)},80)*/
-        })
-        input.setAttribute('depth', i)
-        input.setAttribute('order', j)
-
-        row.appendChild(input)
-      } else {
-        var letter_holder = document.createElement("div")
-        style_letterBox(letter_holder)
-        letter_holder.className = "letterBox"
-        letter_holder.innerText = letter
-        row.appendChild(letter_holder)
-      }
-    }
-  }
-  determine_all_changed_letters()
   
 }

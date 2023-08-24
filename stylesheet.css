@@ -61,9 +61,18 @@ input {
   font-size: medium;
   display: flex;
   flex-direction: column;
+  z-index: 8;
+  width: min(75%, 800px);
+  padding: calc(var(--letterBoxHeight)*0.5);
+  position: absolute;
+  top: 25%;
+  border-radius: 2rem;
 }
 #login_modal span {
   margin: 0.25rem;
+}
+.input_button {
+  font-size: x-large;
 }
 
 #containall {
@@ -130,7 +139,8 @@ input {
 .vertical_header {
   display:flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
   
   width: 100%;
   height: max-content;
@@ -139,6 +149,7 @@ input {
   display:flex;
   flex-direction: row;
   justify-content: space-between;
+  width: 100%;
   
   /*width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);*/
   padding-bottom: var(--letterBoxMargin);
@@ -486,6 +497,7 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
     flex-direction: column;
     align-items: center;
     background-color:rgba(80, 80, 80);
+    z-index: 15;
   }
   @media screen and ((max-device-pixel-ratio: 2) or (-webkit-max-device-pixel-ratio: 2) 
   or (-moz-max-device-pixel-ratio: 2) ){
@@ -544,12 +556,6 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
 }
 .modal.closed {
   display: none
-}
-#login_modal {
-  z-index: 8;
-  width: min(50%, 400px);
-  position: absolute;
-  top: 25%
 }
 #top_modal {
   width: min(100%, 800px);
@@ -638,6 +644,11 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   padding-left: 0px;
   padding-right: 0px;
   background-color: #D9D9D9;
+}
+#login_form .textinput {
+  max-width: 100%;
+  width: 100%;
+  margin: 0.75vw, 0.75vw, 0 ,0;
 }
 .emailbutton {
   color: rgb(0, 0, 0);
