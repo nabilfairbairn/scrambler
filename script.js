@@ -1,12 +1,14 @@
 // import { setgid } from "process";
 import {puzzles} from "./puzzles.js";
 
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 var guesses_made = 0;
+var puzzle_attempt = 1;
 
 history.scrollRestoration = "manual";
 window.onbeforeunload = function(){
@@ -19,8 +21,13 @@ let user = {
     'points': null
 }
 
-let puzzle;
-
+let puzzle = {
+    'id': null,
+    'words': null,
+    'answers': null,
+    'difficulty': null,
+    'base_points': null
+}
 fetchPuzzle()
 
 console.log(puzzle)
@@ -42,6 +49,10 @@ let word_w_px;
 var r = document.querySelector(':root')
 var letterBoxHeight;
 var letterBoxMargin;
+
+// set temp in case puzzle slow to load
+set_global_style_variables(['_____', '_____','_____','_____','_____',])
+
 
 function set_global_style_variables(words) {
     
@@ -95,6 +106,9 @@ function declare_puzzle(httpResponse) {
         'base_points': httpResponse['base_points']
     }
     set_global_style_variables(puzzle['words'])
+    
+    // hide loader
+    document.getElementById('puzzle_loader').style.display = 'none'
     create_puzzle()
 }
 
@@ -106,11 +120,16 @@ function fetchPuzzle() {
     http.send() // Make sure to stringify
     http.onload = function() {
         declare_puzzle(http.response[0])
+
+        // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
+        if (user.id) {
+            startPuzzle()
+        }
     }
 }
 
 
-async function fetchLogin(event) {
+function fetchLogin(event) {
     event.preventDefault()
 
     const submit_type = event.submitter.name
@@ -128,7 +147,7 @@ async function fetchLogin(event) {
         url = "https://scrambler-api.onrender.com/users"
     }
     console.log(params)
-    document.getElementById('loader').style.visibility = 'visible'
+    document.getElementById('login_loader').style.visibility = 'visible'
 
     const http = new XMLHttpRequest()
     http.open("POST", url)
@@ -136,11 +155,11 @@ async function fetchLogin(event) {
     http.responseType = 'json'
 
     http.send(JSON.stringify(params)) // Make sure to stringify
-    http.onload = async function() {
+    http.onload = function() {
 
         if (http.status >= 400) {
             // Timeout to allow loader to hide before raising alert.
-            document.getElementById('loader').style.visibility = 'hidden'
+            document.getElementById('login_loader').style.visibility = 'hidden'
             setTimeout(function() {
                 alert(http.response['err'])
               }, 50);
@@ -148,16 +167,61 @@ async function fetchLogin(event) {
         } else {
             setUser(http.response)
             displayLogin()
+
             // Login successful
-            // call startPuzzle
-            await startPuzzle()
-            // loader on overlay
-            // insert guesses
             document.getElementById('login_modal').style.display = 'none'
-            document.getElementById('login_overlay').style.display = 'none'  
+            document.getElementById('login_overlay').style.display = 'none' 
+            
+            // call startPuzzle
+            // dont call if puzzle not loaded
+            if (puzzle.id) {
+                startPuzzle()
+            }
+            
         }
         
     }
+}
+
+function fetchPostWrapper(url_endpoint, params, response_function) {
+    const full_url = `${api_url_base}${url_endpoint}` // endpoint starts with '/'
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+      };
+    
+    fetch(full_url, requestOptions)
+      .then(response => {
+          if (!response.ok) {
+            throw response;
+          }
+          return response.json();
+        })
+        .then(data => {
+            // if no function supplied, ignore
+            if (response_function) {
+                response_function(data)
+            }
+        })
+        .catch(errorResponse => {
+          if (errorResponse.status >= 400 && errorResponse.status < 500) {
+            // Only display the alert for 4XX client errors
+            errorResponse.json().then(errorData => {
+              if (errorData.err) {
+                alert(errorData.err);
+              } else {
+                console.error('An error occurred:', errorData);
+              }
+            });
+          } else {
+            throw(errorResponse)
+          }
+        })
+        
+    
 }
 
 async function startPuzzle() {
@@ -176,16 +240,14 @@ async function startPuzzle() {
         body: JSON.stringify(params)
       };
 
-    fetch(url, requestOptions)
+    // returns
+    var last_guess;
+    const data = await fetch(url, requestOptions)
     .then(response => {
         if (!response.ok) {
           throw response;
         }
         return response.json();
-      })
-      .then(data => {
-        console.log('Received response data:', data);
-        loadGuess(data)
       })
       .catch(errorResponse => {
         if (errorResponse.status >= 400 && errorResponse.status < 500) {
@@ -200,14 +262,60 @@ async function startPuzzle() {
         } else {
           console.error('A server error occurred:', errorResponse.status);
         }
-      });  
+      })
+      .then(data => {
+        last_guess = data['last_guess']
+        puzzle_attempt = data['current_attempt']
+
+        update_attempt_banner()
+
+        if (last_guess) {
+            loadGuess(last_guess)
+        }
+    })
+       
+}
+
+function update_guess_count() {
+    document.getElementById('guesses_made').innerText = guesses_made
+}
+
+function update_attempt_banner() {
+    if (puzzle_attempt > 1) {
+        console.log('banner slide down')
+        
+        document.getElementById('rewardless_attempt_banner').classList.add('slide_down')
+        document.getElementById('gameBox_wrapper').classList.add('slide_down')
+    } 
+    
 }
 
 function loadGuess(last_guess) {
-    // update guess number
-    // update attempt -> no reward if > 1
+    guesses_made = last_guess['guess_number']
+    update_guess_count()
+
     // fill inputs with last guess
+    fill_puzzle_with_guess(last_guess['words'])
+    
     // update input styling
+    process_guess_styling(false) // Don't send guess to API
+}
+
+function fill_puzzle_with_guess(guess_words) {
+    // Some elemnts of guess_word list are empty strings - no guess made for that word.
+    let i = 0;
+
+    guess_words.forEach((guess_word) => { // forEach works with Arrays
+        let wordrow = get_nth_word(i)
+        let inputlist = get_wordrow_letter_boxes(wordrow)
+        let j = 0
+        for (let j = 0; j < guess_word.length; j++) {
+            let guess_letter = guess_word[j] // strings need to be manually iterated
+            let letter_box = inputlist[j]
+            letter_box.innerText = guess_letter.toUpperCase()
+        }
+        i++
+    })
 }
 
 function setUser(responseData) {
@@ -350,7 +458,7 @@ function process_input(element, event) {
     
     // remove word style from later words
     depth++
-    while (depth < words.length) {
+    while (depth < puzzle.words.length) {
         const [next_word, ng, na] = get_depth(depth) 
         remove_word_style(next_word)
         depth++
@@ -547,11 +655,24 @@ function remove_changed_styling(wordrow, changetype) {
     })
 }
 
+function get_nth_word(depth) {
+    // depth as integer needs parsing
+    let guessid = wordrow_id_prefix + depth.toString()
+    // returns wordRow div
+    return document.getElementById(guessid)
+}
+
+function get_wordrow_letter_boxes(wordrow) {
+    return wordrow.querySelectorAll('.letterBox')
+}
+
 function get_depth(d) {
-  let guessid = wordrow_id_prefix + d.toString()
-  let guess_word = document.getElementById(guessid)
+  let guess_wordrow = get_nth_word(d)
+
   const answer_words = puzzle.answers[d]
-  const guess_letters = guess_word.querySelectorAll('.letterBox')
+
+
+  const guess_letters = get_wordrow_letter_boxes(guess_wordrow)
   var guess_received = ''
 
   guess_letters.forEach((letter_box) => {
@@ -560,7 +681,7 @@ function get_depth(d) {
     guess_received += letter_text ? letter_text : '_'
     
   })
-  return [guess_word, guess_received, answer_words]
+  return [guess_wordrow, guess_received, answer_words] // guess_wordrow = DOM element, guess_received = word string, answer_words = list of all valid answers for this word
 }
 
 function reaches_word(thisword, thisdepth, wuc, wuc_depth) {
@@ -719,9 +840,6 @@ function remove_all_word_style() {
 }
 
 function process_guess() {
-    guesses_made++;
-    document.getElementById('guesses_made').innerText = guesses_made
-
     var focused_element = null;
     if (
         document.hasFocus() &&
@@ -734,6 +852,13 @@ function process_guess() {
         focused_element.blur()
     }
 
+    process_guess_styling(true) // Process real guess -> send guess to API
+
+    guesses_made++;
+    update_guess_count()
+  }
+
+function process_guess_styling(real_guess) {
     remove_all_word_style()
     var printing = ''
     var actual_answer = ''
@@ -743,10 +868,20 @@ function process_guess() {
 
     var one_letter_diff_shown = false
     var rule_break_notice;
+
+    var complete_words = [] // empty strings for incomplete words
     
     for (let w = 0; w < puzzle.words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
       let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
+
+      // Track answers received for pushing full guess to API
+      if (validity_status == -2 || validity_status == 1) {
+        complete_words.push(guess_received) // string
+      } else {
+        complete_words.push('')
+      }
+
       valid_depths.push(validity_status == 1 ? true : false)
 
       style_guessword(guess_word, validity_status)
@@ -763,9 +898,29 @@ function process_guess() {
       }
       
     }
+
+    if (real_guess) {
+        // Push guess to API
+        const params = {
+            puzzle_id: puzzle.id,
+            user_id: user.id,
+            attempt: puzzle_attempt,
+            guess_n: guesses_made + 1, // When 2 guesses made, this guess is 3rd.
+            words: JSON.stringify(complete_words) // prepare array to be read as json
+        }
+        
+        fetchPostWrapper('/guesses', params, null)
+    }
+
     // If all words are valid and correct
     if (!valid_depths.some(x => x === false)) {
         document.getElementById('rowHolder').classList.add('finished')
+
+        // correct guess shouldn't ever be received from API, but adding check just in case
+        if (real_guess) { // push complete puzzle to API
+            return
+        }
+        
     }
 
     var right_wrong = (puzzle_done(valid_depths)) ? "That's right!" : "Try again.";
@@ -774,7 +929,7 @@ function process_guess() {
     var hiding = document.getElementById("button_response")
     hiding.innerText = rule_break_notice ? rule_break_notice : right_wrong;
     hiding.style.visibility = "visible";
-  }
+}
 
 function style_letterBox(element) {
     
@@ -837,10 +992,16 @@ window.onload = function() {
   const next_game = document.getElementById('next_game')
 
   function ShowTime() {
-    var now = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-    var hrs = (23-now.getHours()).toString().padStart(2, '0');
-    var mins = (59-now.getMinutes()).toString().padStart(2, '0');
-    var secs = (59-now.getSeconds()).toString().padStart(2, '0');
+    var now = new Date();
+    var tomorrow = new Date(now);
+    tomorrow.setUTCDate(now.getUTCDate() + 1);
+    tomorrow.setUTCHours(0, 0, 0, 0);
+
+    var timeLeft = tomorrow - now;
+
+    var hrs = Math.floor((timeLeft / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+    var mins = Math.floor((timeLeft / (1000 * 60)) % 60).toString().padStart(2, '0');
+    var secs = Math.floor((timeLeft / 1000) % 60).toString().padStart(2, '0');
     var timeLeft = "" +hrs+':'+mins+':'+secs;
     next_game.innerHTML = timeLeft
     }
