@@ -30,7 +30,6 @@ let puzzle = {
 }
 fetchPuzzle()
 
-console.log(puzzle)
 
 //var puzzle_index = (days_between(start_date, date_today) - 1) % puzzles.length
 //var [words, answers] = puzzles[puzzle_index]
@@ -133,7 +132,6 @@ function fetchLogin(event) {
     event.preventDefault()
 
     const submit_type = event.submitter.name
-    console.log(`submit_type: ${submit_type}`)
 
     var params = {
         uname: document.getElementById('uname').value,
@@ -146,7 +144,6 @@ function fetchLogin(event) {
         params['email'] = document.getElementById('email').value
         url = "https://scrambler-api.onrender.com/users"
     }
-    console.log(params)
     document.getElementById('login_loader').style.visibility = 'visible'
 
     const http = new XMLHttpRequest()
@@ -198,7 +195,11 @@ function fetchPostWrapper(url_endpoint, params, response_function) {
           if (!response.ok) {
             throw response;
           }
-          return response.json();
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } 
+            return null
         })
         .then(data => {
             // if no function supplied, ignore
@@ -286,6 +287,7 @@ function update_attempt_banner() {
         
         document.getElementById('rewardless_attempt_banner').classList.add('slide_down')
         document.getElementById('gameBox_wrapper').classList.add('slide_down')
+        document.getElementById('gameBox').classList.add('slide_down')
     } 
     
 }
@@ -858,6 +860,20 @@ function process_guess() {
     update_guess_count()
   }
 
+const process_puzzle_complete = (data) => {
+    user.points = data['total_points']
+    const total_points_earned = data['puzzle_points']
+    const total_bonus_earned = data['total_bonus']
+    const early_bonus = data['early_bonus']
+    const guess_bonus = data['guess_bonus']
+    const fast_bonus = data['fast_bonus']
+    
+    displayLogin()
+
+    alert(`Total points: ${total_points_earned} (${total_bonus_earned} bonus points).
+    ${early_bonus} early bonus, ${guess_bonus} guess bonus, ${fast_bonus} fast bonus.`)
+}
+
 function process_guess_styling(real_guess) {
     remove_all_word_style()
     var printing = ''
@@ -918,7 +934,13 @@ function process_guess_styling(real_guess) {
 
         // correct guess shouldn't ever be received from API, but adding check just in case
         if (real_guess) { // push complete puzzle to API
-            return
+            const params = {
+                puzzle_id: puzzle.id,
+                user_id: user.id,
+                attempt: puzzle_attempt,
+                total_guesses: guesses_made + 1 // Incrementing 'guesses_made' occurs later
+            }
+            fetchPostWrapper('/completed_puzzles', params, process_puzzle_complete)
         }
         
     }
