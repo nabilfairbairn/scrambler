@@ -47,12 +47,14 @@ let user_states = {
     'easy': {
         'guesses_made': 0,
         'puzzle_attempt': 1,
-        'last_input': []
+        'last_input': [], // last guess has styling provided
+        'last_guess': []  // on change, last input should not be styled
     },
     'hard': {
         'guesses_made': 0,
         'puzzle_attempt': 1,
-        'last_input': []
+        'last_input': [],
+        'last_guess': []
     }
 }
 
@@ -65,7 +67,8 @@ let puzzle = {
     'base_points': null
 }
 function getDiff() {
-    return puzzle.difficulty
+    var diff_scale = ['easy', 'hard']
+    return diff_scale[puzzle.difficulty - 1] // 1 indexed difficulty
 }
 fetchPuzzle()
 
@@ -116,13 +119,21 @@ function switchDifficulty(e) {
     const source_toggle = e.target
     const new_diff = source_toggle.value
 
-    console.log(`diff switched to ${new_diff}`)
+    if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
+        return
+    }
+
+    // On save input, need to isolate last guess (with styling) and preceding input
+    // on reload, only put styling on last guess
 
     // save current Input
     saveCurrentInput()
 
     // replace visible puzzle
     puzzle = todays_puzzles[new_diff]
+
+    // clear old puzzle
+    document.getElementById('rowHolder').innerHTML = ''    
 
     // display current puzzle
     create_puzzle()
@@ -132,11 +143,16 @@ function switchDifficulty(e) {
         startPuzzle()
     }
     // refresh user state, load in new guess
-    refreshUserInputs()   
+    refreshUserInputs() // loads in last verified guess, add styling
+
+    fill_puzzle_with_guess(user_states[getDiff()].last_input) // loads in last input -> not styled
 }
+
 
 function saveCurrentInput() {
     var complete_words = [] // empty strings for incomplete words
+
+    var valid_depths = [] // not used in this function
     
     // mirrors code from process_guess_styling
     // iterate through puzzle words, extracting words from inputs
@@ -364,12 +380,15 @@ function fetchPostWrapper(url_endpoint, params, response_function) {
 function loadAllGuesses() {
     // load easy and hard guesses
     const params = {
-        'user_id': user.id,
-        'puzzle_ids': {
-            'easy': todays_puzzles['easy']['id'],
-            'hard': todays_puzzles['hard']['id']
+        user_id: user.id,
+        puzzle_ids: {
+            easy: todays_puzzles['easy']['id'],
+            hard: todays_puzzles['hard']['id']
         }
     }
+
+    console.log(params)
+    console.log(JSON.stringify(params))
 
     fetchPostWrapper('/guesses/multiple', params ,processAllGuesses) // load guesses. send data to process
 }
@@ -449,7 +468,7 @@ function replace_user_state(all_guess_data) {
         
         if (guess_data) { // if no guess, pass
             user_states[diff]['guesses_made'] = guess_data['guess_number']
-            user_states[diff]['last_input'] = guess_data['words']
+            user_states[diff]['last_guess'] = guess_data['words']
         }
     })
     
@@ -460,10 +479,8 @@ function update_guess_count() {
 }
 
 function update_attempt_banner() {
-    var diff = puzzle.difficulty
-    var puzzle_attempt = user_states[diff].puzzle_attempt
+    var puzzle_attempt = user_states[getDiff()].puzzle_attempt
     if (puzzle_attempt > 1) {
-        console.log('banner slide down')
         
         document.getElementById('rewardless_attempt_banner').classList.add('slide_down')
         document.getElementById('gameBox_wrapper').classList.add('slide_down')
@@ -478,7 +495,7 @@ function refreshUserInputs() {
     update_guess_count() 
 
     // fill inputs with last input
-    fill_puzzle_with_guess(user_states[getDiff()].last_input)
+    fill_puzzle_with_guess(user_states[getDiff()].last_guess)
     
     // update input styling
     process_guess_styling(false) // Don't send guess to API
@@ -1145,8 +1162,13 @@ function process_guess_styling(real_guess) {
             guess_n: guesses_made + 1, // When 2 guesses made, this guess is 3rd.
             words: JSON.stringify(complete_words) // prepare array to be read as json
         }
-        
-        fetchPostWrapper('/guesses', params, null)
+        try {
+            fetchPostWrapper('/guesses', params, null)
+            user_states[getDiff()].last_guess = complete_words // Update last_guess
+        } catch (error) {
+            throw error
+        } 
+
     }
 
     // If all words are valid and correct

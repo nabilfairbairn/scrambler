@@ -93,6 +93,7 @@ input {
 .switch-field {
   display: flex;
   overflow: hidden;
+  margin-bottom: 3rem;
 }
 
 .switch-field input {
