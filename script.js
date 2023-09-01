@@ -7,8 +7,7 @@ var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
-var guesses_made = 0;
-var puzzle_attempt = 1;
+
 
 history.scrollRestoration = "manual";
 window.onbeforeunload = function(){
@@ -21,12 +20,52 @@ let user = {
     'points': null
 }
 
+// all_daily_puzzles: easy/hard
+// user_input: easy, hard - list of inputboxid: text pairs
+
+// autoload easy puzzle.
+// On switch, save current user_input state
+// change puzzle to all_daily_puzzles easy/hard
+
+// create puzzle, replace user_input, restyle
+// on guess, pass in current_puzzle
+
+// loadPuzzle pulls both for day
+// startPuzzle needs to attempt start for both. Pull last guess for both
+// User_input fed with result
+
+
+let todays_puzzles = {
+    'easy': null,
+    'hard': null
+}
+
+let opened_hard_puzzle = false
+
+// updated on puzzleStart
+let user_states = {
+    'easy': {
+        'guesses_made': 0,
+        'puzzle_attempt': 1,
+        'last_input': []
+    },
+    'hard': {
+        'guesses_made': 0,
+        'puzzle_attempt': 1,
+        'last_input': []
+    }
+}
+
+// current puzzle on screen
 let puzzle = {
     'id': null,
     'words': null,
     'answers': null,
     'difficulty': null,
     'base_points': null
+}
+function getDiff() {
+    return puzzle.difficulty
 }
 fetchPuzzle()
 
@@ -46,6 +85,7 @@ let word_buffer_px;
 let word_w_px;
 
 var r = document.querySelector(':root')
+var keyboard = document.getElementById('keyboard-cont')
 var letterBoxHeight;
 var letterBoxMargin;
 
@@ -72,6 +112,93 @@ function set_global_style_variables(words) {
     r.style.setProperty('--letterBoxMargin', `min(${word_buffer}vw, ${word_buffer_px}cm)` )
 }
 
+function switchDifficulty(e) {
+    const source_toggle = e.target
+    const new_diff = source_toggle.value
+
+    console.log(`diff switched to ${new_diff}`)
+
+    // save current Input
+    saveCurrentInput()
+
+    // replace visible puzzle
+    puzzle = todays_puzzles[new_diff]
+
+    // display current puzzle
+    create_puzzle()
+
+    // if first time displaying hard, startPuzzle
+    if (new_diff == 'hard' && !opened_hard_puzzle) {
+        startPuzzle()
+    }
+    // refresh user state, load in new guess
+    refreshUserInputs()   
+}
+
+function saveCurrentInput() {
+    var complete_words = [] // empty strings for incomplete words
+    
+    // mirrors code from process_guess_styling
+    // iterate through puzzle words, extracting words from inputs
+    for (let w = 0; w < puzzle.words.length; w++) {
+      const [guess_word, guess_received, answer_words] = get_depth(w)
+      let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
+
+      if (validity_status == -2 || validity_status == 1) {
+        complete_words.push(guess_received) // string
+      } else {
+        complete_words.push('')
+      }
+    }
+    user_states[getDiff()].last_input = complete_words
+}
+
+
+function replaceOffscreenTooltip(e) {
+    const tooltip = e.target || e.srcElement
+    const tooltipText = tooltip.firstElementChild
+
+    const windowWidth = window.innerWidth;
+    const clientWidth = document.documentElement.clientWidth
+
+    tooltipText.style.width = `${windowWidth * 0.6}px`
+
+    /* tooltipText.style.display = 'block' */
+
+    const screenPadding = 24
+
+    tooltipText.classList.remove("placeLeft", "placeRight")
+
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const tooltipTextRect = tooltipText.getBoundingClientRect();
+
+    const tooltipTextRightX = tooltipTextRect.x + tooltipTextRect.width
+    const tooltipRightX = tooltipRect.x + tooltipRect.width
+
+    console.log('')
+    console.log(`Tooltip width: ${tooltipTextRect.width}`)
+    console.log(`Tooltip x: ${tooltipTextRect.x}`)
+    console.log(`tooltip right x: ${tooltipTextRightX}`)
+    console.log(`Window width: ${windowWidth}`)
+    console.log(`client Width: ${clientWidth}`)
+
+
+    if (tooltipTextRect.x < 0) { // Tooltips leftmost point is off screen to the left
+        console.log('offscren left')
+        tooltipText.classList.add("placeLeft")
+        //tooltipText.style.left = '2';
+        //tooltipText.style.right = 'auto';
+        //tooltipText.style.transform = `translateX(${-tooltipRect.x + screenPadding}px)`;
+    } else if (tooltipTextRightX > windowWidth) {
+        tooltipText.classList.add("placeRight")
+        console.log('offscreen right')
+        //tooltipText.style.left = 'auto';
+        //tooltipText.style.right = '2';
+        //  tooltipText.style.transform = `translateX(${(window.outerWidth - tooltipRightX) - screenPadding}px)`;
+      }
+
+}
+
 function parseArrayWithSpaces(array) {
     const result = [];
   
@@ -89,22 +216,29 @@ function parseArrayWithSpaces(array) {
   }
 
 function declare_puzzle(httpResponse) {
+    // receives json containing both easy and hard puzzles
+    // assigns both daily puzzle variables
+    // creates puzzle for easy
+
+    Object.entries(httpResponse).forEach(([diff, puz]) => {
+        let visible = puz['visible'] // ['THORN','__RCH','_O_C_','_RC__','_R_PS']
+
+        let answer = puz['answer'] // ["SWORD","LORDS FORDS CORDS DORMS WARDS","LOADS ROADS","SODAS","DOSES"] -> Needs to become comma separated nested list
+
+        let parsed_answer = parseArrayWithSpaces(answer)
+        
+        // assign both puzzles
+        todays_puzzles[diff] = {
+            'id': puz['id'],
+            'words': visible,
+            'answers': parsed_answer,
+            'difficulty': puz['difficulty'],
+            'base_points': puz['base_points']
+        }
+    })
     
-    let visible = httpResponse['visible'] // ['THORN','__RCH','_O_C_','_RC__','_R_PS']
-
-    let answer = httpResponse['answer'] // ["SWORD","LORDS FORDS CORDS DORMS WARDS","LOADS ROADS","SODAS","DOSES"] -> Needs to become comma separated nested list
-
-    let parsed_answer = parseArrayWithSpaces(answer)
-    
-
-    puzzle = {
-        'id': httpResponse['id'],
-        'words': visible,
-        'answers': parsed_answer,
-        'difficulty': httpResponse['difficulty'],
-        'base_points': httpResponse['base_points']
-    }
-    set_global_style_variables(puzzle['words'])
+    // set current puzzle to easy
+    puzzle = todays_puzzles['easy']
     
     // hide loader
     document.getElementById('puzzle_loader').style.display = 'none'
@@ -112,17 +246,19 @@ function declare_puzzle(httpResponse) {
 }
 
 function fetchPuzzle() {
+    // Get both daily puzzles
+
     const url = 'https://scrambler-api.onrender.com/puzzles'
     const http = new XMLHttpRequest()
     http.open("GET", url)
     http.responseType = 'json'
     http.send() // Make sure to stringify
     http.onload = function() {
-        declare_puzzle(http.response[0])
+        declare_puzzle(http.response) // easy and hard
 
         // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
         if (user.id) {
-            startPuzzle()
+            loadPuzzleAndGuesses()
         }
     }
 }
@@ -172,7 +308,7 @@ function fetchLogin(event) {
             // call startPuzzle
             // dont call if puzzle not loaded
             if (puzzle.id) {
-                startPuzzle()
+                loadPuzzleAndGuesses()
             }
             
         }
@@ -225,7 +361,39 @@ function fetchPostWrapper(url_endpoint, params, response_function) {
     
 }
 
+function loadAllGuesses() {
+    // load easy and hard guesses
+    const params = {
+        'user_id': user.id,
+        'puzzle_ids': {
+            'easy': todays_puzzles['easy']['id'],
+            'hard': todays_puzzles['hard']['id']
+        }
+    }
+
+    fetchPostWrapper('/guesses/multiple', params ,processAllGuesses) // load guesses. send data to process
+}
+
+function processAllGuesses(all_guess_data) {
+    replace_user_state(all_guess_data) // insert guess data for both easy and hard. manages possibility of no guess
+        
+    refreshUserInputs()
+}
+
+function loadPuzzleAndGuesses() {
+    // start current puzzle, update attempt
+    startPuzzle()
+
+    // load guesses for both puzzles
+    loadAllGuesses()
+    
+}
+
 async function startPuzzle() {
+    // starts current puzzle
+    // last guess requested separately
+    // updates user_state value of current puzzle_attempt
+
     const url = "https://scrambler-api.onrender.com/completed_puzzles/start"
 
     const params = {
@@ -265,23 +433,35 @@ async function startPuzzle() {
         }
       })
       .then(data => {
-        last_guess = data['last_guess']
-        puzzle_attempt = data['current_attempt']
+        // Returns current attempt
+        var current_attempt = data['current_attempt']
 
-        update_attempt_banner()
-
-        if (last_guess) {
-            loadGuess(last_guess)
-        }
+        user_states[getDiff()].puzzle_attempt = current_attempt
     })
        
 }
 
+function replace_user_state(all_guess_data) {
+    // process both easy and hard guesses
+    // manage possibility of no guess
+
+    Object.entries(all_guess_data).forEach(([diff, guess_data]) => {
+        
+        if (guess_data) { // if no guess, pass
+            user_states[diff]['guesses_made'] = guess_data['guess_number']
+            user_states[diff]['last_input'] = guess_data['words']
+        }
+    })
+    
+}
+
 function update_guess_count() {
-    document.getElementById('guesses_made').innerText = guesses_made
+    document.getElementById('guesses_made').innerText = user_states[getDiff()].guesses_made
 }
 
 function update_attempt_banner() {
+    var diff = puzzle.difficulty
+    var puzzle_attempt = user_states[diff].puzzle_attempt
     if (puzzle_attempt > 1) {
         console.log('banner slide down')
         
@@ -292,12 +472,13 @@ function update_attempt_banner() {
     
 }
 
-function loadGuess(last_guess) {
-    guesses_made = last_guess['guess_number']
-    update_guess_count()
+function refreshUserInputs() {
+    update_attempt_banner() // show banner if current_attempt > 1
+    
+    update_guess_count() 
 
-    // fill inputs with last guess
-    fill_puzzle_with_guess(last_guess['words'])
+    // fill inputs with last input
+    fill_puzzle_with_guess(user_states[getDiff()].last_input)
     
     // update input styling
     process_guess_styling(false) // Don't send guess to API
@@ -359,9 +540,6 @@ function calculateStrokeTextCSS(steps) {
     return css;
   }
 
-// TODO: Pressing Enter triggers Guess
-// Typing a letter focuses the next letterInput
-// Typing a letter keeps the last letter
 function days_between(StartDate, EndDate) {
     // The number of milliseconds in all UTC days (no DST)
     
@@ -550,11 +728,10 @@ function determine_local_changed_letters(element) {
 }
 
 function determine_changed_letters(depth) {
-    // TODO: Remove letterAdded letterRemoved styling
     let [this_element, this_word, _] = get_depth(depth)
     let prev_word = depth - 1 < 0 ? null : get_word(depth-1)
     let next_word = parseFloat(depth) + 1 >= puzzle.words.length ? null : get_word(parseFloat(depth)+1)
-    //console.log(prev_word, this_word, next_word)
+    
     let this_letters_count = count_letters(this_word)
     if (next_word) {
         let next_letters_count = count_letters(next_word)
@@ -856,22 +1033,66 @@ function process_guess() {
 
     process_guess_styling(true) // Process real guess -> send guess to API
 
-    guesses_made++;
+    user_states[getDiff()].guesses_made++;
     update_guess_count()
   }
 
+function showPointsPopup(data) {
+    // Takes points summary from postgres, fills points popup to display to player
+
+
+    // TODO modal overlay
+    var base_points = data.total_points_earned - data.total_bonus_earned
+
+    const congrat_title = document.getElementById("reward_title") // TODO: auto change title
+
+    const base_points_span = document.getElementById("reward_base_points")
+    base_points_span.innerText = `${base_points} Points`
+
+    function create_medal(medal) {
+        // creates SVG based on medal number
+        const bonus_medal = document.createElement("img")
+        bonus_medal.classList.add('bonus_icon')
+        bonus_medal.src = medal == 1 ? 'gold-medal.svg' : 'silver-medal.svg'
+        return bonus_medal
+    }
+    
+    if (data.early_bonus > 0) {
+        const early_bonus = document.getElementById("guess_bonus") // div
+
+        const bonus_medal = create_medal(data.early_bonus) // 1 = gold, etc.
+        early_bonus.appendChild(bonus_medal) // insert medal into div
+        document.getElementById('early_points').innerText = `+${data.early_points} Points`
+
+    }
+    if (data.fast_bonus > 0) {
+        const fast_bonus = document.getElementById("fast_bonus") // div
+
+        const bonus_medal = create_medal(data.fast_bonus) // 1 = gold, etc.
+        fast_bonus.appendChild(bonus_medal) // insert medal into div
+        document.getElementById('fast_points').innerText = `+${data.fast_points} Points`
+
+    }
+    if (data.guess_bonus > 0) {
+        const guess_bonus = document.getElementById("guess_bonus") // div
+
+        const bonus_medal = create_medal(data.guess_bonus) // 1 = gold, etc.
+        guess_bonus.appendChild(bonus_medal) // insert medal into div
+        document.getElementById('guess_points').innerText = `+${data.guess_points} Points`
+
+    }
+
+    const total_points = data.base_points + data.early_points + data.guess_points + data.fast_points
+    document.getElementById("reward_total_points").innerText = `= ${total_points} Points!`
+    // Display the popup
+    document.getElementById('puzzle_reward').classList.add('show')
+}
+
 const process_puzzle_complete = (data) => {
     user.points = data['total_points']
-    const total_points_earned = data['puzzle_points']
-    const total_bonus_earned = data['total_bonus']
-    const early_bonus = data['early_bonus']
-    const guess_bonus = data['guess_bonus']
-    const fast_bonus = data['fast_bonus']
     
-    displayLogin()
-
-    alert(`Total points: ${total_points_earned} (${total_bonus_earned} bonus points).
-    ${early_bonus} early bonus, ${guess_bonus} guess bonus, ${fast_bonus} fast bonus.`)
+    displayLogin() //reresh total user points
+    showPointsPopup(data) //popup with points earned summary
 }
 
 function process_guess_styling(real_guess) {
@@ -961,6 +1182,8 @@ function style_letterBox(element) {
 }
 
 function create_puzzle() {
+  set_global_style_variables(puzzle['words'])
+
   var rowHolder = document.getElementById("rowHolder")
 
   var n_words = puzzle.words.length
@@ -1009,6 +1232,22 @@ function create_puzzle() {
 }
 
 window.onload = function() {
+    const allTooltips = document.getElementsByClassName('help-tip');
+    for (let i = 0; i < allTooltips.length; i++) {
+        var tooltip = allTooltips[i]
+        tooltip.addEventListener("pointerenter", replaceOffscreenTooltip)
+        /* tooltip.addEventListener("pointerleave", (event) => {
+            const tooltip = event.target
+            const tooltipText = tooltip.firstElementChild
+            tooltipText.style.display = 'none'
+        }) */
+    }
+    const change_diff_radios = document.getElementsByClassName('switch_diff_radio')
+    for (let i = 0; i < change_diff_radios.length; i++) {
+        var radio = change_diff_radios[i]
+        radio.addEventListener("click", switchDifficulty)
+    }
+
   document.getElementById('guesses_made').innerText = guesses_made
 
   const next_game = document.getElementById('next_game')
@@ -1039,11 +1278,16 @@ window.onload = function() {
   var closeModalButtons = document.getElementById('closemodalbutton')
   var overlay = document.getElementById('top_overlay')
 
+  var closeRewardButton = document.getElementById('closerewardbutton')
+  var puzzle_reward_modal = document.getElementById('puzzle_reward')
+  closeRewardButton.onclick = close_reward_modal
+
   var modal = document.getElementById('top_modal')
 
   var keyboardbutton = document.getElementById('keyboardbutton')
+  
   keyboardbutton.onclick = function() {
-    var keyboard = document.getElementById('keyboard-cont')
+    
     if (keyboard.style.display == 'none') {
         keyboard.style.display = 'flex'
     } else {
@@ -1077,6 +1321,16 @@ window.onload = function() {
     }
     modal.classList.add('closed')
     overlay.classList.add('closed')
+  }
+
+  function close_reward_modal(e) {
+    var caller = e.target || e.srcElement
+    var modal_to_close = document.getElementById(caller.getAttribute('for'))
+
+    modal_to_close.classList.remove('show')
+
+
+    console.log('Closed rewards')
   }
 
   openModalButtons.onclick = openModal 

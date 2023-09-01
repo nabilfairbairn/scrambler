@@ -1,5 +1,7 @@
 @import url(//fonts.googleapis.com/css?family=Nunito);
 
+/* TODO: resize login for mobile */
+
 :root {
     --wrongglow: 0px 0px 24.192px rgb(247, 107, 26), 
     0px 0px 13.824px rgb(247, 107, 26), 
@@ -88,6 +90,51 @@ input {
   margin: 0.25rem;
 }
 
+.switch-field {
+  display: flex;
+  overflow: hidden;
+}
+
+.switch-field input {
+  position: absolute !important;
+  clip-path: rect(0, 0, 0, 0);
+  height: 1px;
+  width: 1px;
+  border: 0;
+  overflow: hidden;
+}
+
+.switch-field label {
+  background-color: #e4e4e4;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: larger;
+  line-height: 1;
+  text-align: center;
+  padding: 1rem 2rem;
+  margin-right: -1px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease-in-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.switch-field label:hover {
+  cursor: pointer;
+}
+
+.switch-field input:checked + label {
+  background-color: #a5dc86;
+  box-shadow: none;
+}
+
+.switch-field label:first-of-type {
+  border-radius: 40% 0% 0% 40% ;
+}
+
+.switch-field label:last-of-type {
+  border-radius: 0% 40% 40% 0%;
+}
+
 #rewardless_attempt_banner {
   position: relative;
   width: 100%;
@@ -106,7 +153,6 @@ input {
   transition: top 1s cubic-bezier(0.17, 0.04, 0.03, 0.94);
 }
 #rewardless_attempt_banner.slide_down {
-  margin-bottom: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*-3);
   top: 0;
 }
 
@@ -118,11 +164,133 @@ input {
   top: 0;
   margin: 3vw;
   
-  transition: top 1s cubic-bezier(0.17, 0.04, 0.03, 0.94); 
+  transition: all 1s cubic-bezier(0.17, 0.04, 0.03, 0.94); 
 }
 #gameBox_wrapper.slide_down {
   top: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*3);
-  margin-top: 3vw;
+  margin-bottom: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*3 + 3vw );
+}
+
+#puzzle_reward {
+  z-index: 16;
+  position: fixed;
+  height: max-content;
+  width: max-content;
+  top: 100vh;
+  display: none;
+  transition: top 1s ease-out;
+  box-shadow: 1rem 1rem 0.5rem darkslategray;
+}
+#puzzle_reward.show {
+  display: flex;
+  top: 15vh;
+}
+.bonus_icon {
+  display: flex;
+  height: max(8vw, 82px);
+  width: max(8vw, 82px);
+  margin: 1rem;
+}
+.svg{
+  height: 100%;
+  width: 100%;
+  /* Takes container's size */
+}
+#centre_bonus {
+  border-left: dashed 0.05rem var(--almost-black);
+  border-right: dashed 0.05rem var(--almost-black);
+}
+
+.bonus_col {
+  padding: 1rem;
+}
+.bonus_w_description {
+  display: flex;
+  align-items:flex-start;
+  position: relative;
+  
+}
+
+.help-tip{
+  display: flex;
+  text-align: center;
+  background-color: lightgray;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  line-height: 1rem;
+  cursor: default;
+  align-items:center;
+  justify-content: center;
+  position: relative;
+  z-index: 20;
+  
+}
+
+.help-tip:before{
+  content:'?';
+  font-weight: bold;
+  color:var(--almost-black);
+}
+
+
+.help-tip:hover p{
+  visibility: visible;
+
+  -webkit-animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
+
+} 
+
+.help-tip p{    /* The tooltip */
+  visibility: collapse;
+  text-align: center;
+  background-color: #1E2021;
+  padding: 2rem;
+  position: absolute;
+  top: 0;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  color: #FFF;
+  font-size: 2rem;
+  line-height: 2rem;
+}
+.tooltipText.placeLeft {
+  left: -8rem;
+  right: auto;
+}
+.tooltipText.placeRight {
+  left: auto;
+  right: -8rem;
+}
+
+.help-tip p:after{ /* Prevents the tooltip from being hidden */
+  width:100%;
+  height:40px;
+  content:'';
+  position: absolute;
+  top:-40px;
+  left:0;
+}
+
+/* CSS animation */
+
+@-webkit-keyframes fadeIn {
+  0% { 
+      opacity:0; 
+      transform: scale(0.6);
+  }
+
+  100% {
+      opacity:100%;
+      transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% { opacity:0; }
+  100% { opacity:100%; }
 }
 
 #login_modal {
@@ -142,7 +310,7 @@ input {
   margin: 0.25rem;
 }
 .input_button {
-  font-size: x-large;
+  font-size: xx-large;
 }
 
 
@@ -206,6 +374,7 @@ input {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  text-align: center;
   
   width: 100%;
   height: max-content;
@@ -543,12 +712,12 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
     transform: translateX(-50%);
     margin-left: auto;
     margin-right: auto;
-    display: flex;
+    display: flex; 
     justify-self: center;
     flex-direction: column;
     align-items: center;
     background-color:rgba(80, 80, 80);
-    z-index: 15;
+    z-index: 11;
   }
   @media screen and ((max-device-pixel-ratio: 2) or (-webkit-max-device-pixel-ratio: 2) 
   or (-moz-max-device-pixel-ratio: 2) ){
@@ -601,7 +770,7 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   padding: 3vw;
   align-items: center;
   justify-content: space-between;
-  z-index: 10;
+  z-index: 15;
   background-color: var(--almost-white);
   
 }
@@ -628,6 +797,7 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   pointer-events: all;
   background-color:rgba(0,0,0,0.5);
   border: none;
+  backdrop-filter: blur(3px);
   top: 0;
   left: 0;
   right: 0;
@@ -684,11 +854,11 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   flex-direction: column;
 }
 .textinput {
-  width: 60vw;
+  width: 45vw;
   max-width: 600px;
-  height: 2.5rem;
-  margin: 0.75vw;
-  font-size: 1.5rem;
+  height: 3rem;
+  margin: 1vw;
+  font-size: 2rem;
   align-self: center;
   text-align: center;
   border-width: 0px;

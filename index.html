@@ -100,14 +100,65 @@
       <form id="login_form" class="vertical_header">
           <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
           <input type="text" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
-          <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address (Optional, when creating profile)" class="textinput">
-          <span><h3>By providing your email, you consent to be asked for feedback.</h3></span>
+          <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address (Optional)" class="textinput">
+          <span><h2>Enter your email if you are interested in giving feedback or testing new features.</h2></span>
         <div class="horizontal_header">
           <input type="submit" name="login" value="Login" class="input_button">
           <input type="submit" name="create" value="Create Profile" class="input_button">
         </div>
       </form>
       <div id="login_loader" class="loader"></div>
+    </div>
+
+    <div id="puzzle_reward" class="modal vertical_header">
+      <div class="header">
+        <button type="button", class='square button minimal invisible'>&times;</button>
+        <span id="reward_title">&#127881; Congratulations &#127881;</span>
+        <button
+            id="closerewardbutton"
+            type="button", class='button square minimal'><span class="material-icons-round" for="puzzle_reward">
+              close
+              </span></button>
+      </div> <!-- <!> Congratulations <!>, etc. with emojis -->
+      <span id="reward_base_points"></span> <!-- 45 points! -->
+      <div id="reward_bonuses" class="horizontal_header">
+        <div class="vertical_header bonus_col"> <!-- Early Bonus -->
+          <span class="bonus_w_description horizontal_header">
+            <div class="help-tip invisible"></div>
+            <img class="bonus_icon bonus" src="flag_one.svg"/>
+            <div class="help-tip">
+              <p class="tooltipText">Earned by being one of the first to complete the puzzle. First earns 2x the base points. Next four earn 10.</p>
+            </div>
+          </span>
+            <span id="early_bonus"></span>
+            <span id="early_points"> --</span>
+        </div> 
+        <div id="centre_bonus" class="vertical_header bonus_col">
+          <span class="bonus_w_description horizontal_header">
+            <div class="help-tip invisible"></div>
+            <img class="bonus_icon bonus" src="fast_bonus.svg"/>
+            <div class="help-tip">
+              <p class="tooltipText">Earned by being one of the fastest to complete the puzzle. Fastest earns 75% extra. Next 3 earn 25% extra.</p>
+            </div>
+          </span>
+          <span id="fast_bonus"></span>
+          <span id="fast_points"> --</span>
+        </div> <!-- Fast Bonus -->
+          
+        <div class="vertical_header bonus_col">
+          <span class="bonus_w_description horizontal_header">
+            <div class="help-tip invisible"></div>
+            <img class="bonus_icon bonus" src="strategy.svg"/>
+            <div class="help-tip">
+              <p class="tooltipText">Earned by completing the puzzle with fewer guesses than others. Fewest guesses earns 75% extra. Next 2 earn 25% extra.</p>
+            </div>
+          </span>
+          <span id="guess_bonus"></span>
+          <span id="guess_points"> --</span>
+        </div> <!-- Strategy Bonus -->
+
+      </div> 
+      <span id="reward_total_points"></span>
     </div>
 
     <div id="gameBox" class='gameBox'>
@@ -128,6 +179,14 @@
             <div id="guesses">Guesses: <span id="guesses_made"></span></div>
             <div id="next_game_box">Next Game: <span id="next_game"></span></div>
           </div>
+          <!-- easy/hard toggle -->
+          <div class="switch-field">
+            <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked/>
+            <label for="easy_radio">Easy</label>
+            <input type="radio" id="hard_radio" class="switch_diff_radio" name="switch-one" value="hard" />
+            <label for="hard_radio">Hard</label>
+          </div>
+          
         </div>
         <div id="rowHolder" class='rowHolder'></div>
         <div id="puzzle_loader" class="loader"></div>
