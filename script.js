@@ -1158,8 +1158,8 @@ function process_guess_styling(real_guess) {
         const params = {
             puzzle_id: puzzle.id,
             user_id: user.id,
-            attempt: puzzle_attempt,
-            guess_n: guesses_made + 1, // When 2 guesses made, this guess is 3rd.
+            attempt: user_states[getDiff()].puzzle_attempt,
+            guess_n: user_states[getDiff()].guesses_made + 1, // When 2 guesses made, this guess is 3rd.
             words: JSON.stringify(complete_words) // prepare array to be read as json
         }
         try {
@@ -1180,8 +1180,8 @@ function process_guess_styling(real_guess) {
             const params = {
                 puzzle_id: puzzle.id,
                 user_id: user.id,
-                attempt: puzzle_attempt,
-                total_guesses: guesses_made + 1 // Incrementing 'guesses_made' occurs later
+                attempt: user_states[getDiff()].puzzle_attempt,
+                total_guesses: user_states[getDiff()].guesses_made + 1 // Incrementing 'guesses_made' occurs later
             }
             fetchPostWrapper('/completed_puzzles', params, process_puzzle_complete)
         }
