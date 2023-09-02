@@ -141,6 +141,7 @@ function switchDifficulty(e) {
     // if first time displaying hard, startPuzzle
     if (new_diff == 'hard' && !opened_hard_puzzle) {
         startPuzzle()
+        opened_hard_puzzle = true
     }
     // refresh user state, load in new guess
     refreshUserInputs() // loads in last verified guess, add styling
@@ -323,7 +324,7 @@ function fetchLogin(event) {
             
             // call startPuzzle
             // dont call if puzzle not loaded
-            if (puzzle.id) {
+            if (todays_puzzles['easy']['id']) {
                 loadPuzzleAndGuesses()
             }
             
@@ -479,13 +480,19 @@ function update_guess_count() {
 }
 
 function update_attempt_banner() {
+    console.log('banner attempt')
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
+    console.log(puzzle_attempt)
     if (puzzle_attempt > 1) {
         
         document.getElementById('rewardless_attempt_banner').classList.add('slide_down')
         document.getElementById('gameBox_wrapper').classList.add('slide_down')
         document.getElementById('gameBox').classList.add('slide_down')
-    } 
+    }  else {
+        document.getElementById('rewardless_attempt_banner').classList.remove('slide_down')
+        document.getElementById('gameBox_wrapper').classList.remove('slide_down')
+        document.getElementById('gameBox').classList.remove('slide_down')
+    }
     
 }
 
@@ -1059,7 +1066,7 @@ function showPointsPopup(data) {
 
 
     // TODO modal overlay
-    var base_points = data.total_points_earned - data.total_bonus_earned
+    var base_points = data.puzzle_points - data.total_bonus
 
     const congrat_title = document.getElementById("reward_title") // TODO: auto change title
 
@@ -1075,7 +1082,7 @@ function showPointsPopup(data) {
     }
     
     if (data.early_bonus > 0) {
-        const early_bonus = document.getElementById("guess_bonus") // div
+        const early_bonus = document.getElementById("early_bonus") // div
 
         const bonus_medal = create_medal(data.early_bonus) // 1 = gold, etc.
         early_bonus.appendChild(bonus_medal) // insert medal into div
@@ -1106,6 +1113,10 @@ function showPointsPopup(data) {
 }
 
 const process_puzzle_complete = (data) => {
+    if (user_states[getDiff()].puzzle_attempt > 1) { // puzzle hasn't earned any new points. nothing to display
+        return
+    }
+
     user.points = data['total_points']
     
     displayLogin() //reresh total user points
