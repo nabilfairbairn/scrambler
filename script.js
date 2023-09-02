@@ -1260,6 +1260,12 @@ function create_puzzle() {
 }
 
 window.onload = function() {
+    // send load info and IP to db
+    fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => fetchPostWrapper('/visit', {ip: data.ip}, null));
+
+
     const allTooltips = document.getElementsByClassName('help-tip');
     for (let i = 0; i < allTooltips.length; i++) {
         var tooltip = allTooltips[i]
