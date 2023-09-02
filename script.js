@@ -115,7 +115,7 @@ function set_global_style_variables(words) {
     r.style.setProperty('--letterBoxMargin', `min(${word_buffer}vw, ${word_buffer_px}cm)` )
 }
 
-function switchDifficulty(e) {
+async function switchDifficulty(e) {
     const source_toggle = e.target
     const new_diff = source_toggle.value
 
@@ -134,13 +134,15 @@ function switchDifficulty(e) {
 
     // clear old puzzle
     document.getElementById('rowHolder').innerHTML = ''    
+    document.getElementById('rowHolder').classList.remove('finished')
+    document.getElementById('answerBtn').classList.remove('finished')
 
     // display current puzzle
     create_puzzle()
 
     // if first time displaying hard, startPuzzle
     if (new_diff == 'hard' && !opened_hard_puzzle) {
-        startPuzzle()
+        await startPuzzle()
         opened_hard_puzzle = true
     }
     // refresh user state, load in new guess
@@ -166,6 +168,8 @@ function saveCurrentInput() {
       } else {
         complete_words.push('')
       }
+      
+      valid_depths.push(validity_status == 1 ? true : false)
     }
     user_states[getDiff()].last_input = complete_words
 }
@@ -192,23 +196,14 @@ function replaceOffscreenTooltip(e) {
     const tooltipTextRightX = tooltipTextRect.x + tooltipTextRect.width
     const tooltipRightX = tooltipRect.x + tooltipRect.width
 
-    console.log('')
-    console.log(`Tooltip width: ${tooltipTextRect.width}`)
-    console.log(`Tooltip x: ${tooltipTextRect.x}`)
-    console.log(`tooltip right x: ${tooltipTextRightX}`)
-    console.log(`Window width: ${windowWidth}`)
-    console.log(`client Width: ${clientWidth}`)
-
 
     if (tooltipTextRect.x < 0) { // Tooltips leftmost point is off screen to the left
-        console.log('offscren left')
         tooltipText.classList.add("placeLeft")
         //tooltipText.style.left = '2';
         //tooltipText.style.right = 'auto';
         //tooltipText.style.transform = `translateX(${-tooltipRect.x + screenPadding}px)`;
     } else if (tooltipTextRightX > windowWidth) {
         tooltipText.classList.add("placeRight")
-        console.log('offscreen right')
         //tooltipText.style.left = 'auto';
         //tooltipText.style.right = '2';
         //  tooltipText.style.transform = `translateX(${(window.outerWidth - tooltipRightX) - screenPadding}px)`;
@@ -388,9 +383,6 @@ function loadAllGuesses() {
         }
     }
 
-    console.log(params)
-    console.log(JSON.stringify(params))
-
     fetchPostWrapper('/guesses/multiple', params ,processAllGuesses) // load guesses. send data to process
 }
 
@@ -466,8 +458,7 @@ function replace_user_state(all_guess_data) {
     // manage possibility of no guess
 
     Object.entries(all_guess_data).forEach(([diff, guess_data]) => {
-        
-        if (guess_data) { // if no guess, pass
+        if (Object.keys(guess_data).length > 0) { // if no guess, pass
             user_states[diff]['guesses_made'] = guess_data['guess_number']
             user_states[diff]['last_guess'] = guess_data['words']
         }
@@ -480,9 +471,7 @@ function update_guess_count() {
 }
 
 function update_attempt_banner() {
-    console.log('banner attempt')
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
-    console.log(puzzle_attempt)
     if (puzzle_attempt > 1) {
         
         document.getElementById('rewardless_attempt_banner').classList.add('slide_down')
@@ -501,7 +490,12 @@ function refreshUserInputs() {
     
     update_guess_count() 
 
-    // fill inputs with last input
+    // if no guess exists, don't change any styling
+    if (user_states[getDiff()].last_guess.length == 0) {
+        return
+    }
+
+    // fill inputs with last input    
     fill_puzzle_with_guess(user_states[getDiff()].last_guess)
     
     // update input styling
@@ -1106,7 +1100,7 @@ function showPointsPopup(data) {
 
     }
 
-    const total_points = data.base_points + data.early_points + data.guess_points + data.fast_points
+    const total_points = base_points + data.early_points + data.guess_points + data.fast_points
     document.getElementById("reward_total_points").innerText = `= ${total_points} Points!`
     // Display the popup
     document.getElementById('puzzle_reward').classList.add('show')
@@ -1184,7 +1178,8 @@ function process_guess_styling(real_guess) {
 
     // If all words are valid and correct
     if (!valid_depths.some(x => x === false)) {
-        document.getElementById('rowHolder').classList.add('finished')
+        document.getElementById('rowHolder').classList.add('finished') // removed on switch
+        document.getElementById('answerBtn').classList.add('finished')
 
         // correct guess shouldn't ever be received from API, but adding check just in case
         if (real_guess) { // push complete puzzle to API
@@ -1281,8 +1276,6 @@ window.onload = function() {
         radio.addEventListener("click", switchDifficulty)
     }
 
-  document.getElementById('guesses_made').innerText = guesses_made
-
   const next_game = document.getElementById('next_game')
 
   function ShowTime() {
@@ -1362,8 +1355,6 @@ window.onload = function() {
 
     modal_to_close.classList.remove('show')
 
-
-    console.log('Closed rewards')
   }
 
   openModalButtons.onclick = openModal 

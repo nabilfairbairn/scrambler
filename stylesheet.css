@@ -225,7 +225,7 @@ input {
   align-items:center;
   justify-content: center;
   position: relative;
-  z-index: 20;
+  
   
 }
 
@@ -256,6 +256,10 @@ input {
   color: #FFF;
   font-size: 2rem;
   line-height: 2rem;
+  margin-block: 0;
+  z-index: 20;
+  pointer-events: none;
+
 }
 .tooltipText.placeLeft {
   left: -8rem;
@@ -266,14 +270,15 @@ input {
   right: -8rem;
 }
 
-.help-tip p:after{ /* Prevents the tooltip from being hidden */
+/*
+.help-tip p:after{ 
   width:100%;
   height:40px;
   content:'';
   position: absolute;
   top:-40px;
   left:0;
-}
+} */
 
 /* CSS animation */
 
@@ -834,6 +839,10 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
 }
 .button.answerButton:active {
   background-color: #7a0404;
+}
+#answerBtn.finished {
+  background-color: grey;
+  pointer-events: none;
 }
 .guessResponse {
   width: 80vw;
