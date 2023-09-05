@@ -48,13 +48,15 @@ let user_states = {
         'guesses_made': 0,
         'puzzle_attempt': 1,
         'last_input': [], // last guess has styling provided
-        'last_guess': []  // on change, last input should not be styled
+        'last_guess': [],  // on change, last input should not be styled
+        'word_styling': {}
     },
     'hard': {
         'guesses_made': 0,
         'puzzle_attempt': 1,
         'last_input': [],
-        'last_guess': []
+        'last_guess': [],
+        'word_styling': {}
     }
 }
 
@@ -127,7 +129,7 @@ async function switchDifficulty(e) {
     // On save input, need to isolate last guess (with styling) and preceding input
     // on reload, only put styling on last guess
 
-    // save current Input
+    // save current Input, including word styling
     saveCurrentInput()
 
     // replace visible puzzle
@@ -142,15 +144,18 @@ async function switchDifficulty(e) {
     create_puzzle()
 
     // if first time displaying hard, startPuzzle
+
+    // refresh user state, load in new guess
+    refreshUserInputs() // loads in last input and existing styling
+
     if (new_diff == 'hard' && !opened_hard_puzzle) {
         await startPuzzle()
         opened_hard_puzzle = true
+
+        // first open of Hard puzzle. Existing input in user_states is from last_guess (if exists)
+        // should be styled
+        process_guess_styling(false)
     }
-
-    // refresh user state, load in new guess
-    refreshUserInputs() // loads in last verified guess, add styling
-
-    fill_puzzle_with_guess(user_states[getDiff()].last_input) // loads in last input -> not styled
 }
 
 
@@ -172,6 +177,9 @@ function saveCurrentInput() {
       }
       
       valid_depths.push(validity_status == 1 ? true : false)
+
+      // save classes on       
+      user_states[getDiff()].word_styling[w] = [...guess_word.classList]
     }
     user_states[getDiff()].last_input = complete_words
 }
@@ -392,6 +400,8 @@ function processAllGuesses(all_guess_data) {
     replace_user_state(all_guess_data) // insert guess data for both easy and hard. manages possibility of no guess
         
     refreshUserInputs()
+
+    process_guess_styling(false)
 }
 
 function loadPuzzleAndGuesses() {
@@ -463,6 +473,7 @@ function replace_user_state(all_guess_data) {
         if (Object.keys(guess_data).length > 0) { // if no guess, pass
             user_states[diff]['guesses_made'] = guess_data['guess_number']
             user_states[diff]['last_guess'] = guess_data['words']
+            user_states[diff]['last_input'] = guess_data['words']
         }
     })
     
@@ -492,16 +503,27 @@ function refreshUserInputs() {
     
     update_guess_count() 
 
-    // if no guess exists, don't change any styling
-    if (user_states[getDiff()].last_guess.length == 0) {
-        return
-    }
-
     // fill inputs with last input    
-    fill_puzzle_with_guess(user_states[getDiff()].last_guess)
+    fill_puzzle_with_guess(user_states[getDiff()].last_input)
     
     // update input styling
-    process_guess_styling(false) // Don't send guess to API
+    reload_word_styling() // Don't send guess to API
+}
+
+function reload_word_styling() {
+    // styling saved in user_states
+    let word_styling = user_states[getDiff()].word_styling
+
+    
+    console.log(word_styling)
+    
+    for (let i = 0; i < Object.keys(word_styling).length; i++) {
+        let wordrow = get_nth_word(i)
+        console.log(wordrow)
+        console.log(word_styling[i].join(' '))
+        wordrow.classList = word_styling[i].join(' ')
+        console.log(wordrow.classList)
+    }
 }
 
 function fill_puzzle_with_guess(guess_words) {
@@ -1199,12 +1221,15 @@ function process_guess_styling(real_guess) {
         
     }
 
-    var right_wrong = (puzzle_done(valid_depths)) ? "That's right!" : "Try again.";
+    if (real_guess) {
+        var right_wrong = (puzzle_done(valid_depths)) ? "That's right!" : "Try again.";
 
 
-    var hiding = document.getElementById("button_response")
-    hiding.innerText = rule_break_notice ? rule_break_notice : right_wrong;
-    hiding.style.visibility = "visible";
+        var hiding = document.getElementById("button_response")
+        hiding.innerText = rule_break_notice ? rule_break_notice : right_wrong;
+        hiding.style.visibility = "visible";
+    }
+    
 }
 
 function style_letterBox(element) {
@@ -1295,7 +1320,18 @@ function create_puzzle() {
   determine_all_changed_letters()
 }
 
+function refreshLastGuess(e) {
+    // reload last guess
+    fill_puzzle_with_guess(user_states[getDiff()].last_guess)
+
+    // restyle puzzle worrows
+    process_guess_styling(false)
+} 
+
 window.onload = function() {
+    const refresh_guess_button = document.getElementById('refresh_guess')
+    refresh_guess_button.addEventListener('click', refreshLastGuess)
+
     // send load info and IP to db
     fetch('https://api.ipify.org?format=json')
     .then(response => response.json())

@@ -61,6 +61,7 @@ body {
   align-items: center;
   justify-self: center;
   margin: auto;
+  margin-bottom: min(50vw, 600px);
 }
 .gameBox {
   position: relative;
@@ -93,7 +94,8 @@ input {
 .switch-field {
   display: flex;
   overflow: hidden;
-  margin-bottom: 3rem;
+  position: relative;
+  left: 10%
 }
 
 .switch-field input {
@@ -129,11 +131,29 @@ input {
 }
 
 .switch-field label:first-of-type {
-  border-radius: 40% 0% 0% 40% ;
+  border-radius: 5rem 0 0 5rem ;
 }
 
 .switch-field label:last-of-type {
-  border-radius: 0% 40% 40% 0%;
+  border-radius: 0 5rem 5rem 0;
+}
+
+.between {
+  justify-content: space-around !important;
+  align-items: center;
+  align-content: center;
+}
+#refresh_guess {
+  display: flex;
+  align-self: center;
+  justify-self: center;
+  padding: 1rem 2rem;
+  font-size: larger;
+  border-radius: 5rem;
+  position: relative;
+  right: 10%;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #rewardless_attempt_banner {
@@ -771,9 +791,6 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
     width: min(22vw, 102px);
     
   }
-.keyboardbuffer {
-    height: min(50vw, 600px);
-}
 
 
 .modal {
