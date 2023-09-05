@@ -1219,11 +1219,14 @@ function resetRowInput(e) {
     const wordrow = document.getElementById(`${wordrow_id_prefix}${target.getAttribute('for')}`)
     const letter_inputs = wordrow.getElementsByClassName('letterInput')
 
+    // remove letter hints
     for (let i = 0; i < letter_inputs.length; i++) {
         let letterBox = letter_inputs[i]
         letterBox.innerText = ''
         determine_local_changed_letters(letterBox)
     }
+    // remove correct/wrong styling
+    process_guess_styling(false)
     
 }
 
