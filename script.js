@@ -118,6 +118,7 @@ function set_global_style_variables(words) {
 async function switchDifficulty(e) {
     const source_toggle = e.target
     const new_diff = source_toggle.value
+    
 
     if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
         return
@@ -145,6 +146,7 @@ async function switchDifficulty(e) {
         await startPuzzle()
         opened_hard_puzzle = true
     }
+
     // refresh user state, load in new guess
     refreshUserInputs() // loads in last verified guess, add styling
 
@@ -508,12 +510,15 @@ function fill_puzzle_with_guess(guess_words) {
 
     guess_words.forEach((guess_word) => { // forEach works with Arrays
         let wordrow = get_nth_word(i)
-        let inputlist = get_wordrow_letter_boxes(wordrow)
+        let inputlist = wordrow.getElementsByClassName('letterInput')
         let j = 0
-        for (let j = 0; j < guess_word.length; j++) {
-            let guess_letter = guess_word[j] // strings need to be manually iterated
+        for (let j = 0; j < inputlist.length && guess_word.length > 0; j++) { // strings need to be manually iterated
             let letter_box = inputlist[j]
+            let letter_order = letter_box.getAttribute('order')
+            let guess_letter = guess_word[parseInt(letter_order)] // iterate through letterInput only. find corresponding user_input
+
             letter_box.innerText = guess_letter.toUpperCase()
+            determine_local_changed_letters(letter_box) // styling for letter Above/Below
         }
         i++
     })
@@ -1209,6 +1214,19 @@ function style_letterBox(element) {
     element.style.margin = letterBoxMargin
 }
 
+function resetRowInput(e) {
+    const target = e.target
+    const wordrow = document.getElementById(`${wordrow_id_prefix}${target.getAttribute('for')}`)
+    const letter_inputs = wordrow.getElementsByClassName('letterInput')
+
+    for (let i = 0; i < letter_inputs.length; i++) {
+        let letterBox = letter_inputs[i]
+        letterBox.innerText = ''
+        determine_local_changed_letters(letterBox)
+    }
+    
+}
+
 function create_puzzle() {
   set_global_style_variables(puzzle['words'])
 
@@ -1253,6 +1271,21 @@ function create_puzzle() {
         letter_holder.className = "letterBox"
         letter_holder.innerText = letter
         row.appendChild(letter_holder)
+      }
+      // Add reset button to end of each row
+      if (j == rowWord.length - 1) {
+        let reset_button = document.createElement("img")
+        reset_button.classList.add('svg')
+        reset_button.setAttribute('for', i) // Depth
+        reset_button.setAttribute('src', 'reset.svg')
+        reset_button.addEventListener("click", resetRowInput)
+
+        let reset_holder = document.createElement("button")
+        reset_holder.appendChild(reset_button)
+        reset_holder.classList.add('button', 'square', 'minimal', 'reset')
+        reset_holder.style.marginRight = letterBoxMargin
+
+        row.appendChild(reset_holder)
       }
     }
   }
