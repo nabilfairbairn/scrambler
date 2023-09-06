@@ -1,7 +1,7 @@
 // import { setgid } from "process";
 import {puzzles} from "./puzzles.js";
 
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -337,9 +337,10 @@ function fetchLogin(event) {
 
 // if user's last login was on a previous version, highlight updates
 function highlightVersionButton(httpResponse) {
-    const last_version_seen = httpResponse.last_version
+    const last_version_seen = httpResponse[0].version
     user.last_version = last_version_seen
     const version_button = document.getElementById('version_update_button')
+
     if (last_version_seen != version_button.innerText) {
         version_button.style.background = 'var(--wrong-color)'
     }
@@ -362,7 +363,8 @@ function fetchPostWrapper(url_endpoint, params, response_function) {
           }
             const contentType = response.headers.get('Content-Type');
             if (contentType && contentType.includes('application/json')) {
-                return response.json();
+                // .json() from queries.js can't return results.rows[0]. gets unexpected end of json
+                return response.json(); 
             } 
             return null
         })
@@ -1385,8 +1387,8 @@ function hideVersionUpdates(e) {
 
 window.onload = function() {
     const version_update_button = document.getElementById('version_update_button')
-    version_update_button.addEventListener('pointerenter', showVersionUpdates)
-    version_update_button.addEventListener('pointerleave', hideVersionUpdates)
+    version_update_button.addEventListener('focus', showVersionUpdates)
+    version_update_button.addEventListener('blur', hideVersionUpdates)
 
     const refresh_guess_button = document.getElementById('refresh_guess')
     refresh_guess_button.addEventListener('click', refreshLastGuess)

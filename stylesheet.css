@@ -787,8 +787,7 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
     background-color:rgba(80, 80, 80);
     z-index: 11;
   }
-  @media screen and ((max-device-pixel-ratio: 2) or (-webkit-max-device-pixel-ratio: 2) 
-  or (-moz-max-device-pixel-ratio: 2) ){
+  @media (hover: hover) and (pointer: fine){
     #keyboard-cont {
         display: none;
     }
