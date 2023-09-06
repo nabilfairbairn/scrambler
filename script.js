@@ -1,7 +1,7 @@
 // import { setgid } from "process";
 import {puzzles} from "./puzzles.js";
 
-const api_url_base = 'https://scrambler-server.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -1116,6 +1116,18 @@ function showPointsPopup(data) {
         // creates SVG based on medal number
         const bonus_medal = document.createElement("img")
         bonus_medal.classList.add('bonus_icon')
+
+        switch(medal) {
+            case 1:
+                bonus_medal.src = 'gold-medal.svg'
+                break;
+            case 2:
+                bonus_medal.src = 'silver-medal.svg'
+                return;
+            default: // 3
+                bonus_medal.src = 'bronze-medal.svg'
+                break
+        }
         bonus_medal.src = medal == 1 ? 'gold-medal.svg' : 'silver-medal.svg'
         return bonus_medal
     }
@@ -1123,7 +1135,7 @@ function showPointsPopup(data) {
     if (data.early_bonus > 0) {
         const early_bonus = document.getElementById("early_bonus") // div
 
-        const bonus_medal = create_medal(data.early_bonus) // 1 = gold, etc.
+        const bonus_medal = create_medal(parseInt(data.early_bonus)) // 1 = gold, etc.. Parse to INT for switch case
         early_bonus.appendChild(bonus_medal) // insert medal into div
         document.getElementById('early_points').innerText = `+${data.early_points} Points`
 
@@ -1149,6 +1161,57 @@ function showPointsPopup(data) {
     document.getElementById("reward_total_points").innerText = `= ${total_points} Points!`
     // Display the popup
     document.getElementById('puzzle_reward').classList.add('show')
+
+    // show leaderboard loader
+    document.getElementById("reward_leaderboard_loader").style.display = 'block';
+    // load Leaderboard
+    const params = {
+        puzzle_id: puzzle.id
+    }
+    fetchPostWrapper('/leaderboard/complete', params, loadInRewardLeaderboard) // hides loader
+}
+
+function loadInRewardLeaderboard(data) {
+
+    const table_body = document.getElementById("daily_leaderboard_tbody")
+    for (let i = 0; i < data.length; i++) {
+        let row = data[i]
+        let rank = i 
+        let username = row['username']
+        let points = row['total_points']
+        let first_rank = row['early_bonus']
+        let fast_rank = row['fast_bonus']
+        let guess_rank = row['guess_bonus']
+        
+        let tr = document.createElement('tr')
+        let th = document.createElement('th').setAttribute('scope', 'row')
+        th.innerText = rank
+        tr.appendChild(th)
+
+        let nameTD = document.createElement('td')
+        nameTD.innerText = username
+        tr.appendChild(nameTD)
+
+        let pointsTD = document.createElement('td')
+        pointsTD.innerText = points
+        tr.appendChild(pointsTD)
+
+        let bonuses = [first_rank, fast_rank, guess_rank]
+
+        // one by one, create medals and append to tr
+        for (let j = 0; j < bonuses.length; j++) {
+            let bonusTD = document.createElement('td')
+            if (bonuses[j]) {
+                let rank_svg = create_medal(bonueses[j])
+                rank_svg.classList.add('small')
+                bonusTD.appendChild(rank_svg)
+            }
+            tr.appendChild(bonusTD)
+        }
+
+        table_body.appendChild(tr)
+    }
+    document.getElementById("reward_leaderboard_loader").style.display = 'none';
 }
 
 const process_puzzle_complete = (data) => {
