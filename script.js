@@ -17,7 +17,8 @@ window.onbeforeunload = function(){
 let user = {
     'id': null,
     'username': null,
-    'points': null
+    'points': null,
+    'last_version': ''
 }
 
 // all_daily_puzzles: easy/hard
@@ -209,14 +210,8 @@ function replaceOffscreenTooltip(e) {
 
     if (tooltipTextRect.x < 0) { // Tooltips leftmost point is off screen to the left
         tooltipText.classList.add("placeLeft")
-        //tooltipText.style.left = '2';
-        //tooltipText.style.right = 'auto';
-        //tooltipText.style.transform = `translateX(${-tooltipRect.x + screenPadding}px)`;
     } else if (tooltipTextRightX > windowWidth) {
         tooltipText.classList.add("placeRight")
-        //tooltipText.style.left = 'auto';
-        //tooltipText.style.right = '2';
-        //  tooltipText.style.transform = `translateX(${(window.outerWidth - tooltipRightX) - screenPadding}px)`;
       }
 
 }
@@ -321,6 +316,8 @@ function fetchLogin(event) {
             
         } else {
             setUser(http.response)
+            const params = {user_id: user.id}
+            fetchPostWrapper('/version/get', params, highlightVersionButton)
             displayLogin()
 
             // Login successful
@@ -335,6 +332,16 @@ function fetchLogin(event) {
             
         }
         
+    }
+}
+
+// if user's last login was on a previous version, highlight updates
+function highlightVersionButton(httpResponse) {
+    const last_version_seen = httpResponse.last_version
+    user.last_version = last_version_seen
+    const version_button = document.getElementById('version_update_button')
+    if (last_version_seen != version_button.innerText) {
+        version_button.style.background = 'var(--wrong-color)'
     }
 }
 
@@ -515,14 +522,11 @@ function reload_word_styling() {
     let word_styling = user_states[getDiff()].word_styling
 
     
-    console.log(word_styling)
-    
+    // classList is a space separated string
+    // word_styling is an array of classes
     for (let i = 0; i < Object.keys(word_styling).length; i++) {
         let wordrow = get_nth_word(i)
-        console.log(wordrow)
-        console.log(word_styling[i].join(' '))
         wordrow.classList = word_styling[i].join(' ')
-        console.log(wordrow.classList)
     }
 }
 
@@ -711,26 +715,27 @@ function create_count_map(str) {
     return ans;   
 }
 
-//function return true or false if word1 and word2 have only 1 letter difference
+// function return true or false if word1 and word2 have only 1 letter difference
 function one_letter_diff(word1, word2) {
-    let w1_dict = count_letters(word1);
+    let w1_dict = count_letters(word1); // dictionary with (letter: count) pairs
     let w2_dict = count_letters(word2);
-    let net_letters = new Map();
-    for (const [key, value] of w1_dict) {
-        if (w2_dict.has(key)) {
-            let difference = w2_dict.get(key) - value
-            net_letters.set(key, difference)
+    let net_letters = new Map(); // dictionary with how many letters added or subtracted to get to 2nd word
+
+    for (const [key, value] of w1_dict) { // for each letter of the first word
+        if (w2_dict.has(key)) { // if letter in 2nd
+            let difference = w2_dict.get(key) - value 
+            net_letters.set(key, difference) // net_letters is w2 - w1 count. BONNY -> BONEY = N: -1
         } else {
-            net_letters.set(key, -value)
+            net_letters.set(key, -value) // If 2nd word doesn't have letter, count of letter in word 1 is removed.
         }
     }
-    for (const [key, value] of w2_dict) {
-        if (!(net_letters.has(key))) {
-            net_letters.set(key, value)
+    for (const [key, value] of w2_dict) { // for letters in word2
+        if (!(net_letters.has(key))) { // that aren't in word1
+            net_letters.set(key, value) // net increase of however many time it appears in word 2
         }
     }
-    let plus_one = 0
-    let minus_one = 0
+    let plus_one = 0 // how many times is a letter added
+    let minus_one = 0 // how many times is a letter removed
     for (const [key, value] of net_letters) {
         if (value > 0) {
             plus_one += value
@@ -739,7 +744,14 @@ function one_letter_diff(word1, word2) {
             minus_one += value
         }
     }
-    return (plus_one == 1 && minus_one == -1)
+    // plus_one and minus_one should be symmetrical in equal length word pairs
+    if (plus_one == 1 && minus_one == -1) {
+        return 1
+    }
+    if (plus_one == 0 && minus_one == 0) {
+        return 0
+    }
+    return plus_one
 }
 
 function determine_all_changed_letters() {
@@ -911,7 +923,7 @@ function get_depth(d) {
 function reaches_word(thisword, thisdepth, wuc, wuc_depth) {
     let joined_words = []
     puzzle.answers[thisdepth].forEach((word) => {
-        if (one_letter_diff(thisword, word)) {
+        if (one_letter_diff(thisword, word) == 1) {
             joined_words.push(word)
         }
     })
@@ -995,7 +1007,7 @@ function is_word_valid(guess_word, guess_received, answer_words, valid_depths) {
     // Prev word valid?
     if (valid_depths[depth-1]) {
         // obeys rule
-        if (one_letter_diff(guess_received, get_word(depth-1))) {
+        if (one_letter_diff(guess_received, get_word(depth-1)) == 1) {
             return 1
         }
     }
@@ -1076,10 +1088,14 @@ function process_guess() {
         focused_element.blur()
     }
 
-    process_guess_styling(true) // Process real guess -> send guess to API
+    // function returns bool - real_guess. If new guess same as last, don't increment guesses
+    const new_guess_bool = process_guess_styling(true) // Process real guess -> send guess to API
 
-    user_states[getDiff()].guesses_made++;
-    update_guess_count()
+    if (new_guess_bool) {
+        user_states[getDiff()].guesses_made++;
+        update_guess_count()
+    }
+    
   }
 
 function showPointsPopup(data) {
@@ -1176,13 +1192,26 @@ function process_guess_styling(real_guess) {
       if (!one_letter_diff_shown && w < puzzle.words.length -1) {
         const [next_word, next_received, next_answers] = get_depth(w+1)
         if (word_complete(guess_received, answer_words) && word_complete(next_received, next_answers)) {
-            if (!one_letter_diff(guess_received, next_received)) {
+            const n_letters_changed = one_letter_diff(guess_received, next_received)
+            if (n_letters_changed != 1) {
                 one_letter_diff_shown = true
                 rule_break_notice = `Careful! You changed more than one letter between ${guess_received} and ${next_received}.`
+
+                // If words contain same letters, change warning
+                if (n_letters_changed == 0) {
+                    rule_break_notice = `Whoops! You didn't change any letters between ${guess_received} and ${next_received}`
+                }
+
             }
         }
       }
       
+    }
+
+    // If guess is same as last one, don't send to API
+    // JSON.stringfy because can't compare arrays natively
+    if (JSON.stringify(complete_words) == JSON.stringify(user_states[getDiff()].last_guess)) {
+        real_guess = false
     }
 
     if (real_guess) {
@@ -1221,6 +1250,7 @@ function process_guess_styling(real_guess) {
         
     }
 
+
     if (real_guess) {
         var right_wrong = (puzzle_done(valid_depths)) ? "That's right!" : "Try again.";
 
@@ -1229,6 +1259,8 @@ function process_guess_styling(real_guess) {
         hiding.innerText = rule_break_notice ? rule_break_notice : right_wrong;
         hiding.style.visibility = "visible";
     }
+    
+    return real_guess
     
 }
 
@@ -1328,7 +1360,34 @@ function refreshLastGuess(e) {
     process_guess_styling(false)
 } 
 
+function showVersionUpdates(e) {
+    document.getElementById('version_update_text').style.visibility = 'visible'
+
+    // log version seen if new
+    const version = e.target.innerText
+
+    if (version != user.last_version) {
+        const params = {
+            user_id: user.id,
+            last_version: version
+        }
+        e.target.style.background = 'var(--almost-white)'
+        fetchPostWrapper('/version/push', params, null)
+    }
+    
+    
+
+}
+
+function hideVersionUpdates(e) {
+    document.getElementById('version_update_text').style.visibility = 'collapse'
+}
+
 window.onload = function() {
+    const version_update_button = document.getElementById('version_update_button')
+    version_update_button.addEventListener('pointerenter', showVersionUpdates)
+    version_update_button.addEventListener('pointerleave', hideVersionUpdates)
+
     const refresh_guess_button = document.getElementById('refresh_guess')
     refresh_guess_button.addEventListener('click', refreshLastGuess)
 

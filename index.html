@@ -20,7 +20,28 @@
           keyboard
           </span>
           </button>
-      <h1>SCRAMBLER</h1>
+      <div id="scrambler_title"><h1>SCRAMBLER<button id="version_update_button">V1.0.2</button></h1>
+        <div id="version_update_text">
+          <p><u>V1.0.2</u></p>
+
+          <ul>
+            <li>Added: No vulgar username reminder</li>
+            <li>Added: This box!</li>
+            <li>Added: Reminder if no letters changed between words</li>
+            <li>Fixed: Guessing same words doesn&#39;t increase guesses</li>
+            <li>Fixed: Colouring for wrong/right words now persists when changing difficulty</li>
+          </ul>
+          
+          <p><u>V1.0.1</u></p>
+          
+          <ul>
+            <li>Added: Reset word guess&nbsp;</li>
+            <li>Added: Refresh previous guess</li>
+            <li>Fixed: Previous guesses were persisting across puzzles</li>
+            <li>Fixed: Increased spacing so keyboard doesn&#39;t cover game</li>
+          </ul>
+        </div>
+      </div>
       <button id="modalbutton" name="openmodalbutton" type="button" class='button square'><span class="material-icons-round">
           question_mark
           </span></button>
@@ -97,6 +118,7 @@
           <input type="submit" name="login" value="Login" class="input_button">
           <input type="submit" name="create" value="Create Profile" class="input_button">
         </div>
+        <span><h3>As a friendly reminder, usernames need to be free of obscene language. Using a vulgar username might result in your profile being deleted.</h3></span>
       </form>
       <div id="login_loader" class="loader"></div>
     </div>
