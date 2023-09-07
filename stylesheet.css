@@ -235,8 +235,8 @@ input {
   position: fixed;
   height: max-content;
   width: calc(var(--letterBoxHeight) * 6.5);
-  top: 20vh; /* TODO: 100vh */
-  display: flex; /* TODO: none */
+  top: 1000vh; 
+  display: none; 
   transition: top 1s ease-out;
   box-shadow: 1rem 1rem 0.5rem darkslategray;
 }
