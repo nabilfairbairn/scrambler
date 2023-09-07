@@ -381,10 +381,14 @@ function fetchPostWrapper(url_endpoint, params, response_function) {
               if (errorData.err) {
                 alert(errorData.err);
               } else {
+                alert(`Bad bad bad. Send this to Nabil please: 
+${errorData}`)
                 console.error('An error occurred:', errorData);
               }
             });
           } else {
+            alert(`Bad bad bad. Send this to Nabil please: 
+${errorResponse}`)
             throw(errorResponse)
           }
         })
@@ -458,10 +462,14 @@ async function startPuzzle() {
             if (errorData.err) {
               alert(errorData.err);
             } else {
+                alert(`Bad bad bad. Send this to Nabil please: 
+${errorData}`)
               console.error('An error occurred:', errorData);
             }
           });
         } else {
+            alert(`Bad bad bad. Send this to Nabil please: 
+${errorResponse}`)
           console.error('A server error occurred:', errorResponse.status);
         }
       })
@@ -1100,6 +1108,26 @@ function process_guess() {
     
   }
 
+function create_medal(medal) {
+    // creates SVG based on medal number
+    const bonus_medal = document.createElement("img")
+    bonus_medal.classList.add('bonus_icon')
+
+    switch(medal) {
+        case 1:
+            bonus_medal.src = 'gold-medal.svg'
+            break;
+        case 2:
+            bonus_medal.src = 'silver-medal.svg'
+            return;
+        default: // 3
+            bonus_medal.src = 'bronze-medal.svg'
+            break
+    }
+    bonus_medal.src = medal == 1 ? 'gold-medal.svg' : 'silver-medal.svg'
+    return bonus_medal
+}
+
 function showPointsPopup(data) {
     // Takes points summary from postgres, fills points popup to display to player
 
@@ -1111,26 +1139,6 @@ function showPointsPopup(data) {
 
     const base_points_span = document.getElementById("reward_base_points")
     base_points_span.innerText = `${base_points} Points`
-
-    function create_medal(medal) {
-        // creates SVG based on medal number
-        const bonus_medal = document.createElement("img")
-        bonus_medal.classList.add('bonus_icon')
-
-        switch(medal) {
-            case 1:
-                bonus_medal.src = 'gold-medal.svg'
-                break;
-            case 2:
-                bonus_medal.src = 'silver-medal.svg'
-                return;
-            default: // 3
-                bonus_medal.src = 'bronze-medal.svg'
-                break
-        }
-        bonus_medal.src = medal == 1 ? 'gold-medal.svg' : 'silver-medal.svg'
-        return bonus_medal
-    }
     
     if (data.early_bonus > 0) {
         const early_bonus = document.getElementById("early_bonus") // div
@@ -1176,7 +1184,7 @@ function loadInRewardLeaderboard(data) {
     const table_body = document.getElementById("daily_leaderboard_tbody")
     for (let i = 0; i < data.length; i++) {
         let row = data[i]
-        let rank = i 
+        let rank = i + 1 // 0 indexed
         let username = row['username']
         let points = row['total_points']
         let first_rank = row['early_bonus']
@@ -1184,7 +1192,8 @@ function loadInRewardLeaderboard(data) {
         let guess_rank = row['guess_bonus']
         
         let tr = document.createElement('tr')
-        let th = document.createElement('th').setAttribute('scope', 'row')
+        let th = document.createElement('th')
+        th.setAttribute('scope', 'row')
         th.innerText = rank
         tr.appendChild(th)
 
@@ -1202,7 +1211,7 @@ function loadInRewardLeaderboard(data) {
         for (let j = 0; j < bonuses.length; j++) {
             let bonusTD = document.createElement('td')
             if (bonuses[j]) {
-                let rank_svg = create_medal(bonueses[j])
+                let rank_svg = create_medal(bonuses[j])
                 rank_svg.classList.add('small')
                 bonusTD.appendChild(rank_svg)
             }
@@ -1292,6 +1301,8 @@ function process_guess_styling(real_guess) {
             fetchPostWrapper('/guesses', params, null)
             user_states[getDiff()].last_guess = complete_words // Update last_guess
         } catch (error) {
+            alert(`Bad bad bad. Send this to Nabil please: 
+${error}`)
             throw error
         } 
 

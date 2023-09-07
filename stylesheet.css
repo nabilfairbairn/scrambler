@@ -99,7 +99,7 @@ body {
   align-items: center;
   justify-self: center;
   margin: auto;
-  margin-bottom: min(50vw, 600px);
+  margin-bottom: 100vw;
 }
 .gameBox {
   position: relative;
