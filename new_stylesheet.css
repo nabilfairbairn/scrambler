@@ -235,24 +235,27 @@ input {
   -webkit-tap-highlight-color: transparent;
 }
 
-#rewardless_attempt_banner {
+#message_banner {
+    display: flex;
+    align-items: center;
+    font-size: 0.8em;
   position: relative;
-  width: 100%;
-  height: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*3);
+  width: 110%;
+  height: 3.5em;
   background-color: darkorange;
   text-align: center;
-  border-top-left-radius: 1vw;
-  border-top-right-radius: 1vw;
   
   box-sizing: border-box;
-  border: solid darkorange 1.5vw;
-  top: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*-3);
-  margin-bottom: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*(-3));
+  padding: 0.5em;
+  top: calc(-3.5em - 1rem) ; /* height - gameBox padding */
+  margin-bottom: -3.5em; /* Leaving padding to push down gamebox-wrapper */
   
   transition: top 1s cubic-bezier(0.17, 0.04, 0.03, 0.94);
+  margin-left: -1rem;
+  margin-right: -1rem;
 }
-#rewardless_attempt_banner.slide_down {
-  top: 0;
+#message_banner.slide_down {
+  top: -1rem; /* Gamebox padding */
 }
 
 #gameBox_wrapper {
@@ -264,18 +267,15 @@ input {
   width: 100%;
   height: 100%;
 
-  
-
   position: relative;
-  top: 0;
-  margin-top: 3vw;
-  margin-bottom: 3vw;
   
   transition: all 1s cubic-bezier(0.17, 0.04, 0.03, 0.94); 
 }
 #gameBox_wrapper.slide_down {
-  top: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*3);
-  margin-bottom: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*3 + 3vw );
+    /* banner originally sits below gamebox padding. banner has been raised the padding 
+    so gamebox wrapper needs to also raise by that much, since 'top' is where banner would have originally sat*/
+    top: calc(3.5em - 1rem); 
+  margin-bottom: calc(3.5em - 1rem);
 }
 
 #puzzle_reward {
@@ -568,6 +568,13 @@ tbody tr:nth-child(even) {
     justify-content: space-between;
 }
 
+.vertical-flex-cont {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%; 
+}
+
 .square {
     aspect-ratio: 1/1;
 }
@@ -719,11 +726,9 @@ tbody tr:nth-child(even) {
 } */
 
 
-.rowHolder {
+#rowHolder {
     font-size: var(--rowHolder-font-size);
-    width: auto;
-    border: 2px dashed rgba(120, 120, 120, 0.4);
-    border-radius: 1vw;
+    border-radius: 1rem;
     height: auto;
     display: flex;
     align-items: stretch;

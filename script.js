@@ -121,7 +121,7 @@ function set_global_style_variables(words) {
     }
 
     r.style.setProperty('--rowHolder-font-size', `${fontsize}rem`)
-    r.style.setProperty('--letterBoxMargin', `0.25em`  )
+    r.style.setProperty('--letterBoxMargin', `0.21em`  )
     r.style.setProperty('--stroke-width', '0.05em')
     // stroke width ratio of font-size
 }
@@ -1388,6 +1388,13 @@ function create_puzzle() {
     
 
     rowHolder.appendChild(row)
+
+    // Add invis button to start of each row
+    let invis_reset_button = createResetButton(i)
+    invis_reset_button.classList.add('invisible')
+    row.appendChild(invis_reset_button)
+
+
     var rowWord = puzzle.words[i]
 
     for (let j = 0; j < rowWord.length; j++) {
@@ -1418,27 +1425,30 @@ function create_puzzle() {
         letter_holder.innerText = letter
         row.appendChild(letter_holder)
       }
-      // Add reset button to end of each row
-      if (j == rowWord.length - 1) {
-        let reset_button = document.createElement("img")
-        reset_button.classList.add('svg')
-        reset_button.setAttribute('for', i) // Depth
-        reset_button.setAttribute('src', 'reset.svg')
-        reset_button.addEventListener("click", resetRowInput)
-
-        let reset_div = document.createElement('div')
-        reset_div.appendChild(reset_button)
-
-        let reset_holder = document.createElement("button")
-
-        reset_holder.appendChild(reset_div)
-        reset_holder.classList.add('button', 'square', 'minimal', 'reset', 'flex-item')
-
-        row.appendChild(reset_holder)
-      }
+      
     }
+    // Add reset button to end of each row
+    let reset_button = createResetButton(i)
+    row.appendChild(reset_button)
   }
   determine_all_changed_letters()
+
+    function createResetButton(i) {
+        let reset_button = document.createElement("img");
+        reset_button.classList.add('svg');
+        reset_button.setAttribute('for', i); // Depth
+        reset_button.setAttribute('src', 'reset.svg');
+        reset_button.addEventListener("click", resetRowInput);
+
+        let reset_div = document.createElement('div');
+        reset_div.appendChild(reset_button);
+
+        let reset_holder = document.createElement("button");
+
+        reset_holder.appendChild(reset_div);
+        reset_holder.classList.add('button', 'square', 'minimal', 'reset', 'flex-item');
+        return reset_holder;
+    }
 }
 
 function refreshLastGuess(e) {
