@@ -8,6 +8,8 @@ const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
+const version = 'V1.0.3'
+
 
 history.scrollRestoration = "manual";
 window.onbeforeunload = function(){
@@ -341,7 +343,7 @@ function highlightVersionButton(httpResponse) {
     user.last_version = last_version_seen
     const version_button = document.getElementById('version_update_button')
 
-    if (last_version_seen != version_button.innerText) {
+    if (last_version_seen != version) {
         version_button.style.background = 'var(--wrong-color)'
     }
 }
@@ -1119,12 +1121,12 @@ function create_medal(medal) {
             break;
         case 2:
             bonus_medal.src = 'silver-medal.svg'
-            return;
+            break;
         default: // 3
             bonus_medal.src = 'bronze-medal.svg'
             break
     }
-    bonus_medal.src = medal == 1 ? 'gold-medal.svg' : 'silver-medal.svg'
+    console.log(bonus_medal)
     return bonus_medal
 }
 
@@ -1182,6 +1184,8 @@ function showPointsPopup(data) {
 function loadInRewardLeaderboard(data) {
 
     const table_body = document.getElementById("daily_leaderboard_tbody")
+    table_body.innerHTML = ''
+
     for (let i = 0; i < data.length; i++) {
         let row = data[i]
         let rank = i + 1 // 0 indexed
@@ -1342,9 +1346,10 @@ ${error}`)
 
 function style_letterBox(element) {
     
-    element.style.width = letterBoxHeight
-    element.style.height = letterBoxHeight
-    element.style.margin = letterBoxMargin
+    //element.style.width = letterBoxHeight
+    //element.style.height = letterBoxHeight
+    // element.style.margin = letterBoxMargin
+    element.style.fontSize = (document.getElementById('containall').style.width / 10).toString + 'px'
 }
 
 function resetRowInput(e) {
@@ -1372,7 +1377,7 @@ function create_puzzle() {
 
   for (let i = 0; i < n_words; i++) {
     var row = document.createElement("div");
-    row.className = "wordRow";
+    row.className = "wordRow horizontal-flex-cont";
     row.id = wordrow_id_prefix + i.toString()
     
 
@@ -1383,8 +1388,7 @@ function create_puzzle() {
       var letter = rowWord[j]
       if (letter === "_") {
         let input = document.createElement("div")
-        input.classList.add("letterInput")
-        input.classList.add("letterBox")
+        input.classList.add("letterInput", 'letterBox', 'flex-item')
         style_letterBox(input)
         input.tabIndex = i*1 + j
         input.onblur = function() {
@@ -1404,7 +1408,7 @@ function create_puzzle() {
       } else {
         var letter_holder = document.createElement("div")
         style_letterBox(letter_holder)
-        letter_holder.className = "letterBox"
+        letter_holder.classList.add("letterBox", 'flex-item')
         letter_holder.innerText = letter
         row.appendChild(letter_holder)
       }
@@ -1416,9 +1420,13 @@ function create_puzzle() {
         reset_button.setAttribute('src', 'reset.svg')
         reset_button.addEventListener("click", resetRowInput)
 
+        let reset_div = document.createElement('div')
+        reset_div.appendChild(reset_button)
+
         let reset_holder = document.createElement("button")
-        reset_holder.appendChild(reset_button)
-        reset_holder.classList.add('button', 'square', 'minimal', 'reset')
+
+        reset_holder.appendChild(reset_div)
+        reset_holder.classList.add('button', 'square', 'minimal', 'reset', 'flex-item')
         reset_holder.style.marginRight = letterBoxMargin
 
         row.appendChild(reset_holder)
@@ -1436,18 +1444,14 @@ function refreshLastGuess(e) {
     process_guess_styling(false)
 } 
 
-function showVersionUpdates(e) {
-    document.getElementById('version_update_text').style.visibility = 'visible'
+function logVersionSeen(e) {
 
     // log version seen if new
-    const version = e.target.innerText
-
     if (version != user.last_version) {
         const params = {
             user_id: user.id,
             last_version: version
         }
-        e.target.style.background = 'var(--almost-white)'
         fetchPostWrapper('/version/push', params, null)
     }
     
@@ -1455,14 +1459,21 @@ function showVersionUpdates(e) {
 
 }
 
-function hideVersionUpdates(e) {
-    document.getElementById('version_update_text').style.visibility = 'collapse'
+
+
+function closeFullscreenModal(modal_element) {
+    modal_element.classList.remove('opened')
 }
 
+
+
 window.onload = function() {
-    const version_update_button = document.getElementById('version_update_button')
-    version_update_button.addEventListener('focus', showVersionUpdates)
-    version_update_button.addEventListener('blur', hideVersionUpdates)
+
+    document.getElementById('pastPuzzlesButton').addEventListener('click', (e) => {
+        alert(`You open the door to find nothing but a brick wall. 
+On it, a note: 
+"Come back soon and we'll have something cool here."`)
+    })
 
     const refresh_guess_button = document.getElementById('refresh_guess')
     refresh_guess_button.addEventListener('click', refreshLastGuess)
@@ -1513,15 +1524,21 @@ window.onload = function() {
   var input_id = 0
   var input_id_prefix = "user_input_"
 
-  var openModalButtons = document.getElementById('modalbutton')
-  var closeModalButtons = document.getElementById('closemodalbutton')
-  var overlay = document.getElementById('top_overlay')
+  document.querySelectorAll('.open-fs-modal-button').forEach(element => {
+    element.addEventListener('click', openFullscreenModal)
+  });
+  document.querySelectorAll('.close-fs-modal-button').forEach(element => {
+    element.addEventListener('click', closeFullscreenModal)
+  });
+
+  var closeModalButtons = document.getElementsByClassName('close-modal-button')
+
 
   var closeRewardButton = document.getElementById('closerewardbutton')
   var puzzle_reward_modal = document.getElementById('puzzle_reward')
   closeRewardButton.onclick = close_reward_modal
 
-  var modal = document.getElementById('top_modal')
+  var modal = document.getElementById('howToModal')
 
   var keyboardbutton = document.getElementById('keyboardbutton')
   
@@ -1544,22 +1561,24 @@ window.onload = function() {
     }
   })
 
-  function openModal() {
-    if (modal == null) {
-      console.log('Couldnt find modal?')
-      return
-    }
-    modal.classList.remove('closed')
-    overlay.classList.remove('closed')
+  function openFullscreenModal(e) {
+    console.log('Trying to open')
+    let target = e.target
+    let modal_id = target.getAttribute('for')
+    let modal = document.getElementById(modal_id)
+
+    const modal_height = modal.getBoundingClientRect().height 
+    r.style.setProperty('--fade-height', `${modal_height*0.2}px`)
+
+    modal.classList.add('opened')
   }
 
-  function closeModal() {
-    if (modal == null) {
-      console.log('Couldnt find modal?')
-      return
-    }
-    modal.classList.add('closed')
-    overlay.classList.add('closed')
+  function closeFullscreenModal(e) {
+    let target = e.target
+    let modal_id = target.getAttribute('for')
+    let modal = document.getElementById(modal_id)
+
+    modal.classList.remove('opened')
   }
 
   function close_reward_modal(e) {
@@ -1570,9 +1589,6 @@ window.onload = function() {
 
   }
 
-  openModalButtons.onclick = openModal 
-  overlay.onclick = closeModal 
-  closeModalButtons.onclick = closeModal 
 
   document.addEventListener("keyup", function(event) {
     if (event.key === 'Enter' && document.activeElement.id != 'email_input') {

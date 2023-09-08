@@ -2,7 +2,7 @@
 <html>
 <head>
 
-  <link rel="stylesheet" href="stylesheet.css">
+  <link rel="stylesheet" href="new_stylesheet.css">
   <!-- Google Icons -->
   
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
@@ -14,121 +14,140 @@
 <body>
   
 
-  <div id='containall'>
-    <div class='header'>
-      <button id="keyboardbutton" type="button" class='button square'><span class="material-icons-round">
-          keyboard
-          </span>
-          </button>
-      <div id="scrambler_title"><h1>SCRAMBLER<button id="version_update_button">V1.0.3</button></h1>
-        <div id="version_update_text">
-          <p><u>V1.0.3</u></p>
-
-          <ul>
-            <li>Added: Current top 5 leaderboard after puzzle completion</li>
-            <li>Added: Password is hidden :)</li>
-            <li>Added: Alerts if something new goes wrong with the server</li>
-            <li>Fixed: Guesses and puzzle completions being rejected by server</li>
-          </ul>
-
-          <p><u>V1.0.2</u></p>
-
-          <ul>
-            <li>Added: No vulgar username reminder</li>
-            <li>Added: This box!</li>
-            <li>Added: Reminder if no letters changed between words</li>
-            <li>Fixed: Guessing same words doesn&#39;t increase guesses</li>
-            <li>Fixed: Colouring for wrong/right words now persists when changing difficulty</li>
-          </ul>
-          
-          <p><u>V1.0.1</u></p>
-          
-          <ul>
-            <li>Added: Reset word guess&nbsp;</li>
-            <li>Added: Refresh previous guess</li>
-            <li>Fixed: Previous guesses were persisting across puzzles</li>
-            <li>Fixed: Increased spacing so keyboard doesn&#39;t cover game</li>
-          </ul>
-        </div>
+  <div id='containall' class="vertical-flex">
+    <div id="versionUpdateModal" class="fullscreen-modal">
+      <div class="header">Version Updates
+        <button
+          id="closemodalbutton" for="versionUpdateModal"
+          type="button" class='button square minimal close-fs-modal-button'><span for="versionUpdateModal" class="material-icons-round">
+            close
+            </span></button>
       </div>
-      <button id="modalbutton" name="openmodalbutton" type="button" class='button square'><span class="material-icons-round">
-          question_mark
-          </span></button>
-      <div id="top_modal", class='modal'>
-        <div id="modal-header" class='header formodal'>
-          <button type="button", class='invisible'>&times;</button>
-          <div id="modal-title">HOW TO PLAY</div>
-          <button
-            id="closemodalbutton"
-            type="button", class='button square minimal'><span class="material-icons-round">
-              close
-              </span></button>
-        </div> <!-- modal header close -->
-        <div>
+      <p><u>V1.0.4</u></p>
+
+      <ul>
+        <li>Added: Unify design elements</li>
+        <li>Fixed: Leaderboard wouldn't reset between puzzles</li>
+        <li>Fixed: Error when showing puzzle rewards</li>
+      </ul>
+
+      <p><u>V1.0.3</u></p>
+
+      <ul>
+        <li>Added: Current top 5 leaderboard after puzzle completion</li>
+        <li>Added: Password is hidden :)</li>
+        <li>Added: Alerts if something new goes wrong with the server</li>
+        <li>Fixed: Guesses and puzzle completions being rejected by server</li>
+      </ul>
+
+      <p><u>V1.0.2</u></p>
+
+      <ul>
+        <li>Added: No vulgar username reminder</li>
+        <li>Added: This box!</li>
+        <li>Added: Reminder if no letters changed between words</li>
+        <li>Fixed: Guessing same words doesn&#39;t increase guesses</li>
+        <li>Fixed: Colouring for wrong/right words now persists when changing difficulty</li>
+      </ul>
+      
+    </div>
+
+    <div id="howToModal", class='fullscreen-modal'>
+      <div id="modal-header" class='header'>
+        <span>HOW TO PLAY</span>
+        <button
+          id="closemodalbutton" for="howToModal"
+          type="button" class='button square minimal close-fs-modal-button'><span for="howToModal" class="material-icons-round">
+            close
+            </span></button>
+      </div> <!-- modal header close -->
+      <div>
+        <hr>
+        <hr>
+        <span>
+          Your goal is to solve the puzzle in as few guesses as possible. You can make guesses one row at a time, or try to solve multiple rows with one guess.
           <hr>
-          <hr>
-          <span>
-            Your goal is to solve the puzzle in as few guesses as possible. You can make guesses one row at a time, or try to solve multiple rows with one guess.
-            <hr>
-            Between any word and the next one, <b>1 letter</b> will always be swapped out for a different one.
-          </span>
-          <div class='rowHolder minimal'>
-            <div class='wordRow'> <div class='letterBox letterRemoved ex'>T</div> <div class='letterBox ex below'>O</div> <div class='letterBox ex below'>U</div>
-            <div class='letterBox ex below'>C</div> <div class='letterBox ex below'>H</div> </div>
+          Between any word and the next one, <b>1 letter</b> will always be swapped out for a different one.
+        </span>
+        <div class='rowHolder minimal'>
+          <div class='wordRow'> <div class='letterBox letterRemoved ex'>T</div> <div class='letterBox ex below'>O</div> <div class='letterBox ex below'>U</div>
+          <div class='letterBox ex below'>C</div> <div class='letterBox ex below'>H</div> </div>
 
-            <div class='wordRow'> <div class='letterBox letterAdded ex'>C</div> <div class='letterBox ex above'>O</div> <div class='letterBox ex above'>U</div>
-            <div class='letterBox ex above'>C</div> <div class='letterBox ex above'>H</div> </div>
-          </div>
-          <span>
-            Blue markings inside the boxes show which letters have repeated between one word and the next.
-          </span>
-          <hr>
-          <span>
-            Along with swapping, the order of the letters might be <i>scrambled.</i>
-          </span>
-          <div class='rowHolder minimal'>
-            <div class='wordRow'> <div class='letterBox ex below'>S</div> <div class='letterBox letterRemoved ex'>P</div> <div class='letterBox ex below'>O</div>
-            <div class='letterBox ex below'>R</div> <div class='letterBox ex below'>T</div> </div>
+          <div class='wordRow'> <div class='letterBox letterAdded ex'>C</div> <div class='letterBox ex above'>O</div> <div class='letterBox ex above'>U</div>
+          <div class='letterBox ex above'>C</div> <div class='letterBox ex above'>H</div> </div>
+        </div>
+        <span>
+          Blue markings inside the boxes show which letters have repeated between one word and the next.
+        </span>
+        <hr>
+        <span>
+          Along with swapping, the order of the letters might be <i>scrambled.</i>
+        </span>
+        <div class='rowHolder minimal'>
+          <div class='wordRow'> <div class='letterBox ex below'>S</div> <div class='letterBox letterRemoved ex'>P</div> <div class='letterBox ex below'>O</div>
+          <div class='letterBox ex below'>R</div> <div class='letterBox ex below'>T</div> </div>
 
-            <div class='wordRow'> <div class='letterBox ex above'>S</div> <div class='letterBox ex above'>T</div> <div class='letterBox ex above'>O</div>
-            <div class='letterBox ex above'>R</div> <div class='letterBox letterAdded ex'>M</div> </div>
-          </div> 
-          <hr>
-          <span>
-            When you make a guess, correct words will be coloured <span style="color: var(--correct-color);">green</span>, and incorrect words will be coloured <span style="color: var(--wrong-color)">orange</span>. 
-          </span>
-          <div class='rowHolder minimal'>
-            <div class='wordRow correct'> <div class='letterBox ex below'>C</div> <div class='letterBox letterRemoved ex'>H</div> <div class='letterBox ex below'>E</div>
-            <div class='letterBox ex below'>S</div> <div class='letterBox ex below'>T</div> </div>
+          <div class='wordRow'> <div class='letterBox ex above'>S</div> <div class='letterBox ex above'>T</div> <div class='letterBox ex above'>O</div>
+          <div class='letterBox ex above'>R</div> <div class='letterBox letterAdded ex'>M</div> </div>
+        </div> 
+        <hr>
+        <span>
+          When you make a guess, correct words will be coloured <span style="color: var(--correct-color);">green</span>, and incorrect words will be coloured <span style="color: var(--wrong-color)">orange</span>. 
+        </span>
+        <div class='rowHolder minimal'>
+          <div class='wordRow correct'> <div class='letterBox ex below'>C</div> <div class='letterBox letterRemoved ex'>H</div> <div class='letterBox ex below'>E</div>
+          <div class='letterBox ex below'>S</div> <div class='letterBox ex below'>T</div> </div>
 
-            <div class='wordRow correct'> <div class='letterBox letterInput ex above below'>S</div> <div class='letterBox ex above'>C</div> <div class='letterBox ex above below'>E</div>
-            <div class='letterBox ex below'>N</div> <div class='letterBox letterAdded above ex below'>T</div> </div>
+          <div class='wordRow correct'> <div class='letterBox letterInput ex above below'>S</div> <div class='letterBox ex above'>C</div> <div class='letterBox ex above below'>E</div>
+          <div class='letterBox ex below'>N</div> <div class='letterBox letterAdded above ex below'>T</div> </div>
 
-            <div class='wordRow wrong'> <div class='letterBox letterInput ex '>D</div> <div class='letterBox letterInput ex above'>E</div> <div class='letterBox letterInput ex above'>N</div>
-            <div class='letterBox ex above'>T</div> <div class='letterBox letterAdded ex above below'>S</div> </div>
+          <div class='wordRow wrong'> <div class='letterBox letterInput ex '>D</div> <div class='letterBox letterInput ex above'>E</div> <div class='letterBox letterInput ex above'>N</div>
+          <div class='letterBox ex above'>T</div> <div class='letterBox letterAdded ex above below'>S</div> </div>
 
-            <div class='wordRow'> <div class='letterBox letterInput ex'></div> <div class='letterBox letterInput ex'></div> <div class='letterBox ex'>L</div>
-            <div class='letterBox letterInput ex'></div> <div class='letterBox letterAdded ex above'>S</div> </div>
-          </div> 
-          <br></br>
-        </div> <!-- modal body div close -->
-      </div> <!-- modal close -->
-      <div id="top_overlay" class='overlay'></div>
+          <div class='wordRow'> <div class='letterBox letterInput ex'></div> <div class='letterBox letterInput ex'></div> <div class='letterBox ex'>L</div>
+          <div class='letterBox letterInput ex'></div> <div class='letterBox letterAdded ex above'>S</div> </div>
+        </div> 
+        <br></br>
+      </div> <!-- modal body div close -->
+    </div> <!-- modal close -->
+
+    <div class='header horizontal-flex-cont'>
+      <button id="keyboardbutton" type="button" class='square flex-item'>
+        <div><img src="past.svg"/></div>
+          </button>
+          <button id="pastPuzzlesButton" type="button" class="square flex-item">
+            <div><img src="past.svg"/></div>
+          </button>
+      <div id="scrambler_title">
+        <button class="notify-button invisible square"></button>
+        <span>SCRAMBLER</span>
+        <button id="version_update_button" for="versionUpdateModal" class="notify-button square open-fs-modal-button" 
+        type="button"></button>
+      </div>
+      
+      <button id="leaderboardButton" type="button" class='square flex-item'>
+        <div><img src="past.svg"/></div>
+      </button>
+      <button id="modalbutton" for="howToModal" name="openmodalbutton" type="button" 
+      class='square flex-item open-fs-modal-button'>
+        <div><img for="howToModal" src="past.svg"/></div>
+      </button>
+
     </div> <!-- page header close -->
 
     <div id="login_modal" class="modal">
-      <span><h1>Please Login or Create a Profile:</h1></span>
+      <span><h5>Please Login or Create a Profile:</h5></span>
       <form id="login_form" class="vertical_header">
           <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
           <input type="password" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
-          <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address (Optional)" class="textinput">
-          <span><h2>Enter your email if you are interested in giving feedback or testing new features.</h2></span>
+          <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address (Optional)*" class="textinput">
+          <span><i>*Enter your email if you are interested in giving feedback or testing new features.</i></span>
         <div class="horizontal_header">
           <input type="submit" name="login" value="Login" class="input_button">
           <input type="submit" name="create" value="Create Profile" class="input_button">
         </div>
-        <span><h3>As a friendly reminder, usernames need to be free of obscene language. Using a vulgar username might result in your profile being deleted.</h3></span>
       </form>
+      <span>As a friendly reminder, usernames need to be <b>free of obscene language</b>. Using a vulgar username might result in your profile being deleted.</span>
       <div id="login_loader" class="loader"></div>
     </div>
 
@@ -217,7 +236,7 @@
       <div id="reward_leaderboard_loader" class="dot-flashing"></div>
     </div>
 
-    <div id="gameBox" class='gameBox'>
+    <div id="gameBox" class='gameBox vertical-flex'>
       <div id="rewardless_attempt_banner"><b>Since you've already completed this puzzle before, any future attempts won't earn you any rewards.</b></div>
 
       <div id="gameBox_wrapper">
@@ -236,7 +255,7 @@
             <div id="next_game_box">Next Game: <span id="next_game"></span></div>
           </div>
           <div class="horizontal_header">
-          <!-- easy/hard toggle -->
+            <!-- easy/hard toggle -->
             <div class="switch-field">
               <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked/>
               <label for="easy_radio">Easy</label>
@@ -253,9 +272,84 @@
         <div id="button_response" class='guessResponse'></div>
         
       </div> <!-- Close gamebox wrapper (needed for margin, so rewardless banner can press against sides)-->
-      <div id="login_overlay" class="overlay"></div>
+      <div id="login_overlay" class="overlay closed"></div> <!-- TODO remove closed -->
+    </div>
+
+    <!-- Full Leaderboard -->
+      <div id="fullLeaderboard" class="modal">
+        
+        <div class="header formodal">
+          <button
+                id="closemodalbutton"
+                type="button", class='button square minimal invisible'><span class="material-icons-round">
+                  close
+                  </span></button>
+          <h1>Scrambler Leaderboard</h1>
+          <button
+                id="closemodalbutton"
+                type="button", class='button square minimal'><span class="material-icons-round">
+                  close
+                  </span></button>
+        
+        </div>
+      <div class="vertical-header">
+        <div class="horizontal_header">
+          <div class="switch-field">
+            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-one" value="today" checked/>
+            <label for="dailyLBRadio">Today</label>
+            <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-one" value="week" />
+            <label for="weekLBRadio">This Week</label>
+            <input type="radio" id="allLBRadio" class="switch_lb_radio" name="switch-one" value="all" />
+            <label for="allLBRadio">All Time</label>
+          </div>
+        </div>
+        <div class="horizontal_header">
+          <div class="switch-field">
+            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-one" value="today" checked/>
+            <label for="dailyLBRadio">Easy</label>
+            <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-one" value="week" />
+            <label for="weekLBRadio">FixHTML</label>
+          </div>
+          <div id="next_game_box">Next Game: <span id="next_game"></span></div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">Username</th>
+            <th scope="col">Points</th>
+            <th scope="col"><img class="bonus_icon small" src="flag_one.svg"/></th>
+            <th scope="col"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
+            <th scope="col"><img class="bonus_icon small" src="strategy.svg"/></th>
+          </tr>
+        </thead>
+        <tbody id="daily_leaderboard_tbody">
+          <!-- EXAMPLE ROWS FOR TESTING CSS
+          <tr>
+            <th scope="row">1st</th>
+            <td>BEEEEEEEEESSAHAHAHA</td>
+            <td>420</td>
+            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+            <td></td>
+            <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
+          </tr>
+          <tr>
+            <th scope="row">2nd</th>
+            <td>CuteJade</td>
+            <td>69</td>
+            <td></td>
+            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+          </tr>
+        -->
+        </tbody>
+      </table>
+
     </div>
   </div>
+
+  
 
   <div id="keyboard-cont">
       <div class="first-row">

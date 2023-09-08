@@ -3,6 +3,9 @@
 /* TODO: resize login for mobile */
 
 :root {
+    font-size: 4vw;
+    -webkit-tap-highlight-color: transparent;
+
     --wrongglow: 0px 0px 24.192px rgb(247, 107, 26), 
     0px 0px 13.824px rgb(247, 107, 26), 
     0px 0px 8.064px rgb(247, 107, 26), 
@@ -30,6 +33,7 @@
     --almost-black: hsl(210, 8%, 14%);
     --lighter-border: hwb(0 67% 33%);
     --almost-white: #F6F6F6;
+    --dark-white: #F0F0F0;
     --stroke-color: var(--almost-black);
     --letterSquare-border-width: min(3px, 0.5vw);
     --letterInput-border-width: min(4px, 0.75vw);
@@ -45,87 +49,125 @@ html {
 }
 body {
   display: flex;
-  font-size: calc(15px + 0.390625vw);
-  
-  font-size: clamp(1.5rem, 1vw + 1.25rem, 2.5rem);
   background-color: var(--almost-white);
-  width: 98%;
-  margin: auto;
+  margin: 0;
+}
+input { /* Override default which is smaller */
+    font-size: 1rem; 
 }
 
 #scrambler_title {
-  display: flex;
-  position: relative;
-  margin: 2rem;
+    display: flex;
 }
-#scrambler_title h1 {
-  position:relative;
+
+#scrambler_title span {
+    display: flex;
+    align-self: center;
 }
+
 #version_update_button {
-  position: absolute;
-  top: 0%;
-  font-size: 1rem;
-  border: 1px solid black;
-  padding: 3px;
-  border-radius: 0.5rem;
-  background: var(--almost-white);
-  transition: all 1s ease-in;
-  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-self: flex-start;
+}
+
+.notify-button {
+  
+    background: lightgray;
+    transition: all 1s ease-in;
+  width: 1.2em;
+  height: 1.2em;
+  padding: 0;
+  margin: 0;
+  padding-block: 0;
+  padding-inline: 0;
+  border: 0.1em solid black;
 }
 
 #version_update_text {
-  visibility: collapse;
+    font-size: 0.8rem;
   text-align: left;
-  background-color: var(--almost-black);
-  padding: 2rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  border-radius: 3px;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-  color: var(--almost-white);
-  font-size: 2rem;
-  line-height: 2rem;
-  margin-block: 0;
-  z-index: 20;
   pointer-events: none;
 }
 
-#containall {
-  display: flex;
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
-  flex-direction: column;
-  align-items: center;
-  justify-self: center;
-  margin: auto;
-  margin-bottom: 100vw;
+.fullscreen-modal {
+    position: absolute; /* Needs to be placed as child of containall, so that if fills THAT container */
+    top: 0; /* Default is closed */
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 1rem; /*  Get header to ignore padding */
+  background-color: var(--dark-white);
+  
+  background: linear-gradient(var(--dark-white) 0 80%, var(--dark-white) 80%, rgba(0, 0, 0, 0) 100%);
+  visibility: hidden;
+  height: max-content;
+  transform: translateY(100vh);
+  transition: all 2s ease-in-out;
 }
-.gameBox {
-  position: relative;
-  display: flex;
-  width: calc(var(--letterBoxHeight) * 6 + var(--letterBoxMargin) * 10);
-  align-items: center;
-  border: 2px solid var(--almost-black);
-  border-radius: 1vw;
-  flex-direction: column;
-  justify-content: center;
-  margin: auto;
+
+.fullscreen-modal.opened {
+    top: 0;
+    transform: translateY(0%);
+    visibility: visible;
+}
+
+
+.fullscreen-modal::after {
+    
+    content: "";
+    display: block;
+    position: relative;
+    height: var(--fade-height);
+    width: 100%;
+    background: transparent;
+    margin: 0;
+} 
+
+#containall {
+  
+  width: 100vw;
+  margin-bottom: 100vw;
+  
+}
+@media (min-aspect-ratio: 6/9) {
+    :root {
+        font-size: 2.2vw;
+    }
+    #containall {
+    position: relative;
+    width: 55vw;
+    margin-bottom: 80vh;
+
+    }
+}
+.vertical-flex {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: auto;
+}
+#gameBox {
+    border: 0.2em solid var(--almost-black); /* TODO remove */
+  border-radius: 1em;
   overflow: hidden;
   transition: margin 1s cubic-bezier(0.17, 0.04, 0.03, 0.94);
+  align-self: stretch;
+  padding: 1rem;
 }
 .gameBox.slide_down {
   overflow: auto;
   margin-bottom: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*3);
 }
 button {
-  border-radius: 1rem;
+    border-width: 0.2em;
+  border-radius: 0.5rem;
   justify-content: center;
-  padding: 0.5rem 1rem;
   outline: 0;
   cursor: pointer;
+}
+.material-icons-round {
+    font-size: 3em !important;
 }
 input {
   margin: 0.25rem;
@@ -150,7 +192,6 @@ input {
 .switch-field label {
   background-color: #e4e4e4;
   color: rgba(0, 0, 0, 0.6);
-  font-size: larger;
   line-height: 1;
   text-align: center;
   padding: 1rem 2rem;
@@ -186,9 +227,7 @@ input {
 #refresh_guess {
   display: flex;
   align-self: center;
-  justify-self: center;
-  padding: 1rem 2rem;
-  font-size: larger;
+  padding: 1rem 1rem;
   border-radius: 5rem;
   position: relative;
   right: 10%;
@@ -202,7 +241,6 @@ input {
   height: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*3);
   background-color: darkorange;
   text-align: center;
-  font-size: 1.5rem;
   border-top-left-radius: 1vw;
   border-top-right-radius: 1vw;
   
@@ -218,9 +256,16 @@ input {
 }
 
 #gameBox_wrapper {
-  flex-direction: column;
+  
   display: flex;
+  flex-direction: column;
   align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  
+
   position: relative;
   top: 0;
   margin: 3vw;
@@ -234,7 +279,7 @@ input {
 
 #puzzle_reward {
   z-index: 16;
-  position: fixed;
+  position: absolute;
   height: max-content;
   width: calc(var(--letterBoxHeight) * 6.5);
   top: 1000vh; 
@@ -282,10 +327,10 @@ input {
   text-align: center;
   background-color: lightgray;
   border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
-  font-size: 1.5rem;
-  line-height: 1rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  font-size: 0.5rem;
+  line-height: 0.3rem;
   cursor: default;
   align-items:center;
   justify-content: center;
@@ -317,8 +362,6 @@ input {
   border-radius: 3px;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
   color: #FFF;
-  font-size: 2rem;
-  line-height: 2rem;
   margin-block: 0;
   z-index: 20;
   pointer-events: none;
@@ -354,7 +397,6 @@ input {
 
 table {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  font-size: 2rem;
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
@@ -398,15 +440,14 @@ td img.bonus_icon.small, th img.bonus_icon.small {
   margin-right: auto;
 }
 tbody {
-  font-size: smaller;
+  font-size: 0.8rem;
 }
 tbody tr:nth-child(even) {
   background: lightgoldenrodyellow;
 }
 
 #login_modal {
-  font-size: medium;
-  display: flex;
+  display: none; /* TODO flex */
   flex-direction: column;
   z-index: 8;
   width: min(75%, 800px);
@@ -419,9 +460,6 @@ tbody tr:nth-child(even) {
 }
 #login_modal span {
   margin: 0.25rem;
-}
-.input_button {
-  font-size: xx-large;
 }
 
 
@@ -493,39 +531,62 @@ tbody tr:nth-child(even) {
 }
 
 .header {
-  width: 100%;
-  display: flex;
+    display: flex;
+    position: relative;
+    top:0;
+    left:0;
+    right:0;
+  margin: 1rem 0.5rem;
+  height: 2.5rem;
+  text-align: center;
+  justify-content: center;
   align-items: center;
-  justify-content: space-around;
-  margin: auto;
+  font-size: 1.5rem;
 }
-.header.formodal {
-  justify-content: space-between;
+
+.fullscreen-modal .header {
+    /* Negate padding on .fullscreen-modal */
+    margin-top: 0; 
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
 }
-.button.square {
-  display: relative;
-  width: min(10vw, 84px);
-  height: min(10vw, 84px);
-  font-size: min(6vw, 52px);
-  font-weight: bold;
-  padding: 0px;
-  line-height: 0;
-  -webkit-tap-highlight-color: transparent;
+
+.close-fs-modal-button {
+    display: flex;
+    position: absolute;
+    right: 5%;
 }
-.buttonsvg {
-  display: relative;
-  padding: 1rem;
-  line-height: 0;
-  height: 65%;
-  width: 65%;
-  margin: auto;
+
+.horizontal-flex-cont {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 0.6em;
+}
+
+.square {
+    aspect-ratio: 1/1;
+}
+.flex-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-block: 0;
+    padding-inline: 0;
+}
+.flex-item div:has(img) {
+    display: flex;
+    justify-content: center;
+    height:  80%;
+    width: 80%;
+}
+.flex-item div img {
+    max-width: 80%;
+    min-width: 80%;
 }
 .formodal .button {
   width: fit-content;
   height: fit-content;
-}
-.material-icons-round {
-    font-size: min(7vw, 56px) !important;
 }
 
 .invisible {
@@ -536,9 +597,8 @@ tbody tr:nth-child(even) {
   border: 0 !important;
 }
 .reset {
-  width: calc(var(--letterBoxHeight) / 2) !important;
-  height: calc(var(--letterBoxHeight) / 2) !important;
-  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex: 1 2 auto;
 
 }
 .highlight {
@@ -560,7 +620,6 @@ tbody tr:nth-child(even) {
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  
   /*width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);*/
   padding-bottom: var(--letterBoxMargin);
 }
@@ -656,40 +715,40 @@ tbody tr:nth-child(even) {
 } */
 
 
-  .rowHolder {
+.rowHolder {
     width: auto;
     border: 2px dashed rgba(120, 120, 120, 0.4);
     border-radius: 1vw;
     height: auto;
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
+    align-self: stretch;
     flex-direction: column;
     position: relative;
     overflow: hidden;
   }
-.wordRow{
+.wordRow {
   display: flex;
-  align-self: center;
   align-items: center;
   justify-content: center;
   flex-direction: row;
   border: 2px solid transparent;
 }
 
-.letterBox{
+.letterBox {
   position: relative;
   background-color: var(--almost-white);
   border: var(--letterSquare-border-width) solid var(--lighter-border);
 
   box-sizing: border-box;
   outline: none !important;
-  font-size: min(7vw, 70px);
   text-transform: uppercase;
   display: flex;
-  flex-direction: column;
+  flex: 2 1 auto;
   justify-content: center;
   align-items: center;
-  text-align: center;
+  
+  aspect-ratio: 1/1;
 
   color: lightgrey;
 
@@ -762,7 +821,6 @@ tbody tr:nth-child(even) {
     max-height: 75px;
     margin: min(12px, 2.4vw);
     --stroke-width: 2px;
-    font-size: min(4vw, 63px);
     border-width: 2px;
 }
 .letterInput.ex {
@@ -878,7 +936,7 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   z-index: 25;
   background: var(--almost-white);
   text-align: center;
-  
+  display: none;
 }
 
 
@@ -949,8 +1007,10 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   justify-content: space-between;
   z-index: 15;
   background-color: var(--almost-white);
-  
 }
+
+
+
 .modal.closed {
   display: none
 }
@@ -959,7 +1019,7 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   max-height: 100%;
   top: 0;
   overflow: auto;
-  position: fixed;
+  position: absolute;
 }
 .container10 {
   flex: 0 0 auto;
@@ -979,10 +1039,6 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   left: 0;
   right: 0;
   bottom: 0;
-}
-#top_overlay {
-  
-  position: fixed;
 }
 #login_overlay {
   position: absolute;
@@ -1016,16 +1072,14 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   pointer-events: none;
 }
 .guessResponse {
-  width: 80vw;
-  max-width: 800px;
   visibility: hidden;
   display: flex;
   flex-wrap: wrap;
-  min-height: 8rem;
+  min-height: 4rem;
   text-align: center;
   align-items: center;
   justify-content: center;
-  font-size: 4.5vw;
+  font-size: 1.5rem;
 }
 .emailform {
   margin: 2vw;
@@ -1037,9 +1091,8 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
 .textinput {
   width: 45vw;
   max-width: 600px;
-  height: 3rem;
+  height: 1.5rem;
   margin: 1vw;
-  font-size: 2rem;
   align-self: center;
   text-align: center;
   border-width: 0px;
@@ -1051,29 +1104,4 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   max-width: 100%;
   width: 100%;
   margin: 0.75vw, 0.75vw, 0 ,0;
-}
-.emailbutton {
-  color: rgb(0, 0, 0);
-  width: 24vw;
-  height: 12vw;
-  margin: 0.75vw;
-  font-size: 2.5vw;
-  display: flex;
-  padding: 0.5rem;
-  align-self: center;
-  box-shadow: 0px 3px 2px 0px rgba(4, 56, 12, 0.75);
-  font-style: normal;
-  text-align: center;
-  align-items: center;
-  font-weight: 600;
-  line-height: 1.25rem;
-  border-width: 0px;
-  border-radius: 4px;
-  flex-direction: row;
-  justify-content: center;
-  background-color: rgba(28, 175, 60, 0.85);
-}
-.emailbuttontext {
-  align-self: center;
-  line-height: 1.25em;
 }
