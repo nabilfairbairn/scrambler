@@ -77,6 +77,7 @@ function getDiff() {
 }
 fetchPuzzle()
 
+var message_banner; // Used for banner messages
 
 //var puzzle_index = (days_between(start_date, date_today) - 1) % puzzles.length
 //var [words, answers] = puzzles[puzzle_index]
@@ -508,15 +509,28 @@ function update_guess_count() {
     document.getElementById('guesses_made').innerText = user_states[getDiff()].guesses_made
 }
 
+function goodBannerMessage(message) {
+
+}
+
+function badBannerMessage(message) {
+
+}
+
+function closeBannerMessage() {
+    
+}
+
 function update_attempt_banner() {
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
+    
     if (puzzle_attempt > 1) {
-        
-        document.getElementById('rewardless_attempt_banner').classList.add('slide_down')
+        message_banner.innerText = `Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`
+        message_banner.classList.add('slide_down')
         document.getElementById('gameBox_wrapper').classList.add('slide_down')
         document.getElementById('gameBox').classList.add('slide_down')
     }  else {
-        document.getElementById('rewardless_attempt_banner').classList.remove('slide_down')
+        message_banner.classList.remove('slide_down')
         document.getElementById('gameBox_wrapper').classList.remove('slide_down')
         document.getElementById('gameBox').classList.remove('slide_down')
     }
@@ -1483,6 +1497,8 @@ function closeFullscreenModal(modal_element) {
 
 
 window.onload = function() {
+
+    message_banner = document.getElementById('message_banner')
 
     document.getElementById('pastPuzzlesButton').addEventListener('click', (e) => {
         alert(`You open the door to find nothing but a brick wall. 
