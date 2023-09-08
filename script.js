@@ -102,22 +102,28 @@ set_global_style_variables(['_____', '_____','_____','_____','_____',])
 
 
 function set_global_style_variables(words) {
-    
+    // Dynamically change font size, stroke-width, margins, borders etc for letterBoxes
+    // based on how many letters in puzzle's longest word
+
     words.forEach((word) => {
         max_wordlength = Math.max(max_wordlength, word.length)
     })
-    w_per_word = optimal_game_w / max_wordlength;
-    word_buffer = w_per_word / 8;
-    word_w = word_buffer * 6;
+    
 
-    w_per_word_px = max_px / max_wordlength;
-    word_buffer_px = w_per_word_px / 8;
-    word_w_px = word_buffer_px * 6
+    // margin, stroke width, borders all scale with rowHolder font size
+    // 1.8rem is appropriate for 5 words or less
 
-    r.style.setProperty('--letterBoxHeight', `min(${word_w}vw, ${word_w_px}cm)`)
-    letterBoxHeight = getComputedStyle(r).getPropertyValue('--letterBoxHeight')
-    letterBoxMargin = `min(${word_buffer}vw, ${word_buffer_px}cm)` 
-    r.style.setProperty('--letterBoxMargin', `min(${word_buffer}vw, ${word_buffer_px}cm)` )
+    let fontsize = 1.8;
+
+    if (max_wordlength > 5) {
+        var scale_ratio = 5 / max_wordlength 
+        fontsize *= scale_ratio
+    }
+
+    r.style.setProperty('--rowHolder-font-size', `${fontsize}rem`)
+    r.style.setProperty('--letterBoxMargin', `0.25em`  )
+    r.style.setProperty('--stroke-width', '0.05em')
+    // stroke width ratio of font-size
 }
 
 async function switchDifficulty(e) {
@@ -1427,7 +1433,6 @@ function create_puzzle() {
 
         reset_holder.appendChild(reset_div)
         reset_holder.classList.add('button', 'square', 'minimal', 'reset', 'flex-item')
-        reset_holder.style.marginRight = letterBoxMargin
 
         row.appendChild(reset_holder)
       }

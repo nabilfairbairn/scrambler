@@ -20,7 +20,7 @@
     0px 0px 1.152px #04D000, 
     0px 0px 0.576px #04D000;
 
-    --stroke-width: min(0.35vw, 4px);
+    --stroke-width: 2px;
     --diffColor: seagreen;
     --finishedColor: gold;
     --correct-color: hwb(85 10% 10%);
@@ -74,8 +74,8 @@ input { /* Override default which is smaller */
   
     background: lightgray;
     transition: all 1s ease-in;
-  width: 1.2em;
-  height: 1.2em;
+  width: 1.2em !important;
+  height: 1.2em !important;
   padding: 0;
   margin: 0;
   padding-block: 0;
@@ -268,7 +268,8 @@ input {
 
   position: relative;
   top: 0;
-  margin: 3vw;
+  margin-top: 3vw;
+  margin-bottom: 3vw;
   
   transition: all 1s cubic-bezier(0.17, 0.04, 0.03, 0.94); 
 }
@@ -544,6 +545,10 @@ tbody tr:nth-child(even) {
   font-size: 1.5rem;
 }
 
+.header button {
+    width: 2.5rem;
+}
+
 .fullscreen-modal .header {
     /* Negate padding on .fullscreen-modal */
     margin-top: 0; 
@@ -561,7 +566,6 @@ tbody tr:nth-child(even) {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    column-gap: 0.6em;
 }
 
 .square {
@@ -598,7 +602,7 @@ tbody tr:nth-child(even) {
 }
 .reset {
   display: flex;
-  flex: 1 2 auto;
+  height: 2rem;
 
 }
 .highlight {
@@ -716,6 +720,7 @@ tbody tr:nth-child(even) {
 
 
 .rowHolder {
+    font-size: var(--rowHolder-font-size);
     width: auto;
     border: 2px dashed rgba(120, 120, 120, 0.4);
     border-radius: 1vw;
@@ -727,28 +732,28 @@ tbody tr:nth-child(even) {
     position: relative;
     overflow: hidden;
   }
+
 .wordRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
   border: 2px solid transparent;
+  max-height: 5rem;
+  justify-content: center;
 }
 
 .letterBox {
   position: relative;
   background-color: var(--almost-white);
-  border: var(--letterSquare-border-width) solid var(--lighter-border);
+  border: 0.08em solid var(--lighter-border);
+  margin: var(--letterBoxMargin);
 
   box-sizing: border-box;
   outline: none !important;
   text-transform: uppercase;
   display: flex;
-  flex: 2 1 auto;
+  flex: 1 1 0;
   justify-content: center;
   align-items: center;
-  
   aspect-ratio: 1/1;
+  max-width: 5rem;
 
   color: lightgrey;
 
@@ -918,8 +923,8 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
 .letterInput{
   position: relative;
   -webkit-tap-highlight-color: transparent;
-  border: var(--letterInput-border-width) solid var(--almost-black);
-  border-radius: var(--letterInput-border-radius);
+  border: 0.09em solid var(--almost-black);
+  border-radius: 0.5em;
   cursor: pointer;
   text-align: center;
   caret-color: transparent;
