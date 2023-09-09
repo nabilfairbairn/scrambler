@@ -126,10 +126,11 @@ input { /* Override default which is smaller */
   display: flex;
   width: 100%;
   overflow: hidden;
-  height: 100%;
+  height: var(--pageHeight);
   margin-left: auto;
   margin-right: auto;
   background-color: rgb(231, 243, 239);
+  margin-bottom: 9rem;
   
 }
 @media (min-aspect-ratio: 6/9) { /* Wider screens */
@@ -892,10 +893,11 @@ tbody tr:nth-child(even) {
 
 #keyboard-cont {
     font-size: 2rem;
-    padding: 0.4em;
-    border-radius: 1em;
+    padding: 0.2rem;
+    height: 7.5rem;
+    border-radius: 0.4rem;
     position: fixed;
-    bottom: 0;
+    bottom: 2%;
     left: 50%;
     transform: translateX(-50%);
     margin-left: auto;
@@ -920,15 +922,16 @@ tbody tr:nth-child(even) {
   }
   .second-row {
     display: flex;
-    margin: 0.5em 0;
+    margin: 0.2rem 0;
   }
   
   .keyboard-button {
-    width: 2.5em;
-    height: 4em;
+    width: 1.5rem;
+    height: 2rem;
     font-weight: 700;
-    padding: min(0.5vw, 6px);
-    margin: min(0.3vw, 4px);
+    font-size: 1rem;
+    padding: 0.1rem;
+    margin: 0.1rem;
     display: flex;
     align-items: center;
     align-content: center;
@@ -939,7 +942,7 @@ tbody tr:nth-child(even) {
     text-transform: uppercase;
   }
   .keyboard-button.square {
-    width: 4em;
+    width: 2rem;
     
   }
 
@@ -982,20 +985,6 @@ tbody tr:nth-child(even) {
     visibility: visible;
 }
 
-#top_modal {
-  width: min(100%, 800px);
-  max-height: 100%;
-  top: 0;
-  overflow: auto;
-  position: absolute;
-}
-.container10 {
-  flex: 0 0 auto;
-  width: auto;
-  height: auto;
-  display: flex;
-  align-items: flex-start;
-}
 .overlay{
   display: block;
   z-index: 5;
