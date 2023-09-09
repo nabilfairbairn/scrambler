@@ -14,7 +14,7 @@
 <body>
   
 
-  <div id='containall' class="vertical-flex">
+  <div id='containall' class="vertical-flex-cont">
     <div id="versionUpdateModal" class="fullscreen-modal">
       <div class="header">Version Updates
         <button
@@ -70,11 +70,11 @@
           <hr>
           Between any word and the next one, <b>1 letter</b> will always be swapped out for a different one.
         </span>
-        <div class='rowHolder minimal'>
-          <div class='wordRow'> <div class='letterBox letterRemoved ex'>T</div> <div class='letterBox ex below'>O</div> <div class='letterBox ex below'>U</div>
+        <div class='rowHolder minimal ex'>
+          <div class='wordRow horizontal-flex-cont'> <div class='letterBox letterRemoved ex'>T</div> <div class='letterBox ex below'>O</div> <div class='letterBox ex below'>U</div>
           <div class='letterBox ex below'>C</div> <div class='letterBox ex below'>H</div> </div>
 
-          <div class='wordRow'> <div class='letterBox letterAdded ex'>C</div> <div class='letterBox ex above'>O</div> <div class='letterBox ex above'>U</div>
+          <div class='wordRow horizontal-flex-cont'> <div class='letterBox letterAdded ex'>C</div> <div class='letterBox ex above'>O</div> <div class='letterBox ex above'>U</div>
           <div class='letterBox ex above'>C</div> <div class='letterBox ex above'>H</div> </div>
         </div>
         <span>
@@ -84,28 +84,28 @@
         <span>
           Along with swapping, the order of the letters might be <i>scrambled.</i>
         </span>
-        <div class='rowHolder minimal'>
-          <div class='wordRow'> <div class='letterBox ex below'>S</div> <div class='letterBox letterRemoved ex'>P</div> <div class='letterBox ex below'>O</div>
+        <div class='rowHolder minimal ex'>
+          <div class='wordRow horizontal-flex-cont'> <div class='letterBox ex below'>S</div> <div class='letterBox letterRemoved ex'>P</div> <div class='letterBox ex below'>O</div>
           <div class='letterBox ex below'>R</div> <div class='letterBox ex below'>T</div> </div>
 
-          <div class='wordRow'> <div class='letterBox ex above'>S</div> <div class='letterBox ex above'>T</div> <div class='letterBox ex above'>O</div>
+          <div class='wordRow horizontal-flex-cont'> <div class='letterBox ex above'>S</div> <div class='letterBox ex above'>T</div> <div class='letterBox ex above'>O</div>
           <div class='letterBox ex above'>R</div> <div class='letterBox letterAdded ex'>M</div> </div>
         </div> 
         <hr>
         <span>
           When you make a guess, correct words will be coloured <span style="color: var(--correct-color);">green</span>, and incorrect words will be coloured <span style="color: var(--wrong-color)">orange</span>. 
         </span>
-        <div class='rowHolder minimal'>
-          <div class='wordRow correct'> <div class='letterBox ex below'>C</div> <div class='letterBox letterRemoved ex'>H</div> <div class='letterBox ex below'>E</div>
+        <div class='rowHolder minimal ex'>
+          <div class='wordRow horizontal-flex-cont correct'> <div class='letterBox ex below'>C</div> <div class='letterBox letterRemoved ex'>H</div> <div class='letterBox ex below'>E</div>
           <div class='letterBox ex below'>S</div> <div class='letterBox ex below'>T</div> </div>
 
-          <div class='wordRow correct'> <div class='letterBox letterInput ex above below'>S</div> <div class='letterBox ex above'>C</div> <div class='letterBox ex above below'>E</div>
+          <div class='wordRow horizontal-flex-cont correct'> <div class='letterBox letterInput ex above below'>S</div> <div class='letterBox ex above'>C</div> <div class='letterBox ex above below'>E</div>
           <div class='letterBox ex below'>N</div> <div class='letterBox letterAdded above ex below'>T</div> </div>
 
-          <div class='wordRow wrong'> <div class='letterBox letterInput ex '>D</div> <div class='letterBox letterInput ex above'>E</div> <div class='letterBox letterInput ex above'>N</div>
+          <div class='wordRow horizontal-flex-cont wrong'> <div class='letterBox letterInput ex '>D</div> <div class='letterBox letterInput ex above'>E</div> <div class='letterBox letterInput ex above'>N</div>
           <div class='letterBox ex above'>T</div> <div class='letterBox letterAdded ex above below'>S</div> </div>
 
-          <div class='wordRow'> <div class='letterBox letterInput ex'></div> <div class='letterBox letterInput ex'></div> <div class='letterBox ex'>L</div>
+          <div class='wordRow horizontal-flex-cont'> <div class='letterBox letterInput ex'></div> <div class='letterBox letterInput ex'></div> <div class='letterBox ex'>L</div>
           <div class='letterBox letterInput ex'></div> <div class='letterBox letterAdded ex above'>S</div> </div>
         </div> 
         <br></br>
@@ -136,7 +136,7 @@
 
     </div> <!-- page header close -->
 
-    <div id="login_modal" class="popup-modal">
+    <div id="login_modal" class="popup-modal opened">
       <div class="header">Please Login or Create a Profile:</div>
       <form id="login_form" class="vertical_header">
           <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
@@ -237,14 +237,14 @@
       <div id="reward_leaderboard_loader" class="dot-flashing"></div>
     </div>
 
-    <div id="gameBox" class='gameBox vertical-flex'>
+    <div id="gameBox" class='gameBox vertical-flex-cont'>
       <div id="message_banner"><b>Since you've already completed this puzzle before, any future attempts won't earn you any rewards.</b></div>
 
       <div id="gameBox_wrapper">
 
         <div class="vertical-flex-cont">
           <div id="game_header" class="horizontal-flex-cont game-stats">
-            <div id="guesses">Guesses: <span id="guesses_made"></span></div>
+            <div id="guesses">Guesses: <span id="guesses_made">0</span></div>
             <div id="next_game_box">Next Game: <span id="next_game"></span></div>
           </div>
           <div class="horizontal-flex-cont game-stats">
@@ -362,41 +362,40 @@
 
   <div id="keyboard-cont">
       <div class="first-row">
-          <button class="keyboard-button">q</button>
-          <button class="keyboard-button">w</button>
-          <button class="keyboard-button">e</button>
-          <button class="keyboard-button">r</button>
-          <button class="keyboard-button">t</button>
-          <button class="keyboard-button">y</button>
-          <button class="keyboard-button">u</button>
-          <button class="keyboard-button">i</button>
-          <button class="keyboard-button">o</button>
-          <button class="keyboard-button">p</button>
+          <button class="keyboard-button flex-item">q</button>
+          <button class="keyboard-button flex-item">w</button>
+          <button class="keyboard-button flex-item">e</button>
+          <button class="keyboard-button flex-item">r</button>
+          <button class="keyboard-button flex-item">t</button>
+          <button class="keyboard-button flex-item">y</button>
+          <button class="keyboard-button flex-item">u</button>
+          <button class="keyboard-button flex-item">i</button>
+          <button class="keyboard-button flex-item">o</button>
+          <button class="keyboard-button flex-item">p</button>
       </div>
       <div class="second-row">
-          <button class="keyboard-button">a</button>
-          <button class="keyboard-button">s</button>
-          <button class="keyboard-button">d</button>
-          <button class="keyboard-button">f</button>
-          <button class="keyboard-button">g</button>
-          <button class="keyboard-button">h</button>
-          <button class="keyboard-button">j</button>
-          <button class="keyboard-button">k</button>
-          <button class="keyboard-button">l</button>
+          <button class="keyboard-button flex-item">a</button>
+          <button class="keyboard-button flex-item">s</button>
+          <button class="keyboard-button flex-item">d</button>
+          <button class="keyboard-button flex-item">f</button>
+          <button class="keyboard-button flex-item">g</button>
+          <button class="keyboard-button flex-item">h</button>
+          <button class="keyboard-button flex-item">j</button>
+          <button class="keyboard-button flex-item">k</button>
+          <button class="keyboard-button flex-item">l</button>
       </div>
       <div class="third-row">
-          <button class="keyboard-button square material-icons-round">keyboard_return</button>
-          <button class="keyboard-button">z</button>
-          <button class="keyboard-button">x</button>
-          <button class="keyboard-button">c</button>
-          <button class="keyboard-button">v</button>
-          <button class="keyboard-button">b</button>
-          <button class="keyboard-button">n</button>
-          <button class="keyboard-button">m</button>
-          <button class="keyboard-button square material-icons-round">backspace</button>
+          <button class="keyboard-button square flex-item"><div><img src="past.svg"/></div></button>
+          <button class="keyboard-button flex-item">z</button>
+          <button class="keyboard-button flex-item">x</button>
+          <button class="keyboard-button flex-item">c</button>
+          <button class="keyboard-button flex-item">v</button>
+          <button class="keyboard-button flex-item">b</button>
+          <button class="keyboard-button flex-item">n</button>
+          <button class="keyboard-button flex-item">m</button>
+          <button class="keyboard-button square flex-item"><div><img src="past.svg"/></div></button>
       </div>
   </div>
-<div class="keyboardbuffer"></div>
 
 </body>
 </html>

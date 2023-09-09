@@ -1,10 +1,15 @@
 @import url(//fonts.googleapis.com/css?family=Nunito);
 
-/* TODO: resize login for mobile */
 
 :root {
     font-size: 4vw;
     -webkit-tap-highlight-color: transparent;
+    --game-left: 0;
+    --game-right: 0;
+    --game-top: 0;
+    --game-bottom: 0;
+
+    
 
     --wrongglow: 0px 0px 24.192px rgb(247, 107, 26), 
     0px 0px 13.824px rgb(247, 107, 26), 
@@ -91,16 +96,19 @@ input { /* Override default which is smaller */
 }
 
 .fullscreen-modal {
-    position: absolute; /* Needs to be placed as child of containall, so that if fills THAT container */
-    top: 0; /* Default is closed */
-  left: 0;
-  right: 0;
+    font-size: 0.8rem;
+    position: fixed; /* Needs to be placed as child of containall, so that if fills THAT container */
+    top: 0%; /* Default is closed */
+  left: var(--game-left);
+  right: var(--game-right);
+  /* max-height: calc(var(--pageHeight) - 1rem); */
+  bottom: 0;
+  overflow: scroll;
   z-index: 20;
-  padding: 1rem; /*  Get header to ignore padding */
+  padding: 1rem; 
   background-color: var(--dark-white);
   
-  background: linear-gradient(var(--dark-white) 0 80%, var(--dark-white) 80%, rgba(0, 0, 0, 0) 100%);
-  height: max-content;
+  /* background: linear-gradient(var(--dark-white) 0 80%, var(--dark-white) 80%, rgba(0, 0, 0, 0) 100%); */
 
   visibility: hidden;
   transform: translateY(100vh);
@@ -114,41 +122,31 @@ input { /* Override default which is smaller */
 }
 
 
-.fullscreen-modal::after {
-    
-    content: "";
-    display: block;
-    position: relative;
-    height: var(--fade-height);
-    width: 100%;
-    background: transparent;
-    margin: 0;
-} 
-
-#containall {
-  
-  width: 100vw;
-  margin-bottom: 100vw;
+#containall { /* on Phones */
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(231, 243, 239);
   
 }
-@media (min-aspect-ratio: 6/9) {
+@media (min-aspect-ratio: 6/9) { /* Wider screens */
     :root {
         font-size: 2.2vw;
+        --game-left: 22.5%;
+        --game-right: 22.5%;
     }
     #containall {
     position: relative;
-    width: 55vw;
-    margin-bottom: 80vh;
-
+    width: 55%;
+    }
+    #keyboard-cont {
+        display: none;
     }
 }
-.vertical-flex {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    margin: auto;
-}
+
 #gameBox {
     /* border: 0.2em solid var(--almost-black);
   border-radius: 1em; */
@@ -543,7 +541,8 @@ tbody tr:nth-child(even) {
 .close-fs-modal-button {
     display: flex;
     position: absolute;
-    right: 5%;
+    right: 3%;
+    align-items: center;
 }
 
 .horizontal-flex-cont {
@@ -553,10 +552,11 @@ tbody tr:nth-child(even) {
 }
 
 .vertical-flex-cont {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    width: 100%; 
+    align-self: stretch;
 }
 
 .square {
@@ -579,6 +579,8 @@ tbody tr:nth-child(even) {
     max-width: 80%;
     min-width: 80%;
 }
+
+
 .formodal .button {
   width: fit-content;
   height: fit-content;
@@ -689,16 +691,16 @@ tbody tr:nth-child(even) {
 } */
 
 
-#rowHolder {
+.rowHolder {
     font-size: var(--rowHolder-font-size);
     border-radius: 1rem;
-    height: auto;
+    height: max-content;
     display: flex;
     align-items: stretch;
     align-self: stretch;
     flex-direction: column;
     position: relative;
-    overflow: hidden;
+    
   }
 
 .wordRow {
@@ -764,55 +766,26 @@ tbody tr:nth-child(even) {
         var(--stroke-color);
 }
 
-/*
-.letterBox.letterAdded {
-    box-shadow: inset 0px calc(var(--letterBoxHeight) * 0.25)
-    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
-}
-
-.letterBox.letterRemoved {
-    box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
-    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
-}
-
-.letterBox.letterRemoved.letterAdded {
-  box-shadow: inset 0px calc(var(--letterBoxHeight) * -0.25)
-    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor),
-    inset 0px calc(var(--letterBoxHeight) * 0.25)
-    calc(var(--letterBoxHeight) * 0.2) calc(var(--letterBoxHeight) * -0.2) var(--diffColor);
-} */
 
 .letterBox.bad {
   --diffColor: var(--wrong-color);
 }
 
-
+.rowHolder.ex{
+    width: 67%;
+    
+    margin-left: auto;
+    margin-right: auto;
+}
 .letterBox.ex {
-    width: 12.75vw;
-    max-width: 75px;
-    height: 12.75vw;
-    max-height: 75px;
-    margin: min(12px, 2.4vw);
-    --stroke-width: 2px;
-    border-width: 2px;
+    font-size: 1.2rem;
+    margin: calc(var(--emLetterBoxMargin) * 0.67);
 }
 .letterInput.ex {
   --letterInput-border-radius: 24px;
 }
 
-/* 
 
-May need to create above/below pseudo-elements for every box, and animate when class is added.
-Every letterBox has a before and an after, which has a transform of scaleX(0) and a transition
-.letterBox.above:before has a transform of scaleX(1)
-
-*/
-
-
-/*
-.wordRow.wrong .letterBox:before, .wordRow.wrong .letterBox:after {
-  --same-letter-color: 25, 25, 25
-} */
 
 /* FINISHED PUZZLE SHEEN */
 .rowHolder.finished .letterBox:before, .rowHolder.finished .letterBox:after {
@@ -839,16 +812,18 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   }
 
 .letterBox.letterInput:before, .letterBox.letterInput:after{
-  border-radius: calc(var(--letterInput-border-radius) - var(--letterInput-border-width));
+  border-radius: calc(0.5em - 0.09em);
 }
 .letterBox:before {
   content: "";
   position: absolute;
 
   /* Size of box-shadow needs to be dynamic */
-  box-shadow: inset rgba(var(--same-letter-color), 0.3) 0px calc(var(--letterBoxHeight) * 0.04), 
-  inset rgba(var(--same-letter-color), 0.2) 0px calc(var(--letterBoxHeight) * 0.07),
-  inset  rgba(var(--same-letter-color), 0.1) 0px calc(var(--letterBoxHeight) * 0.1);
+  --letter-guide-height: calc(var(--rowHolder-font-size) * 2);
+
+  box-shadow: inset rgba(var(--same-letter-color), 0.3) 0px calc(var(--letter-guide-height) * 0.04), 
+  inset rgba(var(--same-letter-color), 0.2) 0px calc(var(--letter-guide-height) * 0.07),
+  inset  rgba(var(--same-letter-color), 0.1) 0px calc(var(--letter-guide-height) * 0.1);
   
   /* sides, top, bottom, radius, etc need to be calculated based on border size */
   top: 0px;
@@ -867,10 +842,11 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
     position: absolute;
     
     /* Size of box-shadow needs to be dynamic */
-    
-    box-shadow: inset rgba(var(--same-letter-color), 0.4) 0px calc(var(--letterBoxHeight) * -0.04), 
-    inset rgba(var(--same-letter-color), 0.3) 0px calc(var(--letterBoxHeight) * -0.07),
-     inset rgba(var(--same-letter-color), 0.2) 0px calc(var(--letterBoxHeight) * -0.1);
+    --letter-guide-height: calc(var(--rowHolder-font-size) * 2);
+
+    box-shadow: inset rgba(var(--same-letter-color), 0.4) 0px calc(var(--letter-guide-height) * -0.04), 
+    inset rgba(var(--same-letter-color), 0.3) 0px calc(var(--letter-guide-height) * -0.07),
+     inset rgba(var(--same-letter-color), 0.2) 0px calc(var(--letter-guide-height) * -0.1);
     
     /* sides, top, bottom etc need to be calculated based on border size */
     
@@ -915,9 +891,9 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
 
 
 #keyboard-cont {
-    margin: min(2vw, 22px) 0;
-    padding: min(1.5vw, 12px);
-    border-radius: 2vw;
+    font-size: 2rem;
+    padding: 0.4em;
+    border-radius: 1em;
     position: fixed;
     bottom: 0;
     left: 50%;
@@ -931,11 +907,7 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
     background-color:rgba(80, 80, 80);
     z-index: 11;
   }
-  @media (hover: hover) and (pointer: fine){
-    #keyboard-cont {
-        display: none;
-    }
-  }
+
   
   #keyboard-cont div {
     display: flex;
@@ -948,12 +920,12 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   }
   .second-row {
     display: flex;
-    margin: max(1vmin, 16px) 0;
+    margin: 0.5em 0;
   }
   
   .keyboard-button {
-    width: min(17vw, 78px);
-    font-size: min(14vw, 64px);
+    width: 2.5em;
+    height: 4em;
     font-weight: 700;
     padding: min(0.5vw, 6px);
     margin: min(0.3vw, 4px);
@@ -967,7 +939,7 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
     text-transform: uppercase;
   }
   .keyboard-button.square {
-    width: min(22vw, 102px);
+    width: 4em;
     
   }
 
@@ -1049,16 +1021,16 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
 }
 
 .button.answerButton {
-  -webkit-tap-highlight-color: transparent;
-  font-size: calc(var(--letterBoxHeight) * 0.4);
+  font-size: 1.2em;
   color: black;  
   font-weight: bold;
-  width: calc(var(--letterBoxHeight) * 1.7);
-  height: calc(var(--letterBoxHeight) * 0.8);
-  box-shadow: rgb(122, 4, 4) 0px 3px 2px 0px;
+  padding: 0.25em 0.5em;
+  box-shadow: rgb(27, 143, 137) 0px 3px 2px 0px;
   text-transform: uppercase;
-  background-color: rgb(236, 22, 22);
-  margin: 2vmin;
+  background-color: rgb(29, 207, 219);
+  margin: 0.8em;
+  border-width: 0.08em;
+  
 }
 .button.answerButton:active {
   background-color: #7a0404;
@@ -1067,28 +1039,9 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   background-color: grey;
   pointer-events: none;
 }
-.guessResponse {
-  visibility: hidden;
-  display: flex;
-  flex-wrap: wrap;
-  min-height: 4rem;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-}
-.emailform {
-  margin: 2vw;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-direction: column;
-}
 .textinput {
-  width: 45vw;
-  max-width: 600px;
-  height: 1.5rem;
-  margin: 1vw;
+  height: 1.2em;
+  margin: 0.3em;
   align-self: center;
   text-align: center;
   border-width: 0px;

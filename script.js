@@ -121,6 +121,7 @@ function set_global_style_variables(words) {
         fontsize *= scale_ratio
     }
 
+    r.style.setProperty('--emLetterBoxMargin', '0.21em')
     r.style.setProperty('--rowHolder-font-size', `${fontsize}rem`)
     r.style.setProperty('--letterBoxMargin', `${fontsize * 0.21}rem`  ) // in rem so it can be referenced by elements outside gamebox
     r.style.setProperty('--stroke-width', '0.05em')
@@ -1499,13 +1500,11 @@ function logVersionSeen(e) {
 
 
 
-function closeFullscreenModal(modal_element) {
-    modal_element.classList.remove('opened')
-}
-
 
 
 window.onload = function() {
+    const windowHeight = document.documentElement.clientHeight;
+    r.style.setProperty('--pageHeight', `${windowHeight}px`)
 
     message_banner = document.getElementById('message_banner')
 
@@ -1608,6 +1607,7 @@ On it, a note:
     let modal = document.getElementById(modal_id)
 
     const modal_height = modal.getBoundingClientRect().height 
+    
     r.style.setProperty('--fade-height', `${modal_height*0.2}px`)
 
     modal.classList.add('opened')
