@@ -58,6 +58,7 @@ input { /* Override default which is smaller */
 
 #scrambler_title {
     display: flex;
+    font-weight: 600;
 }
 
 #scrambler_title span {
@@ -148,16 +149,15 @@ input { /* Override default which is smaller */
     margin: auto;
 }
 #gameBox {
-    border: 0.2em solid var(--almost-black); /* TODO remove */
-  border-radius: 1em;
+    /* border: 0.2em solid var(--almost-black);
+  border-radius: 1em; */
   overflow: hidden;
   transition: margin 1s cubic-bezier(0.17, 0.04, 0.03, 0.94);
   align-self: stretch;
   padding: 1rem;
 }
 .gameBox.slide_down {
-  overflow: auto;
-  margin-bottom: calc(clamp(1.5rem, 1vw + 1.25rem, 2.5rem)*3);
+  margin-bottom: calc(3.5em - 1rem); /* banner height less padding */
 }
 button {
     border-width: 0.2em;
@@ -266,7 +266,7 @@ input {
 
   width: 100%;
   height: 100%;
-
+  top: 0; /* Needed for transition to have a starting point*/
   position: relative;
   
   transition: all 1s cubic-bezier(0.17, 0.04, 0.03, 0.94); 
@@ -278,20 +278,7 @@ input {
   margin-bottom: calc(3.5em - 1rem);
 }
 
-#puzzle_reward {
-  z-index: 16;
-  position: absolute;
-  height: max-content;
-  width: calc(var(--letterBoxHeight) * 6.5);
-  top: 1000vh; 
-  display: none; 
-  transition: top 1s ease-out;
-  box-shadow: 1rem 1rem 0.5rem darkslategray;
-}
-#puzzle_reward.show {
-  display: flex;
-  top: 15vh;
-}
+
 .bonus_icon {
   display: flex;
   height: max(8vw, 82px);
@@ -447,18 +434,7 @@ tbody tr:nth-child(even) {
   background: lightgoldenrodyellow;
 }
 
-#login_modal {
-  display: none; /* TODO flex */
-  flex-direction: column;
-  z-index: 8;
-  width: min(75%, 800px);
-  padding: 6vw;
-  position: absolute;
-  top: 15%;
-  border-radius: 2rem;
-  justify-self: center;
-  justify-items: center;
-}
+
 #login_modal span {
   margin: 0.25rem;
 }
@@ -1009,21 +985,35 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
   }
 
 
-.modal {
+.popup-modal {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    width: 18rem;
+    box-shadow: var(--almost-black) 0px 0px 1rem 5px;
+
   border: 1px solid var(--almost-black);
-  display: block;
+  position: absolute;
   padding: 3vw;
   align-items: center;
   justify-content: space-between;
   z-index: 15;
   background-color: var(--almost-white);
+
+  padding: 6vw;
+  top: 7rem;
+  border-radius: 2rem;
+
+   /* top: 100vh; 
+    display: none; */ 
+    transition: top 1s ease-out;
 }
 
-
-
-.modal.closed {
-  display: none
+.popup-modal.show {
+    display: flex;
+    top: 15vh;
 }
+
 #top_modal {
   width: min(100%, 800px);
   max-height: 100%;

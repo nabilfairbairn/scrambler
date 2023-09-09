@@ -510,29 +510,34 @@ function update_guess_count() {
 }
 
 function goodBannerMessage(message) {
-
+    message_banner.innerText = message
+    message_banner.style.backgroundColor = 'var(--correct-color)'
+    message_banner.classList.add('slide_down')
+    document.getElementById('gameBox_wrapper').classList.add('slide_down')
+    document.getElementById('gameBox').classList.add('slide_down')
 }
 
 function badBannerMessage(message) {
-
+    message_banner.innerText = message
+    message_banner.style.backgroundColor = 'var(--wrong-color)'
+    message_banner.classList.add('slide_down')
+    document.getElementById('gameBox_wrapper').classList.add('slide_down')
+    document.getElementById('gameBox').classList.add('slide_down')
 }
 
 function closeBannerMessage() {
-    
+    message_banner.classList.remove('slide_down')
+    document.getElementById('gameBox_wrapper').classList.remove('slide_down')
+    document.getElementById('gameBox').classList.remove('slide_down')
 }
 
 function update_attempt_banner() {
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
     
     if (puzzle_attempt > 1) {
-        message_banner.innerText = `Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`
-        message_banner.classList.add('slide_down')
-        document.getElementById('gameBox_wrapper').classList.add('slide_down')
-        document.getElementById('gameBox').classList.add('slide_down')
+        goodBannerMessage(`Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`)
     }  else {
-        message_banner.classList.remove('slide_down')
-        document.getElementById('gameBox_wrapper').classList.remove('slide_down')
-        document.getElementById('gameBox').classList.remove('slide_down')
+        closeBannerMessage()
     }
     
 }
@@ -1352,12 +1357,16 @@ ${error}`)
 
 
     if (real_guess) {
-        var right_wrong = (puzzle_done(valid_depths)) ? "That's right!" : "Try again.";
 
-
-        var hiding = document.getElementById("button_response")
-        hiding.innerText = rule_break_notice ? rule_break_notice : right_wrong;
-        hiding.style.visibility = "visible";
+        if (puzzle_done(valid_depths)) { // Finished puzzle
+            closeBannerMessage()
+            // setTimeout(function(){goodBannerMessage(`Nailed it!`)},1000) // Time for close banner to finish closing
+            
+        } else if (rule_break_notice) { // Breaking core rules
+            badBannerMessage(rule_break_notice)
+        } else {
+            closeBannerMessage()
+        }
     }
     
     return real_guess
