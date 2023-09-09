@@ -1580,13 +1580,19 @@ On it, a note:
   var modal = document.getElementById('howToModal')
 
   var keyboardbutton = document.getElementById('keyboardbutton')
+
+  if (keyboard.style.display = 'flex') {
+    document.getElementById('containall').style.height = 'calc(8rem + var(--pageHeight) + 2rem)'
+  }
   
   keyboardbutton.onclick = function() {
     
     if (keyboard.style.display == 'none') {
         keyboard.style.display = 'flex'
+        document.getElementById('containall').style.height = 'calc(8rem + var(--pageHeight) + 2rem)'
     } else {
         keyboard.style.display = 'none'
+        document.getElementById('containall').style.height = 'calc(var(--pageHeight) + 2rem)'
     }
   }
 

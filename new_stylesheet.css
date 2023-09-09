@@ -126,11 +126,10 @@ input { /* Override default which is smaller */
   display: flex;
   width: 100%;
   overflow: hidden;
-  height: var(--pageHeight);
+  height: calc(var(--pageHeight) + 2rem);
   margin-left: auto;
   margin-right: auto;
   background-color: rgb(231, 243, 239);
-  margin-bottom: 9rem;
   
 }
 @media (min-aspect-ratio: 6/9) { /* Wider screens */
