@@ -137,22 +137,22 @@
     </div> <!-- page header close -->
 
     <div id="login_modal" class="popup-modal">
-      <span><h5>Please Login or Create a Profile:</h5></span>
+      <div class="header">Please Login or Create a Profile:</div>
       <form id="login_form" class="vertical_header">
           <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
           <input type="password" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
           <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address (Optional)*" class="textinput">
           <span><i>*Enter your email if you are interested in giving feedback or testing new features.</i></span>
-        <div class="horizontal_header">
+        <div class="horizontal-flex-cont">
           <input type="submit" name="login" value="Login" class="input_button">
           <input type="submit" name="create" value="Create Profile" class="input_button">
         </div>
       </form>
-      <span>As a friendly reminder, usernames need to be <b>free of obscene language</b>. Using a vulgar username might result in your profile being deleted.</span>
-      <div id="login_loader" class="loader"></div>
+      <span>Usernames need to be <b>free of obscene language</b>. Using a vulgar username may result in your profile being deleted.</span>
+      <div id="login_loader" class="dot-spin"></div>
     </div>
 
-    <div id="puzzle_reward" class="popup-modal vertical_header">
+    <div id="puzzle_reward" class="popup-modal">
       <div class="header">
         <button type="button", class='square button minimal invisible'>&times;</button>
         <span id="reward_title">&#127881; Congratulations &#127881;</span>
@@ -163,9 +163,9 @@
               </span></button>
       </div> <!-- <!> Congratulations <!>, etc. with emojis -->
       <span id="reward_base_points"></span> <!-- 45 points! -->
-      <div id="reward_bonuses" class="horizontal_header">
+      <div id="reward_bonuses" class="horizontal-flex-cont">
         <div class="vertical_header bonus_col"> <!-- Early Bonus -->
-          <span class="bonus_w_description horizontal_header">
+          <span class="bonus_w_description horizontal-flex-cont">
             <div class="help-tip invisible"></div>
             <img class="bonus_icon bonus" src="flag_one.svg"/>
             <div class="help-tip">
@@ -176,7 +176,7 @@
             <span id="early_points"> --</span>
         </div> 
         <div id="centre_bonus" class="vertical_header bonus_col">
-          <span class="bonus_w_description horizontal_header">
+          <span class="bonus_w_description horizontal-flex-cont">
             <div class="help-tip invisible"></div>
             <img class="bonus_icon bonus" src="fast_bonus.svg"/>
             <div class="help-tip">
@@ -188,7 +188,7 @@
         </div> <!-- Fast Bonus -->
           
         <div class="vertical_header bonus_col">
-          <span class="bonus_w_description horizontal_header">
+          <span class="bonus_w_description horizontal-flex-cont">
             <div class="help-tip invisible"></div>
             <img class="bonus_icon bonus" src="strategy.svg"/>
             <div class="help-tip">
@@ -243,27 +243,35 @@
       <div id="gameBox_wrapper">
 
         <div class="vertical-flex-cont">
-          <div class="horizontal-flex-cont">
+          <div id="game_header" class="horizontal-flex-cont game-stats">
+            <div id="guesses">Guesses: <span id="guesses_made"></span></div>
+            <div id="next_game_box">Next Game: <span id="next_game"></span></div>
+          </div>
+          <div class="horizontal-flex-cont game-stats">
             
               <div><span id="username">Not logged in...</span></div>
               <div id="points_holder">Points: <span id="points">?</span></div>
             
           </div>
-
-
-          <div id="game_header" class="horizontal_header">
-            <div id="guesses">Guesses: <span id="guesses_made"></span></div>
-            <div id="next_game_box">Next Game: <span id="next_game"></span></div>
-          </div>
-          <div class="horizontal_header">
-            <!-- easy/hard toggle -->
-            <div class="switch-field">
-              <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked/>
-              <label for="easy_radio">Easy</label>
-              <input type="radio" id="hard_radio" class="switch_diff_radio" name="switch-one" value="hard" />
-              <label for="hard_radio">Hard</label>
+          <div class="horizontal-flex-cont">
+            <div class="left-game-buttons">
+              <!-- Invisible buttons to push in game-button equal amount to game squares -->
+              <button class="button square minimal reset flex-item invisible"><div><img class="svg" for="0" src="reset.svg"></div></button>
+              
+              <!-- easy/hard toggle -->
+              <div class="switch-field">
+                <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked/>
+                <label for="easy_radio" class="game-button">Easy</label>
+                <input type="radio" id="hard_radio" class="switch_diff_radio" name="switch-one" value="hard" />
+                <label for="hard_radio" class="game-button">Hard</label>
+              </div>
             </div>
-            <button id="refresh_guess">Refresh Guess</button>
+            <div class="right-game-buttons">
+              <button id="refresh_guess" class="game-button">Refresh Guess</button>
+
+              <!-- Invisible buttons to push in game-button equal amount to game squares -->
+              <button class="button square minimal reset flex-item invisible"><div><img class="svg" for="0" src="reset.svg"></div></button>
+            </div>
           </div>
           
         </div>
@@ -294,7 +302,7 @@
         
         </div>
       <div class="vertical-header">
-        <div class="horizontal_header">
+        <div class="horizontal-flex-cont">
           <div class="switch-field">
             <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-one" value="today" checked/>
             <label for="dailyLBRadio">Today</label>
@@ -304,7 +312,7 @@
             <label for="allLBRadio">All Time</label>
           </div>
         </div>
-        <div class="horizontal_header">
+        <div class="horizontal-flex-cont">
           <div class="switch-field">
             <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-one" value="today" checked/>
             <label for="dailyLBRadio">Easy</label>

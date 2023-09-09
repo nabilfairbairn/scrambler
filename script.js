@@ -122,7 +122,7 @@ function set_global_style_variables(words) {
     }
 
     r.style.setProperty('--rowHolder-font-size', `${fontsize}rem`)
-    r.style.setProperty('--letterBoxMargin', `0.21em`  )
+    r.style.setProperty('--letterBoxMargin', `${fontsize * 0.21}rem`  ) // in rem so it can be referenced by elements outside gamebox
     r.style.setProperty('--stroke-width', '0.05em')
     // stroke width ratio of font-size
 }

@@ -100,8 +100,9 @@ input { /* Override default which is smaller */
   background-color: var(--dark-white);
   
   background: linear-gradient(var(--dark-white) 0 80%, var(--dark-white) 80%, rgba(0, 0, 0, 0) 100%);
-  visibility: hidden;
   height: max-content;
+
+  visibility: hidden;
   transform: translateY(100vh);
   transition: all 2s ease-in-out;
 }
@@ -160,11 +161,19 @@ input { /* Override default which is smaller */
   margin-bottom: calc(3.5em - 1rem); /* banner height less padding */
 }
 button {
+    
+    font-family: Nunito;
     border-width: 0.2em;
   border-radius: 0.5rem;
   justify-content: center;
   outline: 0;
   cursor: pointer;
+}
+.input_button {
+    border-radius: 0.3em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.2em;
 }
 .material-icons-round {
     font-size: 3em !important;
@@ -176,12 +185,11 @@ input {
 .switch-field {
   display: flex;
   overflow: hidden;
-  position: relative;
-  left: 10%
+  justify-self: flex-start;
 }
 
 .switch-field input {
-  position: absolute !important;
+  position: absolute !important; /* Hides input, so label replaces */
   clip-path: rect(0, 0, 0, 0);
   height: 1px;
   width: 1px;
@@ -189,18 +197,6 @@ input {
   overflow: hidden;
 }
 
-.switch-field label {
-  background-color: #e4e4e4;
-  color: rgba(0, 0, 0, 0.6);
-  line-height: 1;
-  text-align: center;
-  padding: 1rem 2rem;
-  margin-right: -1px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease-in-out;
-  -webkit-tap-highlight-color: transparent;
-}
 
 .switch-field label:hover {
   cursor: pointer;
@@ -212,11 +208,11 @@ input {
 }
 
 .switch-field label:first-of-type {
-  border-radius: 5rem 0 0 5rem ;
+  border-radius: 2em 0 0 2em ;
 }
 
 .switch-field label:last-of-type {
-  border-radius: 0 5rem 5rem 0;
+  border-radius: 0 2em 2em 0;
 }
 
 .between {
@@ -224,15 +220,36 @@ input {
   align-items: center;
   align-content: center;
 }
+
 #refresh_guess {
   display: flex;
   align-self: center;
-  padding: 1rem 1rem;
-  border-radius: 5rem;
-  position: relative;
-  right: 10%;
-  line-height: 1;
-  -webkit-tap-highlight-color: transparent;
+  border-radius: 2em; /* match switch-field label:last-of-type */
+  justify-self: flex-end;
+}
+.game-button {
+    text-align: center;
+    font-size: 0.8rem;
+    display: flex;
+    align-self: center;
+    padding: 0.5em 1em;
+    background-color: lightgrey;
+    
+  border: 0.05em solid var(--almost-black);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease-in-out;
+  
+}
+
+.right-game-buttons {
+    display: flex;
+    justify-content: right;
+    margin: var(--letterBoxMargin);
+}
+.left-game-buttons {
+    display: flex;
+    justify-content: left;
+    margin: var(--letterBoxMargin);
 }
 
 #message_banner {
@@ -455,53 +472,44 @@ tbody tr:nth-child(even) {
   100% { transform: rotate(360deg); }
 }
 
-.dot-flashing {
-  position: relative;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 1rem;
-  background-color: #9880ff;
-  color: #9880ff;
-  animation: dot-flashing 1s infinite linear alternate;
-  animation-delay: 0.3s;
-  margin-top: 1rem;
-  display: none;
-}
-.dot-flashing::before, .dot-flashing::after {
-  content: "";
-  display: inline-block;
-  position: absolute;
-  top: 0;
-}
-.dot-flashing::before {
-  left: -2rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 1rem;
-  background-color: #9880ff;
-  color: #9880ff;
-  animation: dot-flashing 1s infinite alternate;
-  animation-delay: 0s;
-}
-.dot-flashing::after {
-  left: 2rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 1rem;
-  background-color: #9880ff;
-  color: #9880ff;
-  animation: dot-flashing 1s infinite alternate;
-  animation-delay: 0.6s;
-}
-
-@keyframes dot-flashing {
-  0% {
-    background-color: #9880ff;
+.dot-spin {
+    position: relative;
+    width: 0.3em;
+    height: 0.3em;
+    border-radius: 0.15em;
+    background-color: transparent;
+    color: transparent;
+    box-shadow: 0 -18px 0 0 #9880ff, 12.727926px -12.727926px 0 0 #9880ff, 18px 0 0 0 #9880ff, 12.727926px 12.727926px 0 0 rgba(152, 128, 255, 0), 0 18px 0 0 rgba(152, 128, 255, 0), -12.727926px 12.727926px 0 0 rgba(152, 128, 255, 0), -18px 0 0 0 rgba(152, 128, 255, 0), -12.727926px -12.727926px 0 0 rgba(152, 128, 255, 0);
+    animation: dot-spin 1.5s infinite linear;
+    margin: 1em;
   }
-  50%, 100% {
-    background-color: rgba(152, 128, 255, 0.2);
+  
+  @keyframes dot-spin {
+    0%, 100% {
+      box-shadow: 0 -18px 0 0 #9880ff, 12.727926px -12.727926px 0 0 #9880ff, 18px 0 0 0 #9880ff, 12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0);
+    }
+    12.5% {
+      box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.727926px -12.727926px 0 0 #9880ff, 18px 0 0 0 #9880ff, 12.727926px 12.727926px 0 0 #9880ff, 0 18px 0 -5px rgba(152, 128, 255, 0), -12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0);
+    }
+    25% {
+      box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 0 #9880ff, 12.727926px 12.727926px 0 0 #9880ff, 0 18px 0 0 #9880ff, -12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0);
+    }
+    37.5% {
+      box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.727926px 12.727926px 0 0 #9880ff, 0 18px 0 0 #9880ff, -12.727926px 12.727926px 0 0 #9880ff, -18px 0 0 -5px rgba(152, 128, 255, 0), -12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0);
+    }
+    50% {
+      box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 0 #9880ff, -12.727926px 12.727926px 0 0 #9880ff, -18px 0 0 0 #9880ff, -12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0);
+    }
+    62.5% {
+      box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.727926px 12.727926px 0 0 #9880ff, -18px 0 0 0 #9880ff, -12.727926px -12.727926px 0 0 #9880ff;
+    }
+    75% {
+      box-shadow: 0 -18px 0 0 #9880ff, 12.727926px -12.727926px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 0 #9880ff, -12.727926px -12.727926px 0 0 #9880ff;
+    }
+    87.5% {
+      box-shadow: 0 -18px 0 0 #9880ff, 12.727926px -12.727926px 0 0 #9880ff, 18px 0 0 -5px rgba(152, 128, 255, 0), 12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.727926px 12.727926px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.727926px -12.727926px 0 0 #9880ff;
+    }
   }
-}
 
 #login_loader {
   visibility: hidden;
@@ -592,35 +600,15 @@ tbody tr:nth-child(even) {
   background-color: gold !important;
 }
 
-.vertical_header {
-  display:flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  text-align: center;
-  
-  width: 100%;
-  height: max-content;
-}
-.horizontal_header {
-  display:flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-  /*width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);*/
-  padding-bottom: var(--letterBoxMargin);
+.game-stats {
+    border-right: 0.2em solid var(--almost-black);
+    border-left: 0.2em solid var(--almost-black);
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    margin-bottom: 0.5em;
 }
 
-#game_header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  
-  /*width: calc(100% - var(--letterBoxMargin) * 2 - var(--letterInput-border-width) * 2);*/
-  padding-bottom: var(--letterBoxMargin);
-}
 #next_game_box {
-  border-right: 3px solid var(--almost-black);
   padding-right: 0.5vw;
 }
 #next_game {
@@ -630,7 +618,6 @@ tbody tr:nth-child(even) {
   display: flex;
   justify-self: left;
   align-self: flex-start;
-  border-left: 3px solid var(--almost-black);
   padding-left: 0.5vw;
   width: 20vw;
 }
@@ -986,32 +973,41 @@ Every letterBox has a before and an after, which has a transform of scaleX(0) an
 
 
 .popup-modal {
+    font-size: 0.8rem;
     display: flex;
     flex-direction: column;
     align-self: center;
+    align-items: center;
+    text-align: center;
     width: 18rem;
     box-shadow: var(--almost-black) 0px 0px 1rem 5px;
 
-  border: 1px solid var(--almost-black);
+  border: 0.1rem solid var(--almost-black);
   position: absolute;
-  padding: 3vw;
-  align-items: center;
-  justify-content: space-between;
+  padding: 1.8rem;
   z-index: 15;
   background-color: var(--almost-white);
 
-  padding: 6vw;
   top: 7rem;
   border-radius: 2rem;
 
-   /* top: 100vh; 
-    display: none; */ 
-    transition: top 1s ease-out;
+  visibility: hidden;
+  /* transform: translateY(100vh); */
+  transition: all 2s ease-in-out;
 }
 
-.popup-modal.show {
-    display: flex;
-    top: 15vh;
+.popup-modal .header {
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.popup-modal.opened {
+    top: 7rem;
+    transform: translateY(0%);
+    visibility: visible;
 }
 
 #top_modal {
