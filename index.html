@@ -114,7 +114,7 @@
 
     <div class='header horizontal-flex-cont'>
       <button id="keyboardbutton" type="button" class='square flex-item'>
-        <div><img src="past.svg"/></div>
+        <div><img src="keyboard.svg"/></div>
           </button>
           <button id="pastPuzzlesButton" type="button" class="square flex-item">
             <div><img src="past.svg"/></div>
@@ -127,11 +127,11 @@
       </div>
       
       <button id="leaderboardButton" type="button" class='square flex-item'>
-        <div><img src="past.svg"/></div>
+        <div><img src="leaderboard.svg"/></div>
       </button>
       <button id="modalbutton" for="howToModal" name="openmodalbutton" type="button" 
       class='square flex-item open-fs-modal-button'>
-        <div><img for="howToModal" src="past.svg"/></div>
+        <div><img for="howToModal" src="question.svg"/></div>
       </button>
 
     </div> <!-- page header close -->
@@ -154,49 +154,50 @@
 
     <div id="puzzle_reward" class="popup-modal">
       <div class="header">
-        <button type="button", class='square button minimal invisible'>&times;</button>
+        <button type="button", class='square button minimal invisible close-fs-modal-button'>&times;</button> <!-- TODO: Rename to close-modal-button -->
         <span id="reward_title">&#127881; Congratulations &#127881;</span>
         <button
             id="closerewardbutton"
-            type="button", class='button square minimal'><span class="material-icons-round" for="puzzle_reward">
+            type="button", class='button square minimal close-fs-modal-button'><span class="material-icons-round" for="puzzle_reward">
               close
               </span></button>
       </div> <!-- <!> Congratulations <!>, etc. with emojis -->
+
       <span id="reward_base_points"></span> <!-- 45 points! -->
       <div id="reward_bonuses" class="horizontal-flex-cont">
-        <div class="vertical_header bonus_col"> <!-- Early Bonus -->
+        <div class="vertical_flex-cont bonus_col"> <!-- Early Bonus -->
           <span class="bonus_w_description horizontal-flex-cont">
             <div class="help-tip invisible"></div>
-            <img class="bonus_icon bonus" src="flag_one.svg"/>
+            <div><img class="bonus_icon bonus square" src="flag_one.svg"/></div>
             <div class="help-tip">
               <p class="tooltipText">Earned by being one of the first to complete the puzzle. First earns +200%. Next four earn +50%.</p>
             </div>
           </span>
-            <span id="early_bonus"></span>
-            <span id="early_points"> --</span>
+            <div id="early_bonus"></div>
+            <div id="early_points"> --</div>
         </div> 
-        <div id="centre_bonus" class="vertical_header bonus_col">
+        <div id="centre_bonus" class="vertical_flex-cont bonus_col">
           <span class="bonus_w_description horizontal-flex-cont">
             <div class="help-tip invisible"></div>
-            <img class="bonus_icon bonus" src="fast_bonus.svg"/>
+            <div><img class="bonus_icon bonus square" src="fast_bonus.svg"/></div>
             <div class="help-tip">
               <p class="tooltipText">Earned by being one of the fastest to complete the puzzle. Fastest earns +75%. Next 3 earn +25%.</p>
             </div>
           </span>
-          <span id="fast_bonus"></span>
-          <span id="fast_points"> --</span>
+          <div id="fast_bonus"></div>
+          <div id="fast_points"> --</div>
         </div> <!-- Fast Bonus -->
           
-        <div class="vertical_header bonus_col">
+        <div class="vertical_flex-cont bonus_col">
           <span class="bonus_w_description horizontal-flex-cont">
             <div class="help-tip invisible"></div>
-            <img class="bonus_icon bonus" src="strategy.svg"/>
+            <div><img class="bonus_icon bonus square" src="strategy.svg"/></div>
             <div class="help-tip">
               <p class="tooltipText">Earned by completing the puzzle with fewer guesses than others. Fewest guesses earns +75%. Next 2 earn +25%.</p>
             </div>
           </span>
-          <span id="guess_bonus"></span>
-          <span id="guess_points"> --</span>
+          <div id="guess_bonus"></div>
+          <div id="guess_points"> --</div>
         </div> <!-- Strategy Bonus -->
 
       </div> 
@@ -260,7 +261,8 @@
               
               <!-- easy/hard toggle -->
               <div class="switch-field">
-                <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked/>
+                <!-- checked can only apply to one radio per set of names -->
+                <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked="checked" autocomplete="off" /> 
                 <label for="easy_radio" class="game-button">Easy</label>
                 <input type="radio" id="hard_radio" class="switch_diff_radio" name="switch-one" value="hard" />
                 <label for="hard_radio" class="game-button">Hard</label>
@@ -304,19 +306,19 @@
       <div class="vertical-header">
         <div class="horizontal-flex-cont">
           <div class="switch-field">
-            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-one" value="today" checked/>
+            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-two" value="today" checked/>
             <label for="dailyLBRadio">Today</label>
-            <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-one" value="week" />
+            <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-two" value="week" />
             <label for="weekLBRadio">This Week</label>
-            <input type="radio" id="allLBRadio" class="switch_lb_radio" name="switch-one" value="all" />
+            <input type="radio" id="allLBRadio" class="switch_lb_radio" name="switch-two" value="all" />
             <label for="allLBRadio">All Time</label>
           </div>
         </div>
         <div class="horizontal-flex-cont">
           <div class="switch-field">
-            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-one" value="today" checked/>
+            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-3" value="today" checked/>
             <label for="dailyLBRadio">Easy</label>
-            <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-one" value="week" />
+            <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-3" value="week" />
             <label for="weekLBRadio">FixHTML</label>
           </div>
           <div id="next_game_box">Next Game: <span id="next_game"></span></div>
@@ -385,7 +387,7 @@
           <button class="keyboard-button flex-item">l</button>
       </div>
       <div class="third-row">
-          <button class="keyboard-button square flex-item"><div><img src="past.svg"/></div></button>
+          <button class="keyboard-button square flex-item"><div><img src="enter.svg"/></div></button>
           <button class="keyboard-button flex-item">z</button>
           <button class="keyboard-button flex-item">x</button>
           <button class="keyboard-button flex-item">c</button>
@@ -393,7 +395,7 @@
           <button class="keyboard-button flex-item">b</button>
           <button class="keyboard-button flex-item">n</button>
           <button class="keyboard-button flex-item">m</button>
-          <button class="keyboard-button square flex-item"><div><img src="past.svg"/></div></button>
+          <button class="keyboard-button square flex-item"><div><img src="backspace.svg"/></div></button>
       </div>
   </div>
 

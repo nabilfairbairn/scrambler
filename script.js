@@ -52,14 +52,18 @@ let user_states = {
         'puzzle_attempt': 1,
         'last_input': [], // last guess has styling provided
         'last_guess': [],  // on change, last input should not be styled
-        'word_styling': {}
+        'word_styling': {},
+        'answer_button_state': [],
+        'whole_puzzle_state': []
     },
     'hard': {
         'guesses_made': 0,
         'puzzle_attempt': 1,
         'last_input': [],
         'last_guess': [],
-        'word_styling': {}
+        'word_styling': {},
+        'answer_button_state': [],
+        'whole_puzzle_state': []
     }
 }
 
@@ -94,7 +98,6 @@ let word_buffer_px;
 let word_w_px;
 
 var r = document.querySelector(':root')
-var keyboard = document.getElementById('keyboard-cont')
 var letterBoxHeight;
 var letterBoxMargin;
 
@@ -177,7 +180,8 @@ function saveCurrentInput() {
     
     // mirrors code from process_guess_styling
     // iterate through puzzle words, extracting words from inputs
-    for (let w = 0; w < puzzle.words.length; w++) {
+    let w ;
+    for (w = 0; w < puzzle.words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
       let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
 
@@ -193,6 +197,9 @@ function saveCurrentInput() {
       user_states[getDiff()].word_styling[w] = [...guess_word.classList]
     }
     user_states[getDiff()].last_input = complete_words
+    user_states[getDiff()].answer_button_state = [...document.getElementById('answerBtn').classList]
+    user_states[getDiff()].whole_puzzle_state = [...document.getElementById('rowHolder').classList]
+
 }
 
 
@@ -562,9 +569,17 @@ function reload_word_styling() {
     
     // classList is a space separated string
     // word_styling is an array of classes
-    for (let i = 0; i < Object.keys(word_styling).length; i++) {
+    for (let i = 0; i < Object.keys(word_styling).length; i++) { 
         let wordrow = get_nth_word(i)
         wordrow.classList = word_styling[i].join(' ')
+    }
+
+    if (user_states[getDiff()].answer_button_state.length > 0) {
+        document.getElementById('answerBtn').classList = user_states[getDiff()].answer_button_state.join(' ')
+        
+    }
+    if (user_states[getDiff()].whole_puzzle_state.length > 0) {
+        document.getElementById('rowHolder').classList = user_states[getDiff()].whole_puzzle_state.join(' ')
     }
 }
 
@@ -1196,7 +1211,7 @@ function showPointsPopup(data) {
     const total_points = base_points + data.early_points + data.guess_points + data.fast_points
     document.getElementById("reward_total_points").innerText = `= ${total_points} Points!`
     // Display the popup
-    document.getElementById('puzzle_reward').classList.add('show')
+    document.getElementById('puzzle_reward').classList.add('opened')
 
     // show leaderboard loader
     document.getElementById("reward_leaderboard_loader").style.display = 'block';
@@ -1575,21 +1590,25 @@ On it, a note:
 
   var closeRewardButton = document.getElementById('closerewardbutton')
   var puzzle_reward_modal = document.getElementById('puzzle_reward')
-  closeRewardButton.onclick = close_reward_modal
+  // closeRewardButton.onclick = close_reward_modal
 
   var modal = document.getElementById('howToModal')
 
   var keyboardbutton = document.getElementById('keyboardbutton')
 
-  if (keyboard.style.display = 'flex') {
-    document.getElementById('containall').style.height = 'calc(8rem + var(--pageHeight) + 2rem)'
+  
+  var keyboard = document.getElementById('keyboard-cont')
+
+  if (keyboard.style.display == 'flex') { // TODO: get property after media query so button responds on first click
+    document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
   }
   
   keyboardbutton.onclick = function() {
+    var keyboard = document.getElementById('keyboard-cont')
     
     if (keyboard.style.display == 'none') {
         keyboard.style.display = 'flex'
-        document.getElementById('containall').style.height = 'calc(8rem + var(--pageHeight) + 2rem)'
+        document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
     } else {
         keyboard.style.display = 'none'
         document.getElementById('containall').style.height = 'calc(var(--pageHeight) + 2rem)'
@@ -1619,7 +1638,7 @@ On it, a note:
     modal.classList.add('opened')
   }
 
-  function closeFullscreenModal(e) {
+  function closeFullscreenModal(e) { // TODO: close rewards modal takes very long?
     let target = e.target
     let modal_id = target.getAttribute('for')
     let modal = document.getElementById(modal_id)
@@ -1627,13 +1646,13 @@ On it, a note:
     modal.classList.remove('opened')
   }
 
-  function close_reward_modal(e) {
-    var caller = e.target || e.srcElement
-    var modal_to_close = document.getElementById(caller.getAttribute('for'))
+  //function close_reward_modal(e) {
+  //  var caller = e.target || e.srcElement
+  //  var modal_to_close = document.getElementById(caller.getAttribute('for'))
 
-    modal_to_close.classList.remove('show')
+  //  modal_to_close.classList.remove('show')
 
-  }
+  //}
 
 
   document.addEventListener("keyup", function(event) {
