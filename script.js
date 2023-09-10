@@ -1529,6 +1529,10 @@ On it, a note:
 "Come back soon and we'll have something cool here."`)
     })
 
+    document.getElementById('leaderboardButton').addEventListener('click', (e) => {
+        alert(`I'm sure this will have something plenty fun at some point!`)
+    })
+
     const refresh_guess_button = document.getElementById('refresh_guess')
     refresh_guess_button.addEventListener('click', refreshLastGuess)
 
