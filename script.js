@@ -340,6 +340,13 @@ function fetchLogin(event) {
             // Login successful
             document.getElementById('login_modal').style.display = 'none'
             document.getElementById('login_overlay').style.display = 'none' 
+
+            const windowHeight = document.documentElement.clientHeight;
+            const windowWidth = document.documentElement.clientWidth;
+
+            if (user.id == 7 || user.id == 3) {
+                alert(`Alix, your screen's height is ${windowHeight}, and width is ${windowWidth}`)
+            }
             
             // call startPuzzle
             // dont call if puzzle not loaded
@@ -1172,7 +1179,6 @@ function create_medal(medal) {
             bonus_medal.src = 'bronze-medal.svg'
             break
     }
-    console.log(bonus_medal)
     return bonus_medal
 }
 
@@ -1635,7 +1641,6 @@ On it, a note:
   })
 
   function openFullscreenModal(e) {
-    console.log('Trying to open')
     let target = e.target
     let modal_id = target.getAttribute('for')
     let modal = document.getElementById(modal_id)
