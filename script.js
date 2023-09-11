@@ -343,9 +343,10 @@ function fetchLogin(event) {
 
             const windowHeight = document.documentElement.clientHeight;
             const windowWidth = document.documentElement.clientWidth;
+            const otherwindowHeight = window.innerHeight;
 
             if (user.id == 7 || user.id == 3) {
-                alert(`Alix, your screen's height is ${windowHeight}, and width is ${windowWidth}`)
+                alert(`Alix, your screen's height is ${windowHeight}, and width is ${windowWidth}. 'Window Inner Height' is ${otherwindowHeight}`)
             }
             
             // call startPuzzle
