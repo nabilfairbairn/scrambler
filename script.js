@@ -3,7 +3,7 @@ import {puzzles} from "./puzzles.js";
 
 // https://scrambler-server-development.onrender.com
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -1611,7 +1611,7 @@ On it, a note:
   
   var keyboard = document.getElementById('keyboard-cont')
 
-  if (keyboard.style.display == 'flex') { // TODO: get property after media query so button responds on first click
+  if (window.getComputedStyle(keyboard)['display'] == 'flex') { // Element.style only shows inline style (declared in HTML)
     //document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
     document.getElementById('containall').style.paddingBottom = 'calc(12rem + 2rem)'
   }
@@ -1619,7 +1619,7 @@ On it, a note:
   keyboardbutton.onclick = function() {
     var keyboard = document.getElementById('keyboard-cont')
     
-    if (keyboard.style.display == 'none') {
+    if (window.getComputedStyle(keyboard)['display'] == 'none') {
         keyboard.style.display = 'flex'
         //document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
         document.getElementById('containall').style.paddingBottom = 'calc(12rem + 2rem)'
