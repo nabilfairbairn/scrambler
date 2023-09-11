@@ -8,7 +8,7 @@ const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.0.3'
+const version = 'V1.0.4'
 
 
 history.scrollRestoration = "manual";
@@ -333,8 +333,8 @@ function fetchLogin(event) {
             
         } else {
             setUser(http.response)
-            const params = {user_id: user.id}
-            fetchPostWrapper('/version/get', params, highlightVersionButton)
+            const newparams = {user_id: user.id}
+            fetchPostWrapper('/version/get', newparams, highlightVersionButton)
             displayLogin()
 
             // Login successful
@@ -354,13 +354,18 @@ function fetchLogin(event) {
 
 // if user's last login was on a previous version, highlight updates
 function highlightVersionButton(httpResponse) {
-    const last_version_seen = httpResponse[0].version
-    user.last_version = last_version_seen
-    const version_button = document.getElementById('version_update_button')
+    if (httpResponse.length >= 1) {
+        const last_version_seen = httpResponse[0]['version']
+        logVersionSeen()
 
-    if (last_version_seen != version) {
-        version_button.style.background = 'var(--wrong-color)'
+        user.last_version = last_version_seen
+        const version_button = document.getElementById('version_update_button')
+
+        if (last_version_seen != version) {
+            version_button.style.background = 'var(--wrong-color)'
+        }
     }
+    
 }
 
 function fetchPostWrapper(url_endpoint, params, response_function) {
