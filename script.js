@@ -1,14 +1,16 @@
 // import { setgid } from "process";
 import {puzzles} from "./puzzles.js";
 
-const api_url_base = 'https://scrambler-api.onrender.com'
+// https://scrambler-server-development.onrender.com
+// 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.0.4'
+const version = 'V1.0.5'
 
 
 history.scrollRestoration = "manual";
@@ -340,14 +342,6 @@ function fetchLogin(event) {
             // Login successful
             document.getElementById('login_modal').style.display = 'none'
             document.getElementById('login_overlay').style.display = 'none' 
-
-            const windowHeight = document.documentElement.clientHeight;
-            const windowWidth = document.documentElement.clientWidth;
-            const otherwindowHeight = window.innerHeight;
-
-            if (user.id == 7 || user.id == 3) {
-                alert(`Alix, your screen's height is ${windowHeight}, and width is ${windowWidth}. 'Window Inner Height' is ${otherwindowHeight}`)
-            }
             
             // call startPuzzle
             // dont call if puzzle not loaded
@@ -1133,7 +1127,7 @@ function remove_letter_style(letterbox) {
 }
 
 function remove_all_word_style() {
-    const wordrows = document.querySelectorAll('.wordRow')
+    const wordrows = document.querySelectorAll('.wordRow:not(.ex)')
     wordrows.forEach((wordrow) => {
         remove_word_style(wordrow)
         const letters = wordrow.querySelectorAll('.letterInput')
@@ -1530,7 +1524,9 @@ function logVersionSeen(e) {
 
 
 window.onload = function() {
-    const windowHeight = document.documentElement.clientHeight;
+    const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
+    console.log(`Window.innerHeight: ${windowHeight}`)
+    console.log(`doc.clientHeight: ${document.documentElement.clientHeight}`)
     r.style.setProperty('--pageHeight', `${windowHeight}px`)
 
     message_banner = document.getElementById('message_banner')
@@ -1616,7 +1612,8 @@ On it, a note:
   var keyboard = document.getElementById('keyboard-cont')
 
   if (keyboard.style.display == 'flex') { // TODO: get property after media query so button responds on first click
-    document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
+    //document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
+    document.getElementById('containall').style.paddingBottom = 'calc(12rem + 2rem)'
   }
   
   keyboardbutton.onclick = function() {
@@ -1624,10 +1621,12 @@ On it, a note:
     
     if (keyboard.style.display == 'none') {
         keyboard.style.display = 'flex'
-        document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
+        //document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
+        document.getElementById('containall').style.paddingBottom = 'calc(12rem + 2rem)'
     } else {
         keyboard.style.display = 'none'
-        document.getElementById('containall').style.height = 'calc(var(--pageHeight) + 2rem)'
+       // document.getElementById('containall').style.height = 'calc(var(--pageHeight) + 2rem)'
+        document.getElementById('containall').style.paddingBottom = '2rem'
     }
   }
 

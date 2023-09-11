@@ -23,6 +23,13 @@
             close
             </span></button>
       </div>
+      <p><u>V1.0.5</u></p>
+
+      <ul>
+        <li>Fixed: Keyboard appearing below screen height</li>
+        <li>Fixed: Game board being clipped at bottom of screen</li>
+      </ul>
+
       <p><u>V1.0.4</u></p>
 
       <ul>
@@ -71,10 +78,10 @@
           Between any word and the next one, <b>1 letter</b> will always be swapped out for a different one.
         </span>
         <div class='rowHolder minimal ex'>
-          <div class='wordRow horizontal-flex-cont'> <div class='letterBox letterRemoved ex'>T</div> <div class='letterBox ex below'>O</div> <div class='letterBox ex below'>U</div>
+          <div class='wordRow horizontal-flex-cont ex'> <div class='letterBox letterRemoved ex'>T</div> <div class='letterBox ex below'>O</div> <div class='letterBox ex below'>U</div>
           <div class='letterBox ex below'>C</div> <div class='letterBox ex below'>H</div> </div>
 
-          <div class='wordRow horizontal-flex-cont'> <div class='letterBox letterAdded ex'>C</div> <div class='letterBox ex above'>O</div> <div class='letterBox ex above'>U</div>
+          <div class='wordRow horizontal-flex-cont ex'> <div class='letterBox letterAdded ex'>C</div> <div class='letterBox ex above'>O</div> <div class='letterBox ex above'>U</div>
           <div class='letterBox ex above'>C</div> <div class='letterBox ex above'>H</div> </div>
         </div>
         <span>
@@ -85,10 +92,10 @@
           Along with swapping, the order of the letters might be <i>scrambled.</i>
         </span>
         <div class='rowHolder minimal ex'>
-          <div class='wordRow horizontal-flex-cont'> <div class='letterBox ex below'>S</div> <div class='letterBox letterRemoved ex'>P</div> <div class='letterBox ex below'>O</div>
+          <div class='wordRow horizontal-flex-cont ex'> <div class='letterBox ex below'>S</div> <div class='letterBox letterRemoved ex'>P</div> <div class='letterBox ex below'>O</div>
           <div class='letterBox ex below'>R</div> <div class='letterBox ex below'>T</div> </div>
 
-          <div class='wordRow horizontal-flex-cont'> <div class='letterBox ex above'>S</div> <div class='letterBox ex above'>T</div> <div class='letterBox ex above'>O</div>
+          <div class='wordRow horizontal-flex-cont ex'> <div class='letterBox ex above'>S</div> <div class='letterBox ex above'>T</div> <div class='letterBox ex above'>O</div>
           <div class='letterBox ex above'>R</div> <div class='letterBox letterAdded ex'>M</div> </div>
         </div> 
         <hr>
@@ -96,16 +103,16 @@
           When you make a guess, correct words will be coloured <span style="color: var(--correct-color);">green</span>, and incorrect words will be coloured <span style="color: var(--wrong-color)">orange</span>. 
         </span>
         <div class='rowHolder minimal ex'>
-          <div class='wordRow horizontal-flex-cont correct'> <div class='letterBox ex below'>C</div> <div class='letterBox letterRemoved ex'>H</div> <div class='letterBox ex below'>E</div>
+          <div class='wordRow horizontal-flex-cont correct ex'> <div class='letterBox ex below'>C</div> <div class='letterBox letterRemoved ex'>H</div> <div class='letterBox ex below'>E</div>
           <div class='letterBox ex below'>S</div> <div class='letterBox ex below'>T</div> </div>
 
-          <div class='wordRow horizontal-flex-cont correct'> <div class='letterBox letterInput ex above below'>S</div> <div class='letterBox ex above'>C</div> <div class='letterBox ex above below'>E</div>
+          <div class='wordRow horizontal-flex-cont correct ex'> <div class='letterBox letterInput ex above below'>S</div> <div class='letterBox ex above'>C</div> <div class='letterBox ex above below'>E</div>
           <div class='letterBox ex below'>N</div> <div class='letterBox letterAdded above ex below'>T</div> </div>
 
-          <div class='wordRow horizontal-flex-cont wrong'> <div class='letterBox letterInput ex '>D</div> <div class='letterBox letterInput ex above'>E</div> <div class='letterBox letterInput ex above'>N</div>
+          <div class='wordRow horizontal-flex-cont wrong ex'> <div class='letterBox letterInput ex '>D</div> <div class='letterBox letterInput ex above'>E</div> <div class='letterBox letterInput ex above'>N</div>
           <div class='letterBox ex above'>T</div> <div class='letterBox letterAdded ex above below'>S</div> </div>
 
-          <div class='wordRow horizontal-flex-cont'> <div class='letterBox letterInput ex'></div> <div class='letterBox letterInput ex'></div> <div class='letterBox ex'>L</div>
+          <div class='wordRow horizontal-flex-cont ex'> <div class='letterBox letterInput ex'></div> <div class='letterBox letterInput ex'></div> <div class='letterBox ex'>L</div>
           <div class='letterBox letterInput ex'></div> <div class='letterBox letterAdded ex above'>S</div> </div>
         </div> 
         <br></br>
@@ -135,6 +142,8 @@
       </button>
 
     </div> <!-- page header close -->
+    <div id="username_holder"><span id="username">Not logged in...</span></div>
+    
 
     <div id="login_modal" class="popup-modal opened">
       <div class="header">Please Login or Create a Profile:</div>
@@ -239,20 +248,23 @@
     </div>
 
     <div id="gameBox" class='gameBox vertical-flex-cont'>
+      
       <div id="message_banner"><b>Since you've already completed this puzzle before, any future attempts won't earn you any rewards.</b></div>
 
       <div id="gameBox_wrapper">
 
         <div class="vertical-flex-cont">
-          <div id="game_header" class="horizontal-flex-cont game-stats">
-            <div id="guesses">Guesses: <span id="guesses_made">0</span></div>
-            <div id="next_game_box">Next Game: <span id="next_game"></span></div>
-          </div>
-          <div class="horizontal-flex-cont game-stats">
-            
-              <div><span id="username">Not logged in...</span></div>
-              <div id="points_holder">Points: <span id="points">?</span></div>
-            
+          <div class="vertical-flex-cont game-stats">
+            <div id="game_header" class="horizontal-flex-cont ">
+              <div id="guesses">Guesses: <span id="guesses_made">0</span></div>
+              <div id="next_game_box">Next Game: <span id="next_game"></span></div>
+            </div>
+            <div class="horizontal-flex-cont ">
+              
+                <div>Streak: <span class="streak">0</span></div>
+                <div id="points_holder">Points: <span id="points">0</span></div>
+              
+            </div>
           </div>
           <div class="horizontal-flex-cont">
             <div class="left-game-buttons">
@@ -287,26 +299,24 @@
     </div>
 
     <!-- Full Leaderboard -->
-      <div id="fullLeaderboard" class="fullscreen-modal opened">
+      <div id="fullLeaderboard" class="fullscreen-modal">
         
         <div class="header">
           <button
-                id="closemodalbutton"
-                type="button", class='button square minimal invisible'><span class="material-icons-round">
+                type="button", class='button square minimal invisible close-fs-modal-button'><span class="material-icons-round">
                   close
                   </span></button>
-          <h1>Scrambler Leaderboard</h1>
+          Scrambler Leaderboard
           <button
-                id="closemodalbutton"
-                type="button", class='button square minimal close-fs-modal-button'><span class="material-icons-round">
+                type="button", class='button square minimal close-fs-modal-button'><span class="material-icons-round" for="fullLeaderboard">
                   close
                   </span></button>
         
         </div>
       <div class="vertical-header">
         <div class="horizontal-flex-cont">
-          <div class="switch-field">
-            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-two" value="today" checked/>
+          <div class="switch-field leaderboard_toggle">
+            <input type="radio" id="dailyLBRadio" class="switch_lb_radio " name="switch-two" value="today" checked/>
             <label for="dailyLBRadio">Today</label>
             <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-two" value="week" />
             <label for="weekLBRadio">This Week</label>
@@ -314,14 +324,29 @@
             <label for="allLBRadio">All Time</label>
           </div>
         </div>
-        <div class="horizontal-flex-cont">
-          <div class="switch-field">
-            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-3" value="today" checked/>
-            <label for="dailyLBRadio">Easy</label>
-            <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-3" value="week" />
-            <label for="weekLBRadio">FixHTML</label>
+
+        <div class="vertical-flex-cont game-stats">
+          <div id="game_header" class="horizontal-flex-cont "> <!-- Fields all change values for each tab -->
+            <div>Your Rank: <span id="lb_rank">0</span></div> <!-- Left -->
+            <div id="next_reset_box">Next Reset: <span id="next_reset"></span></div> <!-- Right-->
           </div>
-          <div id="next_game_box">Next Game: <span id="next_game"></span></div>
+          <div class="horizontal-flex-cont ">
+            
+              <div>Streak: <span id="streak"></span></div>
+              <div id="points_holder">Points: <span id="points">?</span></div>
+            
+          </div>
+        </div>
+
+
+        <div class="centered">
+          <div class="switch-field">
+            <input type="radio" id="easyLBRadio" class="switch_diff_radio" name="switch-3" value="today" checked/>
+            <label for="easyLBRadio" class="game-button">Easy</label>
+            <input type="radio" id="hardLBRadio" class="switch_diff_radio" name="switch-3" value="week" />
+            <label for="hardLBRadio" class="game-button">Hard</label>
+          </div>
+          
         </div>
       </div>
       <table>
