@@ -23,6 +23,13 @@
             close
             </span></button>
       </div>
+      <p><u>V1.0.6</u></p>
+
+      <ul>
+        <li>Added: Leaderboard !!!</li>
+        <li>Added: Streaks</li>
+      </ul>
+
       <p><u>V1.0.5</u></p>
 
       <ul>
@@ -47,16 +54,6 @@
         <li>Added: Password is hidden :)</li>
         <li>Added: Alerts if something new goes wrong with the server</li>
         <li>Fixed: Guesses and puzzle completions being rejected by server</li>
-      </ul>
-
-      <p><u>V1.0.2</u></p>
-
-      <ul>
-        <li>Added: No vulgar username reminder</li>
-        <li>Added: This box!</li>
-        <li>Added: Reminder if no letters changed between words</li>
-        <li>Fixed: Guessing same words doesn&#39;t increase guesses</li>
-        <li>Fixed: Colouring for wrong/right words now persists when changing difficulty</li>
       </ul>
       
     </div>
@@ -134,8 +131,8 @@
         type="button"></button>
       </div>
       
-      <button id="leaderboardButton" type="button" class='square flex-item'>
-        <div><img src="leaderboard.svg"/></div>
+      <button id="leaderboardButton" type="button" class='square flex-item open-fs-modal-button'>
+        <div><img for="fullLeaderboard" src="leaderboard.svg"/></div>
       </button>
       <button id="modalbutton" for="howToModal" name="openmodalbutton" type="button" 
       class='square flex-item open-fs-modal-button'>
@@ -213,7 +210,7 @@
       </div> 
       <span id="reward_total_points"></span>
       <table>
-        <caption>Leaderboard</caption>
+        <caption>Finisher Leaderboard</caption>
         <thead>
           <tr>
             <th scope="col">Rank</th>
@@ -317,7 +314,7 @@
       <div class="vertical-header">
         <div class="horizontal-flex-cont">
           <div class="switch-field leaderboard_toggle">
-            <input type="radio" id="dailyLBRadio" class="switch_lb_radio " name="switch-two" value="today" checked/>
+            <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-two" value="today" checked/>
             <label for="dailyLBRadio">Today</label>
             <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-two" value="week" />
             <label for="weekLBRadio">This Week</label>
@@ -328,12 +325,12 @@
 
         <div class="vertical-flex-cont game-stats">
           <div id="game_header" class="horizontal-flex-cont "> <!-- Fields all change values for each tab -->
-            <div>Your Rank: <span id="lb_rank">0</span></div> <!-- Left -->
+            <div>Your Rank: <span id="lb_rank">?</span></div> <!-- Left -->
             <div id="next_reset_box">Next Reset: <span id="next_reset"></span></div> <!-- Right-->
           </div>
           <div class="horizontal-flex-cont ">
             
-              <div>Streak: <span id="streak"></span></div>
+              <div>Streak: <span class="streak">?</span></div>
               <div id="points_holder">Points: <span id="points">?</span></div>
             
           </div>
@@ -341,47 +338,62 @@
 
 
         <div class="centered">
-          <div class="switch-field">
-            <input type="radio" id="easyLBRadio" class="switch_diff_radio" name="switch-3" value="today" checked/>
+          <div id="today_leaderboard_diff" class="switch-field">
+            <input type="radio" id="easyLBRadio" class="leaderboard_diff_radio" name="switch-3" value="easy" checked/>
             <label for="easyLBRadio" class="game-button">Easy</label>
-            <input type="radio" id="hardLBRadio" class="switch_diff_radio" name="switch-3" value="week" />
+            <input type="radio" id="hardLBRadio" class="leaderboard_diff_radio" name="switch-3" value="hard" />
             <label for="hardLBRadio" class="game-button">Hard</label>
           </div>
           
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Rank</th>
-            <th scope="col">Username</th>
-            <th scope="col">Points</th>
-            <th scope="col"><img class="bonus_icon small" src="flag_one.svg"/></th>
-            <th scope="col"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
-            <th scope="col"><img class="bonus_icon small" src="strategy.svg"/></th>
-          </tr>
-        </thead>
-        <tbody id="daily_leaderboard_tbody">
-          <!-- EXAMPLE ROWS FOR TESTING CSS
-          <tr>
-            <th scope="row">1st</th>
-            <td>BEEEEEEEEESSAHAHAHA</td>
-            <td>420</td>
-            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-            <td></td>
-            <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
-          </tr>
-          <tr>
-            <th scope="row">2nd</th>
-            <td>CuteJade</td>
-            <td>69</td>
-            <td></td>
-            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-          </tr>
-        -->
-        </tbody>
-      </table>
+      <div style="overflow: auto;">
+        <table id="full_leaderboard_table" class="longer">
+          <thead id="today_thead">
+            <tr>
+              <th scope="col">Rank</th>
+              <th scope="col">Username</th>
+              <th scope="col">Points</th>
+              <th scope="col" id="lb_first_icon"><img class="bonus_icon small" src="flag_one.svg"/></th>
+              <th scope="col" id="lb_second_icon"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
+              <th scope="col" id="lb_third_icon"><img class="bonus_icon small" src="strategy.svg"/></th> <!-- <img  class="bonus_icon small" src="strategy.svg"/> -->
+            </tr>
+          </thead>
+          <thead id="long_thead" class="removed">
+            <tr>
+              <th scope="col">Rank</th>
+              <th scope="col">Username</th>
+              <th scope="col">Points</th>
+              <th scope="col" id="lb_first_icon"><img class="bonus_icon small" src="gold-medal.svg"/></th>
+              <th scope="col" id="lb_second_icon"><img class="bonus_icon small" src="silver-medal.svg"/></th>
+              <th scope="col" id="lb_third_icon">Puzzles</th> <!-- <img  class="bonus_icon small" src="strategy.svg"/> -->
+            </tr>
+          </thead>
+          <tbody id="easy_leaderboard_tbody" class="full-leaderboard-tbody">
+            <!-- EXAMPLE ROWS FOR TESTING CSS
+            <tr>
+              <th scope="row">1</th>
+              <td>BEEEEEEEEESSAHAHAHA</td>
+              <td>420</td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+              <td></td>
+              <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>CuteJade</td>
+              <td>69</td>
+              <td></td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+            </tr>
+          -->
+          </tbody>
+          <tbody id="hard_leaderboard_tbody" class="full-leaderboard-tbody invisible"></tbody>
+          <tbody id="week_leaderboard_tbody" class="full-leaderboard-tbody invisible"></tbody>
+          <tbody id="all_leaderboard_tbody" class="full-leaderboard-tbody invisible"></tbody>
+        </table>
+      </div>
 
     </div>
   </div>

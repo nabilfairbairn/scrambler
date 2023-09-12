@@ -423,12 +423,16 @@ table {
   position: relative;
   text-align: left;
   margin-top: 2em;
+  overflow: auto;
 }
+
+
+
 caption {
   line-height: 2em;
 }
 thead th:nth-child(1) {
-  width: 12.5%;
+  width: 11.5%;
 }
 thead th:nth-child(2) {
   width: 50%;
@@ -453,6 +457,9 @@ thead th {
   text-align: left;
   border: 2px solid var(--almost-black);
   background: khaki;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
 }
 td img.bonus_icon.small, th img.bonus_icon.small {
   display: block;
@@ -464,6 +471,17 @@ tbody {
 }
 tbody tr:nth-child(even) {
   background: lightgoldenrodyellow;
+}
+
+tbody.invisible tr {
+  display: none;
+}
+
+table.longer {
+  table-layout: auto;
+}
+table.longer thead th:nth-child(6) {
+  width: 4em !important;
 }
 
 
@@ -613,6 +631,9 @@ tbody tr:nth-child(even) {
 
 .invisible {
   visibility: hidden;
+}
+.removed {
+  display:none;
 }
 .minimal {
   background-color: transparent !important;

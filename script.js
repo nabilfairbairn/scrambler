@@ -3,14 +3,14 @@ import {puzzles} from "./puzzles.js";
 
 // https://scrambler-server-development.onrender.com
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.0.5'
+const version = 'V1.0.6'
 
 
 history.scrollRestoration = "manual";
@@ -22,7 +22,15 @@ let user = {
     'id': null,
     'username': null,
     'points': null,
-    'last_version': ''
+    'last_version': '',
+    'streak': null
+}
+
+let leaderboards = {
+    'easy': null,
+    'hard': null,
+    'week': null,
+    'all': null
 }
 
 // all_daily_puzzles: easy/hard
@@ -292,6 +300,16 @@ function fetchPuzzle() {
     http.onload = function() {
         declare_puzzle(http.response) // easy and hard
 
+        // Get Leaderboard since puzzle_ids are in.
+
+        const leaderboard_params = {
+            easy_id: todays_puzzles.easy.id,
+            hard_id: todays_puzzles.hard.id,
+            week_start: getMostRecentWeekday(6) //6 for saturday
+        }
+
+        fetchPostWrapper('/leaderboard/all', leaderboard_params, loadFullLeaderboard)
+
         // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
         if (user.id) {
             loadPuzzleAndGuesses()
@@ -299,6 +317,68 @@ function fetchPuzzle() {
     }
 }
 
+function loadFullLeaderboard(httpResponse) {
+    const easy_leaderboard = httpResponse.easy
+    const hard_leaderboard = httpResponse.hard
+    const week_leaderboard = httpResponse.week
+    const all_leaderboard = httpResponse.all
+
+    leaderboards.easy = easy_leaderboard
+    leaderboards.hard = hard_leaderboard
+    leaderboards.week = week_leaderboard
+    leaderboards.all = all_leaderboard
+
+    loadDailyLeaderboard(easy_leaderboard, 'easy')
+    loadDailyLeaderboard(hard_leaderboard, 'hard')
+    loadLongerLeaderboard(week_leaderboard, 'week')
+    loadLongerLeaderboard(all_leaderboard, 'all')
+    
+    
+}
+
+function loadDailyLeaderboard(lb, diff) {
+    const tbody_id = `${diff}_leaderboard_tbody`
+    const lb_tbody = document.getElementById(tbody_id)
+
+    for (let i = 0; i < lb.length && i < 25; i++) {
+        let lb_entry = lb[i]
+        let rank = i + 1
+        let username = lb_entry['username']
+        let points = lb_entry['total_points']
+        let early_bonus = create_medal(lb_entry['early_bonus'], 'small')
+        let fast_bonues = create_medal(lb_entry['fast_bonus'], 'small')
+        let guess_bonus = create_medal(lb_entry['guess_bonus'], 'small')
+
+        let row = createTableRow([rank, username, points, early_bonus, fast_bonues, guess_bonus])
+        lb_tbody.appendChild(row)
+    }
+    if (lb.length == 0) {
+        let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', '', ''])
+        lb_tbody.appendChild(row)
+    }
+}
+
+function loadLongerLeaderboard(lb, timespan) {
+    const tbody_id = `${timespan}_leaderboard_tbody`
+    const lb_tbody = document.getElementById(tbody_id)
+
+    for (let i = 0; i < lb.length && i < 25; i++) {
+        let lb_entry = lb[i]
+        let rank = i + 1
+        let username = lb_entry['username']
+        let points = lb_entry['sum']
+        let gold = lb_entry['gold']
+        let silver = lb_entry['silver']
+        let n_puzzles = lb_entry['n_puzzles']
+
+        let row = createTableRow([rank, username, points, gold, silver, n_puzzles])
+        lb_tbody.appendChild(row)
+    }
+    if (lb.length == 0) {
+        let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', '', ''])
+        lb_tbody.appendChild(row)
+    }
+}
 
 function fetchLogin(event) {
     event.preventDefault()
@@ -345,7 +425,7 @@ function fetchLogin(event) {
             
             // call startPuzzle
             // dont call if puzzle not loaded
-            if (todays_puzzles['easy']['id']) {
+            if (todays_puzzles['easy']) {
                 loadPuzzleAndGuesses()
             }
             
@@ -614,6 +694,7 @@ function setUser(responseData) {
     user.id = responseData[0]['id']
     user.username = responseData[0]["username"]
     user.points = responseData[0]["points"]
+    user.streak = responseData[0]['streak']
 }
 
 
@@ -623,9 +704,15 @@ loginForm.addEventListener('submit', fetchLogin)
 function displayLogin(responseData) {
     const username = user.username
     const points = user.points
+    const streak = user.streak || 0
 
     document.getElementById("username").innerText = `Sup, ${username}!`
     document.getElementById("points").innerText = points
+    
+    var streaks = document.getElementsByClassName('streak')
+    for (let i = 0; i < streaks.length; i++) {
+        streaks[i].innerText = streak
+    }
     
 }
 
@@ -1158,7 +1245,10 @@ function process_guess() {
     
   }
 
-function create_medal(medal) {
+function create_medal(medal, extra_classes = null) {
+    if (!medal) {
+        return null
+    }
     // creates SVG based on medal number
     const bonus_medal = document.createElement("img")
     bonus_medal.classList.add('bonus_icon')
@@ -1170,10 +1260,18 @@ function create_medal(medal) {
         case 2:
             bonus_medal.src = 'silver-medal.svg'
             break;
-        default: // 3
+        case 3:
             bonus_medal.src = 'bronze-medal.svg'
-            break
+            break;
+        default: // No medal
+            break;
     }
+    if (extra_classes) {
+        extra_classes.split(' ').forEach((class_name) => {
+            bonus_medal.classList.add(class_name)
+        })
+    }
+    
     return bonus_medal
 }
 
@@ -1228,6 +1326,35 @@ function showPointsPopup(data) {
     fetchPostWrapper('/leaderboard/complete', params, loadInRewardLeaderboard) // hides loader
 }
 
+function createTableRow(input_list) {
+    // create tr (new row)
+    let tr = document.createElement('tr')
+    
+    for (let i = 0; i < input_list.length; i++) {
+        // create cell. th if first element of input row. else td
+        let cell;
+        if (i == 0) {
+            cell = document.createElement('th')
+            cell.setAttribute('scope', 'row')
+        } else {
+            cell = document.createElement('td')
+        }
+        
+        let cell_value = input_list[i]
+        if (cell_value === null || typeof cell_value === 'undefined') {
+            ; // do nothing
+        }
+        else if (cell_value instanceof Element) { // is DOM element
+            cell.appendChild(cell_value)
+        } else { // assume text or number
+            cell.innerText = cell_value
+        }
+
+        tr.appendChild(cell)
+    }
+    return tr
+}
+
 function loadInRewardLeaderboard(data) {
 
     const table_body = document.getElementById("daily_leaderboard_tbody")
@@ -1241,7 +1368,7 @@ function loadInRewardLeaderboard(data) {
         let first_rank = row['early_bonus']
         let fast_rank = row['fast_bonus']
         let guess_rank = row['guess_bonus']
-        
+        /*
         let tr = document.createElement('tr')
         let th = document.createElement('th')
         th.setAttribute('scope', 'row')
@@ -1255,19 +1382,22 @@ function loadInRewardLeaderboard(data) {
         let pointsTD = document.createElement('td')
         pointsTD.innerText = points
         tr.appendChild(pointsTD)
+        */
 
         let bonuses = [first_rank, fast_rank, guess_rank]
 
+        let bonus_elements = []
+
         // one by one, create medals and append to tr
         for (let j = 0; j < bonuses.length; j++) {
-            let bonusTD = document.createElement('td')
             if (bonuses[j]) {
                 let rank_svg = create_medal(bonuses[j])
                 rank_svg.classList.add('small')
-                bonusTD.appendChild(rank_svg)
+                bonus_elements.append(rank_svg)
             }
-            tr.appendChild(bonusTD)
         }
+
+        let tr = createTableRow([rank, username, points, ...bonus_elements])
 
         table_body.appendChild(tr)
     }
@@ -1280,6 +1410,7 @@ const process_puzzle_complete = (data) => {
     }
 
     user.points = data['total_points']
+    user.streak = data['streak']
     
     displayLogin() //reresh total user points
     showPointsPopup(data) //popup with points earned summary
@@ -1519,11 +1650,135 @@ function logVersionSeen(e) {
 
 }
 
+function getMostRecentWeekday(targetDOW) { //Sunday = 0, Saturday = 6
+    const today = new Date();
+    const dayOfWeek = today.getDay(); 
+    
+    const daysSinceWeekday = (dayOfWeek < targetDOW) ? (1 + dayOfWeek + 6 - targetDOW) : dayOfWeek - targetDOW;
 
+    const mostRecentTargetDOW = new Date(today.getTime() - (daysSinceWeekday * 24 * 60 * 60 * 1000));
+    
+    const year = mostRecentTargetDOW.getFullYear();
+    const month = String(mostRecentTargetDOW.getMonth() + 1).padStart(2, '0');
+    const day = String(mostRecentTargetDOW.getDate()).padStart(2, '0');
+
+    
+    return `${year}-${month}-${day}`;
+  }
+
+
+function changeLeaderboard(e) {
+    var target = e.target
+    var change_to = target.value // today week all
+
+    // hide all leaderboards
+    hideAllLeaderboards()
+
+    if (change_to == 'today') {
+        
+        // Show difficulty toggle
+        document.getElementById('today_leaderboard_diff').classList.remove('invisible')
+
+        // change icons to bonuses
+        document.getElementById('today_thead').classList.remove('removed')
+
+        showCheckedLeaderboard()
+
+    } else {
+        // change icons to medals
+
+        var target_tbody = document.getElementById(`${change_to}_leaderboard_tbody`)
+        target_tbody.classList.remove('invisible')
+        document.getElementById('long_thead').classList.remove('removed')
+        document.getElementById('today_leaderboard_diff').classList.add('invisible')
+
+        // TODO load user stats for change_to
+    }
+
+    loadUserStats()
+
+}
+
+function loadUserStats() {
+    // For leaderboard
+
+    let active_leaderboard;
+    let top_toggle_value = document.querySelector('input[name=switch-two]:checked').value
+    if (top_toggle_value == 'today') {
+        active_leaderboard = document.querySelector('input[name=switch-3]:checked').value
+    } else {
+        active_leaderboard = top_toggle_value
+    }
+
+    var rank = '?';
+    var points = '?';
+    var streak = user.streak || 0
+    var reset = ''
+    var full_leaderboard = leaderboards[active_leaderboard]
+    for (let i = 0; i < full_leaderboard.length; i++) {
+        if (full_leaderboard[i]['username'] == user.username) {
+            rank = i + 1
+            points = full_leaderboard[i]['total_points'] || full_leaderboard[i]['sum'] // changes naming based on daily or long span leaderboard
+            break;
+        }
+    }
+
+    switch(active_leaderboard) {
+        case 'all':
+            reset = 'NEVER!'
+            break;
+        case 'week':
+            reset = '8PM EST Friday'
+            break;
+        default: // today
+            reset = '8PM EST'
+            break;
+    }
+
+    if (rank) {
+        document.getElementById('lb_rank').innerText = rank
+        document.getElementById('streak').innerText = streak
+        document.getElementById('points').innerText = points
+    }
+    
+    document.getElementById('next_reset').innerText = reset
+
+    
+        
+            
+
+
+
+}
+
+function hideAllLeaderboards() {
+    var tbodys = document.getElementsByClassName('full-leaderboard-tbody')
+    for (let i = 0; i < tbodys.length; i++) {
+        tbodys[i].classList.add('invisible')
+    }
+    document.getElementById('today_thead').classList.add('removed') 
+    document.getElementById('long_thead').classList.add('removed')
+}
+
+
+function showCheckedLeaderboard() {
+    var checked_radio = document.querySelector('input[name=switch-3]:checked')
+    var value = checked_radio.value
+
+    hideAllLeaderboards()
+    document.getElementById(`${value}_leaderboard_tbody`).classList.remove('invisible')
+    document.getElementById('today_thead').classList.remove('removed')
+
+    // TODO load user stats
+}
 
 
 
 window.onload = function() {
+    
+      
+    const mostRecentSaturday = getMostRecentWeekday(6);
+
     const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
     console.log(`Window.innerHeight: ${windowHeight}`)
     console.log(`doc.clientHeight: ${document.documentElement.clientHeight}`)
@@ -1538,7 +1793,7 @@ On it, a note:
     })
 
     document.getElementById('leaderboardButton').addEventListener('click', (e) => {
-        alert(`I'm sure this will have something plenty fun at some point!`)
+        loadUserStats()
     })
 
     const refresh_guess_button = document.getElementById('refresh_guess')
@@ -1565,6 +1820,14 @@ On it, a note:
         var radio = change_diff_radios[i]
         radio.addEventListener("click", switchDifficulty)
     }
+
+    const switch_lb_radios = document.getElementsByClassName('switch_lb_radio')
+    for (let i = 0; i < switch_lb_radios.length; i++) {
+        var radio = switch_lb_radios[i]
+        radio.addEventListener('click', changeLeaderboard)
+    }
+    document.getElementById('easyLBRadio').addEventListener('click', showCheckedLeaderboard)
+    document.getElementById('hardLBRadio').addEventListener('click', showCheckedLeaderboard)
 
   const next_game = document.getElementById('next_game')
 
@@ -1616,6 +1879,8 @@ On it, a note:
     document.getElementById('containall').style.paddingBottom = 'calc(12rem + 2rem)'
   }
   
+  // TODO: Clamp total padding based on actual height of puzzle. Padding only needs to be puzzle + keyboard - windowHeight
+  // When puzzle is small, I don't need to add the entire keyboard height to the bottom of the puzzle, since the puzzle doesn't reach the bottom of the screen
   keyboardbutton.onclick = function() {
     var keyboard = document.getElementById('keyboard-cont')
     
