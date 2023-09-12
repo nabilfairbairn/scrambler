@@ -1,5 +1,4 @@
-// import { setgid } from "process";
-import {puzzles} from "./puzzles.js";
+
 
 // https://scrambler-server-development.onrender.com
 // 'https://scrambler-api.onrender.com'
@@ -160,7 +159,7 @@ async function switchDifficulty(e) {
     puzzle = todays_puzzles[new_diff]
 
     // clear old puzzle
-    document.getElementById('rowHolder').innerHTML = ''    
+    document.getElementById('rowHolder').textContent = ''    
     document.getElementById('rowHolder').classList.remove('finished')
     document.getElementById('answerBtn').classList.remove('finished')
 
@@ -302,19 +301,24 @@ function fetchPuzzle() {
 
         // Get Leaderboard since puzzle_ids are in.
 
-        const leaderboard_params = {
-            easy_id: todays_puzzles.easy.id,
-            hard_id: todays_puzzles.hard.id,
-            week_start: getMostRecentWeekday(6) //6 for saturday
-        }
-
-        fetchPostWrapper('/leaderboard/all', leaderboard_params, loadFullLeaderboard)
+        refreshLeaderboard()
+        
 
         // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
         if (user.id) {
             loadPuzzleAndGuesses()
         }
     }
+}
+
+function refreshLeaderboard() {
+    const leaderboard_params = {
+        easy_id: todays_puzzles.easy.id,
+        hard_id: todays_puzzles.hard.id,
+        week_start: getMostRecentWeekday(6) //6 for saturday
+    }
+
+    fetchPostWrapper('/leaderboard/all', leaderboard_params, loadFullLeaderboard)
 }
 
 function loadFullLeaderboard(httpResponse) {
@@ -340,6 +344,8 @@ function loadDailyLeaderboard(lb, diff) {
     const tbody_id = `${diff}_leaderboard_tbody`
     const lb_tbody = document.getElementById(tbody_id)
 
+    lb_tbody.textContent = ''
+
     for (let i = 0; i < lb.length && i < 25; i++) {
         let lb_entry = lb[i]
         let rank = i + 1
@@ -361,6 +367,8 @@ function loadDailyLeaderboard(lb, diff) {
 function loadLongerLeaderboard(lb, timespan) {
     const tbody_id = `${timespan}_leaderboard_tbody`
     const lb_tbody = document.getElementById(tbody_id)
+
+    lb_tbody.textContent = ''
 
     for (let i = 0; i < lb.length && i < 25; i++) {
         let lb_entry = lb[i]
@@ -1286,9 +1294,18 @@ function showPointsPopup(data) {
 
     const base_points_span = document.getElementById("reward_base_points")
     base_points_span.innerText = `${base_points} Points`
+
+    const early_bonus = document.getElementById("early_bonus") // div
+    early_bonus.textContent = ''
+
+    const fast_bonus = document.getElementById("fast_bonus") // div
+    fast_bonus.textContent = ''
+
+    const guess_bonus = document.getElementById("guess_bonus") // div
+    guess_bonus.textContent = ''
     
     if (data.early_bonus > 0) {
-        const early_bonus = document.getElementById("early_bonus") // div
+        
 
         const bonus_medal = create_medal(parseInt(data.early_bonus)) // 1 = gold, etc.. Parse to INT for switch case
         early_bonus.appendChild(bonus_medal) // insert medal into div
@@ -1296,7 +1313,7 @@ function showPointsPopup(data) {
 
     }
     if (data.fast_bonus > 0) {
-        const fast_bonus = document.getElementById("fast_bonus") // div
+        
 
         const bonus_medal = create_medal(data.fast_bonus) // 1 = gold, etc.
         fast_bonus.appendChild(bonus_medal) // insert medal into div
@@ -1304,7 +1321,7 @@ function showPointsPopup(data) {
 
     }
     if (data.guess_bonus > 0) {
-        const guess_bonus = document.getElementById("guess_bonus") // div
+        
 
         const bonus_medal = create_medal(data.guess_bonus) // 1 = gold, etc.
         guess_bonus.appendChild(bonus_medal) // insert medal into div
@@ -1358,7 +1375,7 @@ function createTableRow(input_list) {
 function loadInRewardLeaderboard(data) {
 
     const table_body = document.getElementById("daily_leaderboard_tbody")
-    table_body.innerHTML = ''
+    table_body.textContent = ''
 
     for (let i = 0; i < data.length; i++) {
         let row = data[i]
@@ -1393,7 +1410,7 @@ function loadInRewardLeaderboard(data) {
             if (bonuses[j]) {
                 let rank_svg = create_medal(bonuses[j])
                 rank_svg.classList.add('small')
-                bonus_elements.append(rank_svg)
+                bonus_elements.push(rank_svg)
             }
         }
 
@@ -1405,12 +1422,16 @@ function loadInRewardLeaderboard(data) {
 }
 
 const process_puzzle_complete = (data) => {
+    refreshLeaderboard() // Just for giggles, do it even if puzzle wasn't first attempt
+
     if (user_states[getDiff()].puzzle_attempt > 1) { // puzzle hasn't earned any new points. nothing to display
         return
     }
 
     user.points = data['total_points']
     user.streak = data['streak']
+
+    
     
     displayLogin() //reresh total user points
     showPointsPopup(data) //popup with points earned summary
@@ -1712,7 +1733,6 @@ function loadUserStats() {
 
     var rank = '?';
     var points = '?';
-    var streak = user.streak || 0
     var reset = ''
     var full_leaderboard = leaderboards[active_leaderboard]
     for (let i = 0; i < full_leaderboard.length; i++) {
@@ -1728,7 +1748,7 @@ function loadUserStats() {
             reset = 'NEVER!'
             break;
         case 'week':
-            reset = '8PM EST Friday'
+            reset = 'Friday, 8PM EST'
             break;
         default: // today
             reset = '8PM EST'
@@ -1737,8 +1757,7 @@ function loadUserStats() {
 
     if (rank) {
         document.getElementById('lb_rank').innerText = rank
-        document.getElementById('streak').innerText = streak
-        document.getElementById('points').innerText = points
+        document.getElementById('lb_points').innerText = points
     }
     
     document.getElementById('next_reset').innerText = reset
@@ -1776,8 +1795,7 @@ function showCheckedLeaderboard() {
 
 window.onload = function() {
     
-      
-    const mostRecentSaturday = getMostRecentWeekday(6);
+    document.getElementById('login_modal').classList.add('opened')
 
     const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
     console.log(`Window.innerHeight: ${windowHeight}`)
@@ -1849,25 +1867,12 @@ On it, a note:
   setInterval(ShowTime ,1000);
 
 
-  var input_id_answer = {}
-  var input_id = 0
-  var input_id_prefix = "user_input_"
-
   document.querySelectorAll('.open-fs-modal-button').forEach(element => {
     element.addEventListener('click', openFullscreenModal)
   });
   document.querySelectorAll('.close-fs-modal-button').forEach(element => {
     element.addEventListener('click', closeFullscreenModal)
   });
-
-  var closeModalButtons = document.getElementsByClassName('close-modal-button')
-
-
-  var closeRewardButton = document.getElementById('closerewardbutton')
-  var puzzle_reward_modal = document.getElementById('puzzle_reward')
-  // closeRewardButton.onclick = close_reward_modal
-
-  var modal = document.getElementById('howToModal')
 
   var keyboardbutton = document.getElementById('keyboardbutton')
 

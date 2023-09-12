@@ -97,18 +97,16 @@ input { /* Override default which is smaller */
 
 .fullscreen-modal {
     font-size: 0.8rem;
-    position: fixed; /* Needs to be placed as child of containall, so that if fills THAT container */
+    position: fixed; 
     top: 0%; /* Default is closed */
   left: var(--game-left);
   right: var(--game-right);
-  /* max-height: calc(var(--pageHeight) - 1rem); */
   bottom: 0;
   overflow: scroll;
   z-index: 20;
   padding: 1rem; 
   background-color: var(--dark-white);
   
-  /* background: linear-gradient(var(--dark-white) 0 80%, var(--dark-white) 80%, rgba(0, 0, 0, 0) 100%); */
 
   visibility: hidden;
   transform: translateY(100vh);
@@ -656,6 +654,9 @@ table.longer thead th:nth-child(6) {
     margin-bottom: 0.5em;
 }
 
+.game-stats span {
+  font-weight: bold;
+}
 #next_game {
   font-weight: bold;
 }
@@ -981,9 +982,9 @@ table.longer thead th:nth-child(6) {
 
   top: 7rem;
   border-radius: 2rem;
+  transform: translateY(100vh);
 
   visibility: hidden;
-  /* transform: translateY(100vh); */
   transition: all 2s ease-in-out;
 }
 
