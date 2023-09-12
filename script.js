@@ -2,7 +2,7 @@
 
 // https://scrambler-server-development.onrender.com
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -1695,7 +1695,7 @@ function changeLeaderboard(e) {
     // hide all leaderboards
     hideAllLeaderboards()
 
-    if (change_to == 'today') {
+    if (change_to == 'today') { // today tab
         
         // Show difficulty toggle
         document.getElementById('today_leaderboard_diff').classList.remove('invisible')
@@ -1705,8 +1705,8 @@ function changeLeaderboard(e) {
 
         showCheckedLeaderboard()
 
-    } else {
-        // change icons to medals
+    } else { // week or all tab
+        
 
         var target_tbody = document.getElementById(`${change_to}_leaderboard_tbody`)
         target_tbody.classList.remove('invisible')
@@ -1781,6 +1781,7 @@ function hideAllLeaderboards() {
 
 
 function showCheckedLeaderboard() {
+    loadUserStats()
     var checked_radio = document.querySelector('input[name=switch-3]:checked')
     var value = checked_radio.value
 
