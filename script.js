@@ -837,9 +837,16 @@ function process_input(element, event) {
     var word = document.getElementById(wordrow_id_prefix + depth.toString())
 
     
-    // remove word style
-    remove_word_style(word)
+    // remove styling from any words after this one
+    remove_lower_word_styling(word)
     
+}
+
+function remove_lower_word_styling(wordRow) {
+    // remove word style
+    remove_word_style(wordRow)
+    
+    let depth = wordRow.id.slice(wordrow_id_prefix.length)
     // remove word style from later words
     depth++
     while (depth < puzzle.words.length) {
@@ -847,7 +854,6 @@ function process_input(element, event) {
         remove_word_style(next_word)
         depth++
     }
-    
 }
 
 function count_letters(str){
@@ -1560,6 +1566,8 @@ function resetRowInput(e) {
     const wordrow = document.getElementById(`${wordrow_id_prefix}${target.getAttribute('for')}`)
     const letter_inputs = wordrow.getElementsByClassName('letterInput')
 
+    
+
     // remove letter hints
     for (let i = 0; i < letter_inputs.length; i++) {
         let letterBox = letter_inputs[i]
@@ -1567,7 +1575,9 @@ function resetRowInput(e) {
         determine_local_changed_letters(letterBox)
     }
     // remove correct/wrong styling
-    process_guess_styling(false)
+    remove_lower_word_styling(wordrow)
+
+    
     
 }
 
