@@ -650,8 +650,11 @@ function refreshUserInputs() {
     
     update_guess_count() 
 
-    // fill inputs with last input    
-    fill_puzzle_with_guess(user_states[getDiff()].last_input)
+    // fill inputs with last input if one exists
+    if (user_states[getDiff()].last_input.length > 0) {
+        fill_puzzle_with_guess(user_states[getDiff()].last_input)
+    }
+    
     
     // update input styling
     reload_word_styling() // Don't send guess to API
