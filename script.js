@@ -9,7 +9,7 @@ const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.0.6'
+const version = 'V1.0.7'
 
 
 history.scrollRestoration = "manual";
@@ -291,7 +291,7 @@ function declare_puzzle(httpResponse) {
 function fetchPuzzle() {
     // Get both daily puzzles
 
-    const url = 'https://scrambler-api.onrender.com/puzzles'
+    const url = `${api_url_base}/puzzles`
     const http = new XMLHttpRequest()
     http.open("GET", url)
     http.responseType = 'json'
@@ -352,10 +352,10 @@ function loadDailyLeaderboard(lb, diff) {
         let username = lb_entry['username']
         let points = lb_entry['total_points']
         let early_bonus = create_medal(lb_entry['early_bonus'], 'small')
-        let fast_bonues = create_medal(lb_entry['fast_bonus'], 'small')
+        let fast_bonus = create_medal(lb_entry['fast_bonus'], 'small')
         let guess_bonus = create_medal(lb_entry['guess_bonus'], 'small')
 
-        let row = createTableRow([rank, username, points, early_bonus, fast_bonues, guess_bonus])
+        let row = createTableRow([rank, username, points, early_bonus, fast_bonus, guess_bonus])
         lb_tbody.appendChild(row)
     }
     if (lb.length == 0) {
@@ -388,6 +388,63 @@ function loadLongerLeaderboard(lb, timespan) {
     }
 }
 
+function finishCreateUser(httpResponse) {
+    // Take creation_data
+    // login
+    // RECEIVE COOKIE
+
+    const loginParams = {
+        uname: httpResponse[0]['username'],
+        pword: httpResponse[0]['passkey']
+    }
+    // TODO: replace loginParams with cookie
+    fetchPostWrapper('/users/login', loginParams, finishLogin, manageLoginError)
+}
+
+function finishLogin(httpResponse) {
+    // login_data contains cookie
+    // parse cookie data to feed client-facing user data
+
+    setUser(httpResponse)
+    const newparams = {user_id: user.id}
+    fetchPostWrapper('/version/get', newparams, highlightVersionButton)
+    displayLogin()
+
+    // Login successful
+    document.getElementById('login_modal').style.display = 'none'
+    document.getElementById('login_overlay').style.display = 'none' 
+    
+    // call startPuzzle
+    // dont call if puzzle not loaded
+    if (todays_puzzles['easy']) {
+        loadPuzzleAndGuesses()
+    }
+
+    console.log(document.cookie)
+
+    // TODO: visit request is first to be sent to server. Should return cookie if exists. 
+    // Send callback here to parse cookie
+}
+
+function manageLoginError(errorResponse) {
+    if (errorResponse.status >= 400) {
+        // Timeout to allow loader to hide before raising alert.
+        document.getElementById('login_loader').style.visibility = 'hidden'
+
+        setTimeout(function() {
+            errorResponse.json().then(errorData => {
+                if (errorData.err) {
+                    alert(errorData.err);
+                } else {
+                    alert(`Bad bad bad. Send this to Nabil please: 
+    ${errorData}`)
+                    console.error('An error occurred:', errorData);
+                }
+                })
+          }, 100);
+    }
+}
+
 function fetchLogin(event) {
     event.preventDefault()
 
@@ -396,16 +453,18 @@ function fetchLogin(event) {
     var params = {
         uname: document.getElementById('uname').value,
         pword: document.getElementById('pword').value
-    };
-    var url = "https://scrambler-api.onrender.com/users/login"
+    }
 
+    document.getElementById('login_loader').style.visibility = 'visible'
 
     if (submit_type == 'create') {
         params['email'] = document.getElementById('email').value
-        url = "https://scrambler-api.onrender.com/users"
+        fetchPostWrapper('/users', params, finishCreateUser, manageLoginError)
+    } else {
+        fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
     }
-    document.getElementById('login_loader').style.visibility = 'visible'
-
+    
+    /*
     const http = new XMLHttpRequest()
     http.open("POST", url)
     http.setRequestHeader('Content-type', 'application/json')
@@ -440,6 +499,7 @@ function fetchLogin(event) {
         }
         
     }
+    */
 }
 
 // if user's last login was on a previous version, highlight updates
@@ -458,10 +518,11 @@ function highlightVersionButton(httpResponse) {
     
 }
 
-function fetchPostWrapper(url_endpoint, params, response_function) {
+function fetchPostWrapper(url_endpoint, params, response_function, error_function=null) {
     const full_url = `${api_url_base}${url_endpoint}` // endpoint starts with '/'
     const requestOptions = {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -487,22 +548,27 @@ function fetchPostWrapper(url_endpoint, params, response_function) {
             }
         })
         .catch(errorResponse => {
-          if (errorResponse.status >= 400 && errorResponse.status < 500) {
-            // Only display the alert for 4XX client errors
-            errorResponse.json().then(errorData => {
-              if (errorData.err) {
-                alert(errorData.err);
-              } else {
+            if (error_function) {
+                error_function(errorResponse)
+            } else {
+
+            if (errorResponse.status >= 400 && errorResponse.status < 500) {
+                // Only display the alert for 4XX client errors
+                errorResponse.json().then(errorData => {
+                if (errorData.err) {
+                    alert(errorData.err);
+                } else {
+                    alert(`Bad bad bad. Send this to Nabil please: 
+    ${errorData}`)
+                    console.error('An error occurred:', errorData);
+                }
+                });
+            } else {
                 alert(`Bad bad bad. Send this to Nabil please: 
-${errorData}`)
-                console.error('An error occurred:', errorData);
-              }
-            });
-          } else {
-            alert(`Bad bad bad. Send this to Nabil please: 
-${errorResponse}`)
-            throw(errorResponse)
-          }
+    ${errorResponse}`)
+                throw(errorResponse)
+            }
+        }
         })
         
     
@@ -543,7 +609,7 @@ async function startPuzzle() {
     // last guess requested separately
     // updates user_state value of current puzzle_attempt
 
-    const url = "https://scrambler-api.onrender.com/completed_puzzles/start"
+    const url = `${api_url_base}/completed_puzzles/start`
 
     const params = {
         user_id: user.id,
@@ -552,6 +618,7 @@ async function startPuzzle() {
 
     const requestOptions = {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -1263,9 +1330,9 @@ function process_guess() {
   }
 
 function create_medal(medal, extra_classes = null) {
-    if (!medal) {
+    /*if (!medal) {
         return null
-    }
+    }*/
     // creates SVG based on medal number
     const bonus_medal = document.createElement("img")
     bonus_medal.classList.add('bonus_icon')
@@ -1368,7 +1435,8 @@ function createTableRow(input_list) {
         
         let cell_value = input_list[i]
         if (cell_value === null || typeof cell_value === 'undefined') {
-            ; // do nothing
+            cell.innerText = ''
+            // empty cell
         }
         else if (cell_value instanceof Element) { // is DOM element
             cell.appendChild(cell_value)
@@ -1394,6 +1462,10 @@ function loadInRewardLeaderboard(data) {
         let first_rank = row['early_bonus']
         let fast_rank = row['fast_bonus']
         let guess_rank = row['guess_bonus']
+
+        let early_bonus = create_medal(row['early_bonus'], 'small')
+        let fast_bonus = create_medal(row['fast_bonus'], 'small')
+        let guess_bonus = create_medal(row['guess_bonus'], 'small')
         /*
         let tr = document.createElement('tr')
         let th = document.createElement('th')
@@ -1423,7 +1495,7 @@ function loadInRewardLeaderboard(data) {
             }
         }
 
-        let tr = createTableRow([rank, username, points, ...bonus_elements])
+        let tr = createTableRow([rank, username, points, early_bonus, fast_bonus, guess_bonus])
 
         table_body.appendChild(tr)
     }
@@ -1812,8 +1884,7 @@ window.onload = function() {
     document.getElementById('login_modal').classList.add('opened')
 
     const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
-    console.log(`Window.innerHeight: ${windowHeight}`)
-    console.log(`doc.clientHeight: ${document.documentElement.clientHeight}`)
+   
     r.style.setProperty('--pageHeight', `${windowHeight}px`)
 
     message_banner = document.getElementById('message_banner')
