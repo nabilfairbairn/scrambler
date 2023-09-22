@@ -1,5 +1,3 @@
-
-
 // https://scrambler-server-development.onrender.com
 // 'https://scrambler-api.onrender.com'
 const api_url_base = 'https://scrambler-api.onrender.com'
@@ -522,7 +520,7 @@ function fetchPostWrapper(url_endpoint, params, response_function, error_functio
     const full_url = `${api_url_base}${url_endpoint}` // endpoint starts with '/'
     const requestOptions = {
         method: 'POST',
-        credentials: 'include',
+        // credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
