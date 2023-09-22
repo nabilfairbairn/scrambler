@@ -616,7 +616,7 @@ async function startPuzzle() {
 
     const requestOptions = {
         method: 'POST',
-        credentials: 'include',
+        // credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
