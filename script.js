@@ -1,6 +1,6 @@
 // https://scrambler-server-development.onrender.com
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -409,8 +409,9 @@ function finishLogin(httpResponse) {
     displayLogin()
 
     // Login successful
-    document.getElementById('login_modal').style.display = 'none'
-    document.getElementById('login_overlay').style.display = 'none' 
+    document.getElementById('login_modal').classList.remove('opened')
+    removeAllOverlays()
+    
     
     // call startPuzzle
     // dont call if puzzle not loaded
@@ -418,10 +419,17 @@ function finishLogin(httpResponse) {
         loadPuzzleAndGuesses()
     }
 
-    console.log(document.cookie)
 
     // TODO: visit request is first to be sent to server. Should return cookie if exists. 
     // Send callback here to parse cookie
+}
+
+function removeAllOverlays() {
+    const all_overlays = document.getElementsByClassName('overlay')
+    for (let i = 0; i < all_overlays.length; i++) {
+        const overlay = all_overlays[i]
+        overlay.classList.add('closed')
+    }
 }
 
 function manageLoginError(errorResponse) {
@@ -443,6 +451,107 @@ function manageLoginError(errorResponse) {
     }
 }
 
+function openResetTokenModal() {
+    // Open modal where user send reset token to their email
+    document.getElementById('send_reset_email_modal').classList.add('opened')
+    document.getElementById('reset_loader_1').style.visibility = 'hidden'
+    document.getElementById('login_loader').style.visibility = 'hidden'
+
+    document.getElementById('pword_reset_overlay').classList.remove('closed') // add overlay to login modal
+}
+
+function openPasswordResetModal() {
+    // close previous modal.
+    // Open new modal to input reset token and new password
+    document.getElementById('password_reset_modal').classList.add('opened')
+    document.getElementById('send_reset_email_modal').classList.remove('opened')
+    document.getElementById('reset_loader_1').style.visibility = 'hidden'
+    document.getElementById('reset_loader_2').style.visibility = 'hidden'
+    document.getElementById('login_loader').style.visibility = 'hidden'
+}
+
+
+function requestResetToken(e) {
+    document.getElementById('reset_loader_1').style.visibility = 'visible'
+
+    e.preventDefault()
+
+    const submit_type = e.submitter.name
+
+    if (submit_type == 'input_token') {
+        openPasswordResetModal()
+    } else { // requesting reset token be sent to email
+        const email = document.getElementById('reset_email_send').value
+        // TODO: Regex check that email is valid
+
+        if (!email) {
+            alert('Please enter the email address you used to create your profile.')
+
+        } else { // email present
+
+            params = {
+                email: email,
+            }
+            fetchPostWrapper('/password/reset', params, openPasswordResetModal, manageResetError)
+        }
+        
+    }
+}
+
+function submitNewPassword(e) {
+    document.getElementById('reset_loader_2').style.visibility = 'visible'
+
+    e.preventDefault()
+
+    const email = document.getElementById('reset_email').value
+    const new_pword = document.getElementById('new_pword').value
+    const reset_token = document.getElementById('reset_token').value
+
+    // No checking submitter because only submit button is to send new password
+
+    if (!email || !new_pword || !reset_token) {
+        alert('Please fill all fields.')
+    } else {
+        params = {
+            email: email,
+            new_pword: new_pword,
+            reset_token: reset_token,
+        }
+        fetchPostWrapper('/password/new', params, resetSuccess, manageResetError)
+    }
+    
+    
+}
+
+function resetSuccess(httpResponse) {
+    
+    document.getElementById('pword_reset_overlay').classList.add('closed')
+    document.getElementById('password_reset_modal').classList.remove('opened')
+
+    setTimeout(function() {
+        errorResponse.json().then(errorData => {
+            alert(`Your password reset was successful. You can now login with your new password.`)
+        })
+    }, 100)
+}
+
+function manageResetError(errorResponse) {
+    // User gets generic error
+
+    if (errorResponse.status >= 400) {
+        // Timeout to allow loader to hide before raising alert.
+        document.getElementById('login_loader').style.visibility = 'hidden'
+
+        setTimeout(function() {
+            errorResponse.json().then(errorData => {
+                alert(`Your password reset failed. Check that the values were correct and your reset token hasn't expired.`)
+            })
+        }, 100)
+          
+        }
+    }
+
+
 function fetchLogin(event) {
     event.preventDefault()
 
@@ -458,6 +567,8 @@ function fetchLogin(event) {
     if (submit_type == 'create') {
         params['email'] = document.getElementById('email').value
         fetchPostWrapper('/users', params, finishCreateUser, manageLoginError)
+    } else if (submit_type == 'reset') {
+        openResetTokenModal()
     } else {
         fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
     }
@@ -772,6 +883,7 @@ function setUser(responseData) {
     user.points = responseData[0]["points"]
     user.streak = responseData[0]['streak']
 }
+
 
 
 const loginForm = document.getElementById("login_form")
@@ -1878,7 +1990,10 @@ function showCheckedLeaderboard() {
 
 
 window.onload = function() {
-    
+
+    document.getElementById('send_reset_email_modal').addEventListener('submit', requestResetToken)
+    document.getElementById('password_reset_modal').addEventListener('submit', submitNewPassword)
+
     document.getElementById('login_modal').classList.add('opened')
 
     const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
@@ -2011,6 +2126,12 @@ On it, a note:
     let modal = document.getElementById(modal_id)
 
     modal.classList.remove('opened')
+
+    if (modal_id == 'send_reset_email_modal' || modal_id == 'password_reset_modal') {
+        // if closing reset modal, remove login overlay
+        document.getElementById('pword_reset_overlay').classList.add('closed')
+
+    }
   }
 
   //function close_reward_modal(e) {
