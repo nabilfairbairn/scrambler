@@ -1,6 +1,6 @@
 // https://scrambler-server-development.onrender.com
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -8,7 +8,8 @@ const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
 const version = 'V1.0.8'
-
+const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
+let not_logging_in;
 
 history.scrollRestoration = "manual";
 window.onbeforeunload = function(){
@@ -20,7 +21,8 @@ let user = {
     'username': null,
     'points': null,
     'last_version': '',
-    'streak': null
+    'streak': null,
+    'ip': null
 }
 
 let leaderboards = {
@@ -141,41 +143,47 @@ function set_global_style_variables(words) {
 async function switchDifficulty(e) {
     const source_toggle = e.target
     const new_diff = source_toggle.value
+
+    if (new_diff == 'hard' && !user.id) { // if User isn't logged in, can't change difficulty
+        alert('You have to be logged in to play the hard puzzle.')
+
+        // keep easy toggled
+        document.getElementById('easy_radio').checked = true
+    } else {
+        if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
+            return
+        }
     
-
-    if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
-        return
-    }
-
-    // On save input, need to isolate last guess (with styling) and preceding input
-    // on reload, only put styling on last guess
-
-    // save current Input, including word styling
-    saveCurrentInput()
-
-    // replace visible puzzle
-    puzzle = todays_puzzles[new_diff]
-
-    // clear old puzzle
-    document.getElementById('rowHolder').textContent = ''    
-    document.getElementById('rowHolder').classList.remove('finished')
-    document.getElementById('answerBtn').classList.remove('finished')
-
-    // display current puzzle
-    create_puzzle()
-
-    // if first time displaying hard, startPuzzle
-
-    // refresh user state, load in new guess
-    refreshUserInputs() // loads in last input and existing styling
-
-    if (new_diff == 'hard' && !opened_hard_puzzle) {
-        await startPuzzle()
-        opened_hard_puzzle = true
-
-        // first open of Hard puzzle. Existing input in user_states is from last_guess (if exists)
-        // should be styled
-        process_guess_styling(false)
+        // On save input, need to isolate last guess (with styling) and preceding input
+        // on reload, only put styling on last guess
+    
+        // save current Input, including word styling
+        saveCurrentInput()
+    
+        // replace visible puzzle
+        puzzle = todays_puzzles[new_diff]
+    
+        // clear old puzzle
+        document.getElementById('rowHolder').textContent = ''    
+        document.getElementById('rowHolder').classList.remove('finished')
+        document.getElementById('answerBtn').classList.remove('finished')
+    
+        // display current puzzle
+        create_puzzle()
+    
+        // if first time displaying hard, startPuzzle
+    
+        // refresh user state, load in new guess
+        refreshUserInputs() // loads in last input and existing styling
+    
+        if (new_diff == 'hard' && !opened_hard_puzzle) {
+            await startPuzzle()
+            opened_hard_puzzle = true
+    
+            // first open of Hard puzzle. Existing input in user_states is from last_guess (if exists)
+            // should be styled
+            process_guess_styling(false)
+        }
     }
 }
 
@@ -212,18 +220,23 @@ function saveCurrentInput() {
 
 function replaceOffscreenTooltip(e) {
     const tooltip = e.target || e.srcElement
+
+    const tooltipX = tooltip.getBoundingClientRect().x
     const tooltipText = tooltip.firstElementChild
 
-    const windowWidth = window.innerWidth;
-    const clientWidth = document.documentElement.clientWidth
+    const containallWidth = containall.getBoundingClientRect().width
+    
+    const containallLeftX = containall.getBoundingClientRect().x
+    const containallRightX = containallWidth + containallLeftX
 
-    tooltipText.style.width = `${windowWidth * 0.6}px`
+    tooltipText.style.maxWidth = `${containallWidth * 0.7}px`
 
     /* tooltipText.style.display = 'block' */
 
     const screenPadding = 24
 
-    tooltipText.classList.remove("placeLeft", "placeRight")
+    tooltipText.style.left = 'auto'
+    tooltipText.style.right = 'auto'
 
     const tooltipRect = tooltip.getBoundingClientRect();
     const tooltipTextRect = tooltipText.getBoundingClientRect();
@@ -232,10 +245,12 @@ function replaceOffscreenTooltip(e) {
     const tooltipRightX = tooltipRect.x + tooltipRect.width
 
 
-    if (tooltipTextRect.x < 0) { // Tooltips leftmost point is off screen to the left
-        tooltipText.classList.add("placeLeft")
-    } else if (tooltipTextRightX > windowWidth) {
-        tooltipText.classList.add("placeRight")
+    if (tooltipTextRect.x < containallLeftX) { // Tooltips leftmost point is off screen to the left
+        const space_between = tooltipX - containallLeftX
+        tooltipText.style.left = `calc(-${space_between}px + 1em)`
+    } else if (tooltipTextRightX > containallRightX) {
+        const space_between = containallRightX - tooltipX
+        tooltipText.style.right = `calc(-${space_between}px + 2em)` // 2 em because helptip width is 1em
       }
 
 }
@@ -284,6 +299,7 @@ function declare_puzzle(httpResponse) {
     // hide loader
     document.getElementById('puzzle_loader').style.display = 'none'
     create_puzzle()
+
 }
 
 function fetchPuzzle() {
@@ -303,7 +319,10 @@ function fetchPuzzle() {
         
 
         // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
-        if (user.id) {
+        // Or, user refused login. closing modal set not_logging_in to true.
+        // If user later decides to log in, clicking login button will set not_loggin_in to false
+        if (user.id || (!user.id && not_logging_in == true) ) { 
+             
             loadPuzzleAndGuesses()
         }
     }
@@ -391,14 +410,15 @@ function finishLogin(httpResponse) {
     // login_data contains cookie
     // parse cookie data to feed client-facing user data
 
+
     setUser(httpResponse)
     const newparams = {user_id: user.id}
     fetchPostWrapper('/version/get', newparams, highlightVersionButton)
     displayLogin()
-
     // Login successful
     document.getElementById('login_modal').classList.remove('opened')
-    removeAllOverlays()
+    document.getElementById('overlay').classList.add('closed')
+
     
     
     // call startPuzzle
@@ -412,13 +432,6 @@ function finishLogin(httpResponse) {
     // Send callback here to parse cookie
 }
 
-function removeAllOverlays() {
-    const all_overlays = document.getElementsByClassName('overlay')
-    for (let i = 0; i < all_overlays.length; i++) {
-        const overlay = all_overlays[i]
-        overlay.classList.add('closed')
-    }
-}
 
 function manageLoginError(errorResponse) {
     if (errorResponse.status >= 400) {
@@ -445,7 +458,7 @@ function openResetTokenModal() {
     document.getElementById('reset_loader_1').style.visibility = 'hidden'
     document.getElementById('login_loader').style.visibility = 'hidden'
 
-    document.getElementById('pword_reset_overlay').classList.remove('closed') // add overlay to login modal
+    document.getElementById('overlay').classList.add('higher') // add overlay to login modal
 }
 
 function openPasswordResetModal() {
@@ -513,7 +526,7 @@ function submitNewPassword(e) {
 
 function resetSuccess(httpResponse) {
     
-    document.getElementById('pword_reset_overlay').classList.add('closed')
+    document.getElementById('overlay').classList.remove('higher')
     document.getElementById('password_reset_modal').classList.remove('opened')
 
     setTimeout(function() {
@@ -553,49 +566,15 @@ function fetchLogin(event) {
     // TOOD: validate email and that all fields exist.
 
     if (submit_type == 'create') {
+        not_logging_in = false
         fetchPostWrapper('/users', params, finishLogin, manageLoginError)
     } else if (submit_type == 'reset') {
         openResetTokenModal()
     } else {
+        not_logging_in = false
         fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
     }
     
-    /*
-    const http = new XMLHttpRequest()
-    http.open("POST", url)
-    http.setRequestHeader('Content-type', 'application/json')
-    http.responseType = 'json'
-
-    http.send(JSON.stringify(params)) // Make sure to stringify
-    http.onload = function() {
-
-        if (http.status >= 400) {
-            // Timeout to allow loader to hide before raising alert.
-            document.getElementById('login_loader').style.visibility = 'hidden'
-            setTimeout(function() {
-                alert(http.response['err'])
-              }, 50);
-            
-        } else {
-            setUser(http.response)
-            const newparams = {user_id: user.id}
-            fetchPostWrapper('/version/get', newparams, highlightVersionButton)
-            displayLogin()
-
-            // Login successful
-            document.getElementById('login_modal').style.display = 'none'
-            document.getElementById('login_overlay').style.display = 'none' 
-            
-            // call startPuzzle
-            // dont call if puzzle not loaded
-            if (todays_puzzles['easy']) {
-                loadPuzzleAndGuesses()
-            }
-            
-        }
-        
-    }
-    */
 }
 
 // if user's last login was on a previous version, highlight updates
@@ -672,15 +651,19 @@ function fetchPostWrapper(url_endpoint, params, response_function, error_functio
 
 function loadAllGuesses() {
     // load easy and hard guesses
-    const params = {
-        user_id: user.id,
-        puzzle_ids: {
-            easy: todays_puzzles['easy']['id'],
-            hard: todays_puzzles['hard']['id']
-        }
-    }
 
-    fetchPostWrapper('/guesses/multiple', params ,processAllGuesses) // load guesses. send data to process
+    if (user.id) { // only load guesses if user is logged in
+        const params = {
+            user_id: user.id,
+            puzzle_ids: {
+                easy: todays_puzzles['easy']['id'],
+                hard: todays_puzzles['hard']['id']
+            }
+        }
+    
+        fetchPostWrapper('/guesses/multiple', params ,processAllGuesses) // load guesses. send data to process
+    }
+    
 }
 
 function processAllGuesses(all_guess_data) {
@@ -709,7 +692,8 @@ async function startPuzzle() {
 
     const params = {
         user_id: user.id,
-        puzzle_id: puzzle.id
+        puzzle_id: puzzle.id,
+        user_ip: user.ip
     }
 
     const requestOptions = {
@@ -876,14 +860,17 @@ function setUser(responseData) {
 const loginForm = document.getElementById("login_form")
 loginForm.addEventListener('submit', fetchLogin)
 
-function displayLogin(responseData) {
+function displayLogin() {
     const username = user.username
     const points = user.points
     const streak = user.streak || 0
 
+
     document.getElementById("username").innerText = `Sup, ${username}!`
     document.getElementById("points").innerText = points
-    
+    document.getElementById('open_login_button').style.display = 'none'
+
+
     var streaks = document.getElementsByClassName('streak')
     for (let i = 0; i < streaks.length; i++) {
         streaks[i].innerText = streak
@@ -1453,14 +1440,14 @@ function create_medal(medal, extra_classes = null) {
         })
     }
     
-    return bonus_medal
+    return bonus_medal.src ? bonus_medal : null 
 }
 
 function showPointsPopup(data) {
     // Takes points summary from postgres, fills points popup to display to player
 
+    // what to do if not logged in
 
-    // TODO modal overlay
     var base_points = data.puzzle_points - data.total_bonus
 
     const congrat_title = document.getElementById("reward_title") // TODO: auto change title
@@ -1503,9 +1490,19 @@ function showPointsPopup(data) {
     }
 
     const total_points = base_points + data.early_points + data.guess_points + data.fast_points
-    document.getElementById("reward_total_points").innerText = `= ${total_points} Points!`
+
+    let total_reward_message;
+    if (!user.id) {
+        total_reward_message = `If you create an account, you can track your points and rank on the leaderboard.`
+    } else {
+        total_reward_message = `= ${total_points} Points!`
+    }
+
+    document.getElementById("reward_total_points").innerText = total_reward_message
+    
     // Display the popup
     document.getElementById('puzzle_reward').classList.add('opened')
+    document.getElementById('overlay').classList.remove('closed')
 
     // show leaderboard loader
     document.getElementById("reward_leaderboard_loader").style.display = 'block';
@@ -1602,16 +1599,20 @@ function loadInRewardLeaderboard(data) {
 const process_puzzle_complete = (data) => {
     refreshLeaderboard() // Just for giggles, do it even if puzzle wasn't first attempt
 
-    if (user_states[getDiff()].puzzle_attempt > 1) { // puzzle hasn't earned any new points. nothing to display
-        return
+    if (user.id) { // only update if logged in
+        
+        if (user_states[getDiff()].puzzle_attempt > 1) { // puzzle hasn't earned any new points. nothing to display
+            return
+        }
+
+        user.points = data['total_points']
+        user.streak = data['streak']
+
+        
+        
+        displayLogin() //reresh total user points
     }
 
-    user.points = data['total_points']
-    user.streak = data['streak']
-
-    
-    
-    displayLogin() //reresh total user points
     showPointsPopup(data) //popup with points earned summary
 }
 
@@ -1671,13 +1672,17 @@ function process_guess_styling(real_guess) {
 
     if (real_guess) {
         // Push guess to API
+        // Always send with IP. if not logged in, server manages
         const params = {
             puzzle_id: puzzle.id,
             user_id: user.id,
             attempt: user_states[getDiff()].puzzle_attempt,
             guess_n: user_states[getDiff()].guesses_made + 1, // When 2 guesses made, this guess is 3rd.
-            words: JSON.stringify(complete_words) // prepare array to be read as json
+            words: JSON.stringify(complete_words), // prepare array to be read as json
+            user_ip: user.ip
         }
+        
+
         try {
             fetchPostWrapper('/guesses', params, null)
             user_states[getDiff()].last_guess = complete_words // Update last_guess
@@ -1700,7 +1705,8 @@ ${error}`)
                 puzzle_id: puzzle.id,
                 user_id: user.id,
                 attempt: user_states[getDiff()].puzzle_attempt,
-                total_guesses: user_states[getDiff()].guesses_made + 1 // Incrementing 'guesses_made' occurs later
+                total_guesses: user_states[getDiff()].guesses_made + 1, // Incrementing 'guesses_made' occurs later
+                user_ip: user.ip
             }
             fetchPostWrapper('/completed_puzzles', params, process_puzzle_complete)
         }
@@ -1828,6 +1834,8 @@ function create_puzzle() {
         reset_holder.classList.add('button', 'square', 'minimal', 'reset', 'flex-item');
         return reset_holder;
     }
+    process_guess_styling(false)
+    readjustContainallPadding()
 }
 
 function refreshLastGuess(e) {
@@ -1974,6 +1982,33 @@ function showCheckedLeaderboard() {
     // TODO load user stats
 }
 
+var keyboard = document.getElementById('keyboard-cont')
+
+
+  function readjustContainallPadding() {
+    // Adds padding to the bottom of containall so that it visually takes up the whole screen, and allows for keyboard
+    const containall = document.getElementById('containall')
+    const containallBottomPadding = window.getComputedStyle(containall)['paddingBottom'].slice(0, -2)
+    const containall_total_height = containall.getBoundingClientRect().height 
+    const containall_height = containall_total_height - containallBottomPadding
+    const keyboard_height = keyboard.getBoundingClientRect().height
+    const windowHeight = window.innerHeight
+
+
+    let containallNewPaddingHeight;
+
+    if (containall_height + keyboard_height > windowHeight) { // containall + keyboard exceed the screen
+        // padding is equal to MAX( (containall + keyboard) - window, keyboard)
+        containallNewPaddingHeight = Math.max(containall_height + keyboard_height - windowHeight, keyboard_height)
+
+    } else { // containall + keyboard are within the screen
+        // Add padding to containall so that it visually fits the screen
+        containallNewPaddingHeight = windowHeight - containall_height
+    }
+    containall.style.paddingBottom = `${containallNewPaddingHeight - 12}px`
+    
+  }
+
 
 
 window.onload = function() {
@@ -1983,7 +2018,7 @@ window.onload = function() {
 
     document.getElementById('login_modal').classList.add('opened')
 
-    const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
+    
    
     r.style.setProperty('--pageHeight', `${windowHeight}px`)
 
@@ -2005,7 +2040,10 @@ On it, a note:
     // send load info and IP to db
     fetch('https://api.ipify.org?format=json')
     .then(response => response.json())
-    .then(data => fetchPostWrapper('/visit', {ip: data.ip}, null));
+    .then(data => {
+        user.ip = data.ip
+        fetchPostWrapper('/visit', {ip: data.ip}, null)
+    });
 
 
     const allTooltips = document.getElementsByClassName('help-tip');
@@ -2062,12 +2100,8 @@ On it, a note:
   var keyboardbutton = document.getElementById('keyboardbutton')
 
   
-  var keyboard = document.getElementById('keyboard-cont')
 
-  if (window.getComputedStyle(keyboard)['display'] == 'flex') { // Element.style only shows inline style (declared in HTML)
-    //document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
-    document.getElementById('containall').style.paddingBottom = 'calc(12rem + 2rem)'
-  }
+  
   
   // TODO: Clamp total padding based on actual height of puzzle. Padding only needs to be puzzle + keyboard - windowHeight
   // When puzzle is small, I don't need to add the entire keyboard height to the bottom of the puzzle, since the puzzle doesn't reach the bottom of the screen
@@ -2077,11 +2111,13 @@ On it, a note:
     if (window.getComputedStyle(keyboard)['display'] == 'none') {
         keyboard.style.display = 'flex'
         //document.getElementById('containall').style.height = 'calc(12rem + var(--pageHeight) + 2rem)'
-        document.getElementById('containall').style.paddingBottom = 'calc(12rem + 2rem)'
+        // document.getElementById('containall').style.paddingBottom = 'calc(12rem + 2rem)'
+        readjustContainallPadding()
     } else {
         keyboard.style.display = 'none'
        // document.getElementById('containall').style.height = 'calc(var(--pageHeight) + 2rem)'
-        document.getElementById('containall').style.paddingBottom = '2rem'
+        //document.getElementById('containall').style.paddingBottom = '2rem'
+        readjustContainallPadding()
     }
   }
 
@@ -2105,6 +2141,7 @@ On it, a note:
     r.style.setProperty('--fade-height', `${modal_height*0.2}px`)
 
     modal.classList.add('opened')
+    document.getElementById('overlay').classList.remove('closed')
   }
 
   function closeFullscreenModal(e) { // TODO: close rewards modal takes very long?
@@ -2116,9 +2153,17 @@ On it, a note:
 
     if (modal_id == 'send_reset_email_modal' || modal_id == 'password_reset_modal') {
         // if closing reset modal, remove login overlay
-        document.getElementById('pword_reset_overlay').classList.add('closed')
-
+        document.getElementById('overlay').classList.remove('higher')
+    } else {
+        document.getElementById('overlay').classList.add('closed')
     }
+    if (modal_id == 'login_modal') {
+        not_logging_in = true
+        if (puzzle.id) { // if refusing login and puzzle is loaded, send start
+            startPuzzle()
+        }
+    }
+
   }
 
   //function close_reward_modal(e) {
@@ -2140,5 +2185,7 @@ On it, a note:
   document.getElementById("answerBtn").onclick = function() {
     process_guess()
   }
+
+  readjustContainallPadding()
   
 }

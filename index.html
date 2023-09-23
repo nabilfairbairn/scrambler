@@ -15,13 +15,179 @@
   
 
   <div id='containall' class="vertical-flex-cont">
-    <div class="overlay"></div> <!-- Starts opened -->
-    <div id="pword_reset_overlay" class="overlay closed"></div>
+    <div class="modal-container">
+
+      <div id="login_modal" class="popup-modal">
+        <div class="header">
+          <button
+              type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
+                close
+                </span></button>
+          Login or Create a Profile
+          <button
+              type="button", class='button square minimal close-fs-modal-button' for="login_modal"><span class="material-icons-round" >
+                close
+                </span></button>
+        </div>
+        <span>Without a profile, you will only be able to play the daily easy puzzle.</span>
+        <form id="login_form" class="vertical-flex-cont">
+            <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
+              <input type="password" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
+
+            <div class="flex-box">
+              <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address" class="textinput">
+              <div class="help-tip">
+                <p class="tooltipText">Your passwords are hashed in a database and can only be reset by email.</p>
+              </div>
+            </div>
+          <div class="horizontal-flex-cont">
+            <input type="submit" name="login" value="Login" class="input_button">
+            <input type="submit" name="create" value="Create Profile" class="input_button">
+          </div>
+        
+        <div>Usernames need to be <b>free of obscene language</b>. Using a vulgar username may result in your profile being deleted.</div>
+        <div class="horizontal-flex-cont one-child"><input type="submit" name="reset" class="input_button" id="pass_reset_button" value="Reset Password"></div>
+        </form>
+        <div id="login_loader" class="dot-spin"></div>
+      </div>
+  
+      <div id="send_reset_email_modal" class="popup-modal higher">
+        <div class="header">
+          <button
+              type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
+                close
+                </span></button>
+          Password Reset
+          <button
+          type="button", class='button square minimal close-fs-modal-button' for="send_reset_email_modal"><span class="material-icons-round" >
+            close
+            </span></button>
+        </div>
+        <form id="reset_token_form" class="vertical-flex-cont">
+            <input type="text" id="reset_email_send" name="email" maxlength="50" placeholder="Email Address" class="textinput">
+            <div><br><i>Enter your email address. If an account exists, we will send a password reset token to use in the next step.</i></div>
+          <div class="horizontal-flex-cont">
+            <input type="submit" name="send_token" value="Request Reset Token" class="input_button">
+            <input type="submit" name="input_token" value="Enter My Token" class="input_button">
+          </div>
+        </form>
+        <div id="reset_loader_1" class="dot-spin"></div>
+      </div>
+  
+      <div id="password_reset_modal" class="popup-modal higher">
+        <div class="header">
+          <button
+              type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
+                close
+                </span></button>
+          Password Reset
+          <button
+          type="button", class='button square minimal close-fs-modal-button' for="password_reset_modal"><span class="material-icons-round" >
+            close
+            </span></button>
+        </div>
+        <form id="password_reset_form" class="vertical-flex-cont">
+            <input type="text" id="reset_email" name="email" maxlength="50" placeholder="Email Address" class="textinput">
+            <input type="password" id="new_pword" name="pword" maxlength="20" placeholder="New Password" class="textinput"/>
+            <input type="text" id="reset_token" name="reset_token" maxlength="50" placeholder="Reset Token" class="textinput">
+            <div><i>Enter the password reset token sent to your email above, along with your email and new password</i></div>
+            <div class="horizontal-flex-cont one-child"><input type="submit" name="reset" value="Set New Password" class="input_button"></div>
+        </form>
+        <div id="reset_loader_2" class="dot-spin"></div>
+      </div>
+  
+      <div id="puzzle_reward" class="popup-modal">
+        <div class="header">
+          <button type="button", class='square button minimal invisible close-fs-modal-button'>&times;</button> <!-- TODO: Rename to close-modal-button -->
+          <span id="reward_title">&#127881; Congratulations &#127881;</span>
+          <button
+              type="button", class='button square minimal close-fs-modal-button' for="puzzle_reward"><span class="material-icons-round" >
+                close
+                </span></button>
+        </div> <!-- <!> Congratulations <!>, etc. with emojis -->
+  
+        <span id="reward_base_points"></span> <!-- 45 points! -->
+        <div id="reward_bonuses" class="horizontal-flex-cont">
+          <div class="vertical_flex-cont bonus_col"> <!-- Early Bonus -->
+            <span class="bonus_w_description horizontal-flex-cont">
+              <div class="help-tip invisible"></div>
+              <div><img class="bonus_icon bonus square" src="flag_one.svg"/></div>
+              <div class="help-tip">
+                <p class="tooltipText">Earned by being one of the first to complete the puzzle. First earns +200%. Next four earn +50%.</p>
+              </div>
+            </span>
+              <div id="early_bonus"></div>
+              <div id="early_points"> --</div>
+          </div> 
+          <div id="centre_bonus" class="vertical_flex-cont bonus_col">
+            <span class="bonus_w_description horizontal-flex-cont">
+              <div class="help-tip invisible"></div>
+              <div><img class="bonus_icon bonus square" src="fast_bonus.svg"/></div>
+              <div class="help-tip">
+                <p class="tooltipText">Earned by being one of the fastest to complete the puzzle. Fastest earns +75%. Next 3 earn +25%.</p>
+              </div>
+            </span>
+            <div id="fast_bonus"></div>
+            <div id="fast_points"> --</div>
+          </div> <!-- Fast Bonus -->
+            
+          <div class="vertical_flex-cont bonus_col">
+            <span class="bonus_w_description horizontal-flex-cont">
+              <div class="help-tip invisible"></div>
+              <div><img class="bonus_icon bonus square" src="strategy.svg"/></div>
+              <div class="help-tip">
+                <p class="tooltipText">Earned by completing the puzzle with fewer guesses than others. Fewest guesses earns +75%. Next 2 earn +25%.</p>
+              </div>
+            </span>
+            <div id="guess_bonus"></div>
+            <div id="guess_points"> --</div>
+          </div> <!-- Strategy Bonus -->
+  
+        </div> 
+        <span id="reward_total_points"></span>
+        <table>
+          <caption>Finisher Leaderboard</caption>
+          <thead>
+            <tr>
+              <th scope="col">Rank</th>
+              <th scope="col">Username</th>
+              <th scope="col">Points</th>
+              <th scope="col"><img class="bonus_icon small" src="flag_one.svg"/></th>
+              <th scope="col"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
+              <th scope="col"><img class="bonus_icon small" src="strategy.svg"/></th>
+            </tr>
+          </thead>
+          <tbody id="daily_leaderboard_tbody">
+            <!-- EXAMPLE ROWS FOR TESTING CSS
+            <tr>
+              <th scope="row">1st</th>
+              <td>BEEEEEEEEESSAHAHAHA</td>
+              <td>420</td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+              <td></td>
+              <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
+            </tr>
+            <tr>
+              <th scope="row">2nd</th>
+              <td>CuteJade</td>
+              <td>69</td>
+              <td></td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+            </tr>
+          -->
+          </tbody>
+        </table>
+        <div id="reward_leaderboard_loader" class="dot-flashing"></div>
+      </div>
+
+    </div>
+
+    <div id="overlay" class="overlay"></div> <!-- Starts opened -->
     <div id="versionUpdateModal" class="fullscreen-modal">
       <div class="header">Version Updates
         <button
-          id="closemodalbutton" for="versionUpdateModal"
-          type="button" class='button square minimal close-fs-modal-button'><span for="versionUpdateModal" class="material-icons-round">
+          type="button" class='button square minimal close-fs-modal-button' for="versionUpdateModal"><span  class="material-icons-round">
             close
             </span></button>
       </div>
@@ -60,8 +226,7 @@
       <div id="modal-header" class='header'>
         <span>HOW TO PLAY</span>
         <button
-          id="closemodalbutton" for="howToModal"
-          type="button" class='button square minimal close-fs-modal-button'><span for="howToModal" class="material-icons-round">
+          type="button" class='button square minimal close-fs-modal-button' for="howToModal"><span  class="material-icons-round">
             close
             </span></button>
       </div> <!-- modal header close -->
@@ -138,161 +303,13 @@
       </button>
 
     </div> <!-- page header close -->
-    <div id="username_holder"><span id="username">Not logged in...</span></div>
+    <div id="username_holder">
+      <span id="username"></span>
+      <button id="open_login_button" class="open-fs-modal-button" for="login_modal">Login</button>
+    </div>
     
 
-    <div id="login_modal" class="popup-modal">
-      <div class="header">Please Login or Create a Profile:</div>
-      <form id="login_form" class="vertical_header">
-          <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
-          <input type="password" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
-          <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address*" class="textinput">
-          <span><i>*Your email is used to reset your password if lost. You do not need to enter an email when logging in.</i></span>
-        <div class="horizontal-flex-cont">
-          <input type="submit" name="login" value="Login" class="input_button">
-          <input type="submit" name="create" value="Create Profile" class="input_button">
-        </div>
-      
-      <div>Usernames need to be <b>free of obscene language</b>. Using a vulgar username may result in your profile being deleted.</div>
-      <input type="submit" name="reset" class="input_button" id="pass_reset_button" value="Reset Password">
-      </form>
-      <div id="login_loader" class="dot-spin"></div>
-    </div>
-
-    <div id="send_reset_email_modal" class="popup-modal higher">
-      <div class="header">
-        <button
-            id="closerewardbutton"
-            type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
-              close
-              </span></button>
-        Password Reset
-        <button
-        id="closerewardbutton"
-        type="button", class='button square minimal close-fs-modal-button'><span class="material-icons-round" for="send_reset_email_modal">
-          close
-          </span></button>
-      </div>
-      <form id="reset_token_form" class="vertical_header">
-          <input type="text" id="reset_email_send" name="email" maxlength="50" placeholder="Email Address" class="textinput">
-          <div><br><i>Enter your email address. If an account exists, we will send a password reset token to use in the next step.</i></div>
-        <div class="horizontal-flex-cont">
-          <input type="submit" name="send_token" value="Request Reset Token" class="input_button">
-          <input type="submit" name="input_token" value="Enter My Token" class="input_button">
-        </div>
-      </form>
-      <div id="reset_loader_1" class="dot-spin"></div>
-    </div>
-
-    <div id="password_reset_modal" class="popup-modal higher">
-      <div class="header">
-        <button
-            id="closerewardbutton"
-            type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
-              close
-              </span></button>
-        Password Reset
-        <button
-        id="closerewardbutton"
-        type="button", class='button square minimal close-fs-modal-button'><span class="material-icons-round" for="password_reset_modal">
-          close
-          </span></button>
-      </div>
-      <form id="password_reset_form" class="vertical_header">
-          <input type="text" id="reset_email" name="email" maxlength="50" placeholder="Email Address" class="textinput">
-          <input type="password" id="new_pword" name="pword" maxlength="20" placeholder="New Password" class="textinput"/>
-          <input type="text" id="reset_token" name="reset_token" maxlength="50" placeholder="Reset Token" class="textinput">
-          <div><i>Enter the password reset token sent to your email above, along with your email and new password</i></div>
-          <input type="submit" name="reset" value="Set New Password" class="input_button">
-      </form>
-      <div id="reset_loader_2" class="dot-spin"></div>
-    </div>
-
-    <div id="puzzle_reward" class="popup-modal">
-      <div class="header">
-        <button type="button", class='square button minimal invisible close-fs-modal-button'>&times;</button> <!-- TODO: Rename to close-modal-button -->
-        <span id="reward_title">&#127881; Congratulations &#127881;</span>
-        <button
-            id="closerewardbutton"
-            type="button", class='button square minimal close-fs-modal-button'><span class="material-icons-round" for="puzzle_reward">
-              close
-              </span></button>
-      </div> <!-- <!> Congratulations <!>, etc. with emojis -->
-
-      <span id="reward_base_points"></span> <!-- 45 points! -->
-      <div id="reward_bonuses" class="horizontal-flex-cont">
-        <div class="vertical_flex-cont bonus_col"> <!-- Early Bonus -->
-          <span class="bonus_w_description horizontal-flex-cont">
-            <div class="help-tip invisible"></div>
-            <div><img class="bonus_icon bonus square" src="flag_one.svg"/></div>
-            <div class="help-tip">
-              <p class="tooltipText">Earned by being one of the first to complete the puzzle. First earns +200%. Next four earn +50%.</p>
-            </div>
-          </span>
-            <div id="early_bonus"></div>
-            <div id="early_points"> --</div>
-        </div> 
-        <div id="centre_bonus" class="vertical_flex-cont bonus_col">
-          <span class="bonus_w_description horizontal-flex-cont">
-            <div class="help-tip invisible"></div>
-            <div><img class="bonus_icon bonus square" src="fast_bonus.svg"/></div>
-            <div class="help-tip">
-              <p class="tooltipText">Earned by being one of the fastest to complete the puzzle. Fastest earns +75%. Next 3 earn +25%.</p>
-            </div>
-          </span>
-          <div id="fast_bonus"></div>
-          <div id="fast_points"> --</div>
-        </div> <!-- Fast Bonus -->
-          
-        <div class="vertical_flex-cont bonus_col">
-          <span class="bonus_w_description horizontal-flex-cont">
-            <div class="help-tip invisible"></div>
-            <div><img class="bonus_icon bonus square" src="strategy.svg"/></div>
-            <div class="help-tip">
-              <p class="tooltipText">Earned by completing the puzzle with fewer guesses than others. Fewest guesses earns +75%. Next 2 earn +25%.</p>
-            </div>
-          </span>
-          <div id="guess_bonus"></div>
-          <div id="guess_points"> --</div>
-        </div> <!-- Strategy Bonus -->
-
-      </div> 
-      <span id="reward_total_points"></span>
-      <table>
-        <caption>Finisher Leaderboard</caption>
-        <thead>
-          <tr>
-            <th scope="col">Rank</th>
-            <th scope="col">Username</th>
-            <th scope="col">Points</th>
-            <th scope="col"><img class="bonus_icon small" src="flag_one.svg"/></th>
-            <th scope="col"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
-            <th scope="col"><img class="bonus_icon small" src="strategy.svg"/></th>
-          </tr>
-        </thead>
-        <tbody id="daily_leaderboard_tbody">
-          <!-- EXAMPLE ROWS FOR TESTING CSS
-          <tr>
-            <th scope="row">1st</th>
-            <td>BEEEEEEEEESSAHAHAHA</td>
-            <td>420</td>
-            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-            <td></td>
-            <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
-          </tr>
-          <tr>
-            <th scope="row">2nd</th>
-            <td>CuteJade</td>
-            <td>69</td>
-            <td></td>
-            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-            <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-          </tr>
-        -->
-        </tbody>
-      </table>
-      <div id="reward_leaderboard_loader" class="dot-flashing"></div>
-    </div>
+    
 
     <div id="gameBox" class='gameBox vertical-flex-cont'>
       
@@ -308,8 +325,8 @@
             </div>
             <div class="horizontal-flex-cont">
               
-                <div>Streak: <span class="streak">???</span></div>
-                <div id="points_holder">Points: <span id="points">0</span></div>
+                <div>Streak: <span class="streak">?</span></div>
+                <div id="points_holder">Points: <span id="points">?</span></div>
               
             </div>
           </div>
@@ -342,7 +359,6 @@
         <div id="button_response" class='guessResponse'></div>
         
       </div> <!-- Close gamebox wrapper (needed for margin, so rewardless banner can press against sides)-->
-      <div id="login_overlay" class="overlay closed"></div> <!-- TODO remove closed -->
     </div>
 
     <!-- Full Leaderboard -->
@@ -355,7 +371,7 @@
                   </span></button>
           Scrambler Leaderboard
           <button
-                type="button", class='button square minimal close-fs-modal-button'><span class="material-icons-round" for="fullLeaderboard">
+                type="button", class='button square minimal close-fs-modal-button' for="fullLeaderboard"><span class="material-icons-round" >
                   close
                   </span></button>
         

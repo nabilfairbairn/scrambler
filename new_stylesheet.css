@@ -108,7 +108,7 @@ input { /* Override default which is smaller */
   background-color: var(--dark-white);
   
 
-  visibility: hidden;
+  visibility: collapse;
   transform: translateY(100vh);
   transition: all 2s ease-in-out;
 }
@@ -126,16 +126,17 @@ input { /* Override default which is smaller */
   /* height: calc(var(--pageHeight) + 2rem); */
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: calc(2rem);
   background-color: rgb(231, 243, 239);
   
 }
 
 #username_holder {
   position: absolute;
+  display: flex;
+  align-self: center;
   font-size: 0.8em;
-  margin-left: 1rem;
   top: 3.8rem;
+  text-align: center;
 }
 
 #gameBox {
@@ -150,13 +151,19 @@ input { /* Override default which is smaller */
   margin-bottom: calc(3.5em - 1rem); /* banner height less padding */
 }
 button {
-    
-    font-family: Nunito;
-    border-width: 0.2em;
+  font-family: Nunito;
+  border-width: 0.2em;
   border-radius: 0.5rem;
   justify-content: center;
   outline: 0;
   cursor: pointer;
+  display: block;
+  text-align: center;
+    padding: 0.5em 1em;
+}
+button span {
+  pointer-events: none;
+  display: block;
 }
 .input_button {
   font-size: 1em;
@@ -165,8 +172,20 @@ button {
     margin-bottom: 1em;
     padding: 0.2em;
 }
+#open_login_button {
+  font-size: 1em;
+  padding: 0.2em;
+  border: 0.1em solid var(--almost-black);
+  background-color: var(--wrong-color);
+  z-index:1;
+}
 .material-icons-round {
-    font-size: 3em !important;
+  display: flex;
+  align-content: center;
+    font-size: 1.5rem !important;
+    align-self: center;
+    text-align: center;
+    align-items: center;
 }
 input {
   margin: 0.25rem;
@@ -235,10 +254,11 @@ input {
   justify-self: flex-end;
 }
 .game-button {
-    text-align: center;
+    
     font-size: 0.8rem;
     display: flex;
     align-self: center;
+    text-align: center;
     padding: 0.5em 1em;
     background-color: lightgrey;
     
@@ -355,6 +375,12 @@ input {
   position: relative;
 }
 
+input ~ .help-tip {
+  position: absolute;
+  right: -1em;
+  top: 0;
+}
+
 .help-tip:before{
   content:'?';
   font-weight: bold;
@@ -374,15 +400,16 @@ input {
   visibility: collapse;
   text-align: center;
   background-color: #1E2021;
-  padding: 2rem;
+  padding: 1em;
   position: absolute;
-  top: 0;
-  border-radius: 3px;
+  top: 1em;
+  border-radius: 0.8em;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
   color: #FFF;
   margin-block: 0;
   z-index: 20;
   pointer-events: none;
+  width: max-content;
 
 }
 .tooltipText.placeLeft {
@@ -488,6 +515,10 @@ table.longer thead th:nth-child(6) {
   margin: 0.25rem;
 }
 
+span.small {
+  font-size: 0.85em;
+}
+
 
 .loader {
   
@@ -564,6 +595,7 @@ table.longer thead th:nth-child(6) {
 
 .header button {
     width: 2.5rem;
+    height: 2.5rem;
 }
 
 .fullscreen-modal .header {
@@ -578,13 +610,17 @@ table.longer thead th:nth-child(6) {
     position: absolute;
     right: 0;
     align-items: center;
+    justify-content: center;
 }
 
 .horizontal-flex-cont {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
 
+.horizontal-flex-cont.one-child {
+  justify-content: center;
 }
 
 .centered {
@@ -593,11 +629,15 @@ table.longer thead th:nth-child(6) {
   justify-content: center;
 }
 
+.flex-box {
+  display: flex;
+  position: relative;
+}
+
 .vertical-flex-cont {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
     align-self: stretch;
 }
 
@@ -738,6 +778,7 @@ table.longer thead th:nth-child(6) {
     align-self: stretch;
     flex-direction: column;
     position: relative;
+    overflow: hidden;
     
   }
 
@@ -832,9 +873,9 @@ table.longer thead th:nth-child(6) {
 .rowHolder.finished:before {
   content: '';
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   height: 200%;
-  width: calc(var(--letterBoxHeight) * 0.3);
+  width: 0.5em;
   top: 0;
   left: 0;
   background: linear-gradient(to right, rgba(229, 172, 142, 0), rgba(255,255,255,0.5) 50%, rgba(229, 172, 142, 0));
@@ -964,9 +1005,20 @@ table.longer thead th:nth-child(6) {
     flex: 3 3 auto;
   }
 
+.modal-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
 
 .popup-modal { /* Can't get to have space between bottom and edge of screen when long */
     font-size: 0.8rem;
+    position: fixed;
     display: flex;
     flex-direction: column;
     align-self: center;
@@ -985,7 +1037,8 @@ table.longer thead th:nth-child(6) {
   border-radius: 2rem;
   transform: translateY(100vh);
 
-  visibility: hidden;
+
+  visibility: collapse;
   transition: all 2s ease-in-out;
 }
 
@@ -1027,7 +1080,7 @@ table.longer thead th:nth-child(6) {
   pointer-events: none;
 }
 
-#pword_reset_overlay.overlay {
+.overlay.higher {
   z-index: 11
 }
 
@@ -1053,17 +1106,18 @@ table.longer thead th:nth-child(6) {
 .textinput {
   height: 1.2em;
   margin: 0.3em;
-  align-self: center;
   text-align: center;
   border-width: 0px;
   padding-left: 0px;
   padding-right: 0px;
   background-color: #D9D9D9;
+
+  display: flex;
+  align-self: stretch;
+  flex: 1 0 0;
 }
 .popup-modal .textinput {
-  max-width: 100%;
-  width: 100%;
-  margin: 0.75vw, 0.75vw, 0 ,0;
+  margin: 0.25em, 0.25em, 0 ,0;
 }
 
 
