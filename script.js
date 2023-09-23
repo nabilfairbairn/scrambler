@@ -544,7 +544,8 @@ function fetchLogin(event) {
 
     var params = {
         uname: document.getElementById('uname').value,
-        pword: document.getElementById('pword').value
+        pword: document.getElementById('pword').value,
+        email: document.getElementById('email').value
     }
 
     document.getElementById('login_loader').style.visibility = 'visible'
@@ -552,7 +553,6 @@ function fetchLogin(event) {
     // TOOD: validate email and that all fields exist.
 
     if (submit_type == 'create') {
-        params['email'] = document.getElementById('email').value
         fetchPostWrapper('/users', params, finishLogin, manageLoginError)
     } else if (submit_type == 'reset') {
         openResetTokenModal()
