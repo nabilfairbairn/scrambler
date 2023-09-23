@@ -25,6 +25,14 @@
             close
             </span></button>
       </div>
+      <p><u>V1.0.8</u></p>
+
+      <ul>
+        <li>Removed: No user_id cookies yet. Apple won't save cookie. This will wait until we have a custom URL</li>
+        <li>Added: Passwords are store in the database as a salted hash. Basically it's much safer</li>
+        <li>Added: Password reset via email</li>
+      </ul>
+
       <p><u>V1.0.7</u></p>
 
       <ul>
@@ -44,15 +52,6 @@
         <li>Fixed: Keyboard appearing below screen height</li>
         <li>Fixed: Keyboard not appearing until 2 clicks of keyboard button</li>
         <li>Fixed: Game board being clipped at bottom of screen</li>
-      </ul>
-
-      <p><u>V1.0.4</u></p>
-
-      <ul>
-        <li>Added: Full visual cleanup</li>
-        <li>Added: Puzzle messages all shown within banner</li>
-        <li>Fixed: Leaderboard wouldn't reset between puzzles</li>
-        <li>Fixed: Error when showing puzzle rewards</li>
       </ul>
       
     </div>
@@ -147,8 +146,8 @@
       <form id="login_form" class="vertical_header">
           <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
           <input type="password" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
-          <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address (Optional)*" class="textinput">
-          <span><i>*Enter your email if you are interested in giving feedback or testing new features.</i></span>
+          <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address*" class="textinput">
+          <span><i>*Your email is used to reset your password if lost. You do not need to enter an email when logging in.</i></span>
         <div class="horizontal-flex-cont">
           <input type="submit" name="login" value="Login" class="input_button">
           <input type="submit" name="create" value="Create Profile" class="input_button">
@@ -204,7 +203,7 @@
           <input type="password" id="new_pword" name="pword" maxlength="20" placeholder="New Password" class="textinput"/>
           <input type="text" id="reset_token" name="reset_token" maxlength="50" placeholder="Reset Token" class="textinput">
           <div><i>Enter the password reset token sent to your email above, along with your email and new password</i></div>
-          <input type="submit" name="reset" value="Reset My Password" class="input_button">
+          <input type="submit" name="reset" value="Set New Password" class="input_button">
       </form>
       <div id="reset_loader_2" class="dot-spin"></div>
     </div>

@@ -1,13 +1,13 @@
 // https://scrambler-server-development.onrender.com
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.0.7'
+const version = 'V1.0.8'
 
 
 history.scrollRestoration = "manual";
@@ -386,18 +386,6 @@ function loadLongerLeaderboard(lb, timespan) {
     }
 }
 
-function finishCreateUser(httpResponse) {
-    // Take creation_data
-    // login
-    // RECEIVE COOKIE
-
-    const loginParams = {
-        uname: httpResponse[0]['username'],
-        pword: httpResponse[0]['passkey']
-    }
-    // TODO: replace loginParams with cookie
-    fetchPostWrapper('/users/login', loginParams, finishLogin, manageLoginError)
-}
 
 function finishLogin(httpResponse) {
     // login_data contains cookie
@@ -515,7 +503,7 @@ function submitNewPassword(e) {
         const params = {
             email: email,
             new_pword: new_pword,
-            reset_token: reset_token,
+            reset_token: reset_token
         }
         fetchPostWrapper('/password/new', params, resetSuccess, manageResetError)
     }
@@ -529,9 +517,7 @@ function resetSuccess(httpResponse) {
     document.getElementById('password_reset_modal').classList.remove('opened')
 
     setTimeout(function() {
-        errorResponse.json().then(errorData => {
-            alert(`Your password reset was successful. You can now login with your new password.`)
-        })
+        alert(`Your password reset was successful. You can now login with your new password.`)
     }, 100)
 }
 
@@ -543,9 +529,8 @@ function manageResetError(errorResponse) {
         document.getElementById('login_loader').style.visibility = 'hidden'
 
         setTimeout(function() {
-            errorResponse.json().then(errorData => {
-                alert(`Your password reset failed. Check that the values were correct and your reset token hasn't expired.`)
-            })
+            alert(`Your password reset failed. Check that the values were correct and your reset token hasn't expired or been used.`)
+            
         }, 100)
           
         }
@@ -564,9 +549,11 @@ function fetchLogin(event) {
 
     document.getElementById('login_loader').style.visibility = 'visible'
 
+    // TOOD: validate email and that all fields exist.
+
     if (submit_type == 'create') {
         params['email'] = document.getElementById('email').value
-        fetchPostWrapper('/users', params, finishCreateUser, manageLoginError)
+        fetchPostWrapper('/users', params, finishLogin, manageLoginError)
     } else if (submit_type == 'reset') {
         openResetTokenModal()
     } else {
@@ -878,10 +865,10 @@ function fill_puzzle_with_guess(guess_words) {
 }
 
 function setUser(responseData) {
-    user.id = responseData[0]['id']
-    user.username = responseData[0]["username"]
-    user.points = responseData[0]["points"]
-    user.streak = responseData[0]['streak']
+    user.id = responseData['id']
+    user.username = responseData["username"]
+    user.points = responseData["points"]
+    user.streak = responseData['streak']
 }
 
 
