@@ -489,7 +489,7 @@ function requestResetToken(e) {
 
         } else { // email present
 
-            params = {
+            const params = {
                 email: email,
             }
             fetchPostWrapper('/password/reset', params, openPasswordResetModal, manageResetError)
@@ -512,7 +512,7 @@ function submitNewPassword(e) {
     if (!email || !new_pword || !reset_token) {
         alert('Please fill all fields.')
     } else {
-        params = {
+        const params = {
             email: email,
             new_pword: new_pword,
             reset_token: reset_token,
