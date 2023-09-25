@@ -191,33 +191,37 @@
             close
             </span></button>
       </div>
-      <p><u>V1.0.8</u></p>
+      <p><u>V1.0.9 - Sep 25 2023</u></p>
 
       <ul>
-        <li>Removed: No user_id cookies yet. Apple won't save cookie. This will wait until we have a custom URL</li>
-        <li>Added: Passwords are store in the database as a salted hash. Basically it's much safer</li>
-        <li>Added: Password reset via email</li>
+        <li><p>Added: You can now play the easy puzzle without logging in (to encourage new players to try it out).</p></li>
+        <li><p>Added: After finishing the easy puzzle while not being logged in - logging in or creating an account will add your rewards to your profile</p></li>
+        <li><p>Changed: Hard puzzles with now be worth more.</p></li>
+        <li><p>Fixed: Problems with puzzle refusing to accept answer place in lower rows</p></li>
+        <li><p>Fixed: Delete key no longer shifts over to the next letter</p></li>
+      </ul>
+      <br>
+      <p><u>V1.0.8 - Sep 23 2023</u></p>
+
+      <ul>
+        <li><p>Removed: No user_id cookies yet. Apple won't save cookie. This will wait until we have a custom URL</p></li>
+        <li><p>Added: Passwords are store in the database as a salted hash. Basically it's much safer</p></li>
+        <li><p>Added: Password reset via email</p></li>
       </ul>
 
-      <p><u>V1.0.7</u></p>
+      <br>
+      <p><u>V1.0.7 - Sep 21 2023</u></p>
 
       <ul>
-        <li>Added: Security! Your user_id is now sent through a cookie</li>
+        <li><p>Added: Security! Your user_id is now sent through a cookie</p></li>
       </ul>
 
-      <p><u>V1.0.6</u></p>
+      <br>
+      <p><u>V1.0.6 - Sep 12 2023</u></p>
 
       <ul>
-        <li>Added: Leaderboard !!!</li>
-        <li>Added: Streaks</li>
-      </ul>
-
-      <p><u>V1.0.5</u></p>
-
-      <ul>
-        <li>Fixed: Keyboard appearing below screen height</li>
-        <li>Fixed: Keyboard not appearing until 2 clicks of keyboard button</li>
-        <li>Fixed: Game board being clipped at bottom of screen</li>
+        <li><p>Added: Leaderboard !!!</p></li>
+        <li><p>Added: Streaks</p></li>
       </ul>
       
     </div>
@@ -490,7 +494,7 @@
           <button class="keyboard-button flex-item">l</button>
       </div>
       <div class="third-row">
-          <button class="keyboard-button square flex-item"><div><img src="enter.svg"/></div></button>
+          <button class="keyboard-button square flex-item" value="enter"><div><img src="enter.svg"/></div></button>
           <button class="keyboard-button flex-item">z</button>
           <button class="keyboard-button flex-item">x</button>
           <button class="keyboard-button flex-item">c</button>
@@ -498,7 +502,7 @@
           <button class="keyboard-button flex-item">b</button>
           <button class="keyboard-button flex-item">n</button>
           <button class="keyboard-button flex-item">m</button>
-          <button class="keyboard-button square flex-item"><div><img src="backspace.svg"/></div></button>
+          <button class="keyboard-button square flex-item" value="backspace"><div><img src="backspace.svg"/></div></button>
       </div>
   </div>
 

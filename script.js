@@ -1,13 +1,13 @@
-// https://scrambler-server-development.onrender.com
+// 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.0.8'
+const version = 'V1.0.9'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
 
@@ -412,20 +412,23 @@ function finishLogin(httpResponse) {
 
 
     setUser(httpResponse)
-    const newparams = {user_id: user.id}
+    const newparams = {
+        user_id: user.id,
+        user_ip: user.ip
+    }
     fetchPostWrapper('/version/get', newparams, highlightVersionButton)
+
+    if (puzzle.id) {
+        newparams['puzzle_id'] = todays_puzzles.easy.id // user can only play easy puzzle while not logged in.
+        fetchPostWrapper('/backfill', newparams, loadPuzzleAndGuesses) // if any guesses or completed_puzzles have been made by the ip, user id will be appended
+    }
+    
+
     displayLogin()
     // Login successful
     document.getElementById('login_modal').classList.remove('opened')
     document.getElementById('overlay').classList.add('closed')
 
-    
-    
-    // call startPuzzle
-    // dont call if puzzle not loaded
-    if (todays_puzzles['easy']) {
-        loadPuzzleAndGuesses()
-    }
 
 
     // TODO: visit request is first to be sent to server. Should return cookie if exists. 
@@ -652,18 +655,18 @@ function fetchPostWrapper(url_endpoint, params, response_function, error_functio
 function loadAllGuesses() {
     // load easy and hard guesses
 
-    if (user.id) { // only load guesses if user is logged in
-        const params = {
-            user_id: user.id,
-            puzzle_ids: {
-                easy: todays_puzzles['easy']['id'],
-                hard: todays_puzzles['hard']['id']
-            }
+    const params = {
+        user_id: user.id,
+        user_ip: user.ip,
+        puzzle_ids: {
+            easy: todays_puzzles['easy']['id'],
+            hard: todays_puzzles['hard']['id']
         }
-    
-        fetchPostWrapper('/guesses/multiple', params ,processAllGuesses) // load guesses. send data to process
     }
+
+    fetchPostWrapper('/guesses/multiple', params ,processAllGuesses) // load guesses. send data to process
     
+
 }
 
 function processAllGuesses(all_guess_data) {
@@ -765,6 +768,7 @@ function goodBannerMessage(message) {
     message_banner.classList.add('slide_down')
     document.getElementById('gameBox_wrapper').classList.add('slide_down')
     document.getElementById('gameBox').classList.add('slide_down')
+    readjustContainallPadding()
 }
 
 function badBannerMessage(message) {
@@ -773,12 +777,14 @@ function badBannerMessage(message) {
     message_banner.classList.add('slide_down')
     document.getElementById('gameBox_wrapper').classList.add('slide_down')
     document.getElementById('gameBox').classList.add('slide_down')
+    readjustContainallPadding()
 }
 
 function closeBannerMessage() {
     message_banner.classList.remove('slide_down')
     document.getElementById('gameBox_wrapper').classList.remove('slide_down')
     document.getElementById('gameBox').classList.remove('slide_down')
+    readjustContainallPadding()
 }
 
 function update_attempt_banner() {
@@ -962,7 +968,7 @@ function process_input(element, event) {
             case 'backspace':
                 delete_letter(element);
                 break;
-            case 'keyboard_return':
+            case 'enter':
                 process_guess();
                 return;
             default:
@@ -1236,23 +1242,35 @@ function get_depth(d) {
 }
 
 function reaches_word(thisword, thisdepth, wuc, wuc_depth) {
+    // wuc = word under consideration
+
+    // So, there is at least one word intervening between wuc and thisword, which may or may not be entered (the first time this function is called [it's recursive])
+    // wuc is correct, but there is more than one possible answer
+    // The objective is to determine if the last correct word entered is on a branch that can lead to this word
+
+    // for all the possible answers at the next depth, how many join with thisword?
+    let nextdepth = thisdepth + 1
     let joined_words = []
-    puzzle.answers[thisdepth].forEach((word) => {
+    puzzle.answers[nextdepth].forEach((word) => { // no concern of over-indexing, since this function can't be called on the last word.
         if (one_letter_diff(thisword, word) == 1) {
             joined_words.push(word)
         }
     })
-    if (thisdepth == wuc_depth) {
+
+    if (nextdepth == wuc_depth) { // if we've dug down the branch until we reached wuc_depth, does the branch join wuc?
         return joined_words.includes(wuc)
-    } else {
-        let reaches = true
+    } else { // there's still at least one depth before we reach wuc_depth
+
+        // If even one reaches_word returns true, then the branch, then the nearest valid word reaches wuc.
+
+        let reaches = false
         joined_words.forEach((word) => {
-            if (!reaches_word(word, thisdepth+1, wuc, wuc_depth)) {
-                reaches = false
-                return false
+            if (reaches_word(word, thisdepth+1, wuc, wuc_depth)) { // branch downwards recursively, until we get an answer that some word reaches wuc
+                reaches = true
+                return reaches // no need to ask the rest of the branches
             }
         })
-        return reaches
+        return reaches // only returns false if none of the words on any branches reach wuc.
     }
 } 
 
@@ -1330,15 +1348,21 @@ function is_word_valid(guess_word, guess_received, answer_words, valid_depths) {
     // Does closest valid word join this word?
       
     let nearest_valid_depth = -1
-    let i = depth
-    while (nearest_valid_depth == -1 && i > 0) {
+    let i = depth - 1
+    while (nearest_valid_depth == -1 && i >= 0) {
         nearest_valid_depth = valid_depths[i] ? i : nearest_valid_depth;
         i--;
     }
-    let valid_word = get_word(nearest_valid_depth)
-    if (reaches_word(valid_word, nearest_valid_depth, guess_received, depth)) {
-        return 1
+    
+    // is there a nearest valid word?
+    if (nearest_valid_depth != -1) {
+        let valid_word = get_word(nearest_valid_depth)
+        // see whether the branch that valid word belongs to joins up to the guess word being considered
+        if (reaches_word(valid_word, nearest_valid_depth, guess_received, depth)) {
+            return 1
+        }
     }
+    
     return 0
 }
 
@@ -1986,26 +2010,31 @@ var keyboard = document.getElementById('keyboard-cont')
 
 
   function readjustContainallPadding() {
-    // Adds padding to the bottom of containall so that it visually takes up the whole screen, and allows for keyboard
-    const containall = document.getElementById('containall')
-    const containallBottomPadding = window.getComputedStyle(containall)['paddingBottom'].slice(0, -2)
-    const containall_total_height = containall.getBoundingClientRect().height 
-    const containall_height = containall_total_height - containallBottomPadding
-    const keyboard_height = keyboard.getBoundingClientRect().height
-    const windowHeight = window.innerHeight
+    // timeout to allow for transitions to complete
+    setTimeout(function() {
+        // Adds padding to the bottom of containall so that it visually takes up the whole screen, and allows for keyboard
+        const containall = document.getElementById('containall')
+        const containallBottomPadding = window.getComputedStyle(containall)['paddingBottom'].slice(0, -2)
+        const containall_total_height = containall.getBoundingClientRect().height 
+        const containall_height = containall_total_height - containallBottomPadding
+        const keyboard_height = keyboard.getBoundingClientRect().height
+        const windowHeight = window.innerHeight
 
 
-    let containallNewPaddingHeight;
+        let containallNewPaddingHeight;
 
-    if (containall_height + keyboard_height > windowHeight) { // containall + keyboard exceed the screen
-        // padding is equal to MAX( (containall + keyboard) - window, keyboard)
-        containallNewPaddingHeight = Math.max(containall_height + keyboard_height - windowHeight, keyboard_height)
+        if (containall_height + keyboard_height > windowHeight) { // containall + keyboard exceed the screen
+            // padding is equal to MAX( (containall + keyboard) - window, keyboard)
+            containallNewPaddingHeight = Math.max(containall_height + keyboard_height - windowHeight, keyboard_height)
 
-    } else { // containall + keyboard are within the screen
-        // Add padding to containall so that it visually fits the screen
-        containallNewPaddingHeight = windowHeight - containall_height
-    }
-    containall.style.paddingBottom = `${containallNewPaddingHeight - 12}px`
+        } else { // containall + keyboard are within the screen
+            // Add padding to containall so that it visually fits the screen
+            containallNewPaddingHeight = windowHeight - containall_height
+        }
+        containall.style.paddingBottom = `${containallNewPaddingHeight - 12}px`
+      }, 1000);
+
+    
     
   }
 
@@ -2125,7 +2154,10 @@ On it, a note:
   keyboard_keys.forEach((key) => {
     key.onclick = function(event) {
         event.preventDefault();
-        const key_val = key.innerText
+        let key_val = key.innerText
+        if (!key_val) {
+            key_val = key.value
+        }
         blurred.focus()
         process_input(blurred, key_val)
     }
@@ -2160,7 +2192,7 @@ On it, a note:
     if (modal_id == 'login_modal') {
         not_logging_in = true
         if (puzzle.id) { // if refusing login and puzzle is loaded, send start
-            startPuzzle()
+            loadPuzzleAndGuesses()
         }
     }
 

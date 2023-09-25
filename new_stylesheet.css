@@ -45,6 +45,8 @@
     --letterInput-border-radius: min(42px, 3.5vw);
     --same-letter-color-hwb: rgb(26, 97, 230);
     --same-letter-color: 26, 97, 230;
+    --bright-blue: rgb(29, 207, 219);
+    --light-bright-blue: rgba(29, 207, 219, 0.6)
 }
 
 
@@ -96,7 +98,8 @@ input { /* Override default which is smaller */
 }
 
 .fullscreen-modal {
-    font-size: 0.8rem;
+    font-size: 0.6rem;
+    line-height: 1.4em;
     position: fixed; 
     top: 0%; /* Default is closed */
   left: var(--game-left);
@@ -131,11 +134,11 @@ input { /* Override default which is smaller */
 }
 
 #username_holder {
-  position: absolute;
+  position: relative;
   display: flex;
   align-self: center;
   font-size: 0.8em;
-  top: 3.8rem;
+  top: -0.5rem;
   text-align: center;
 }
 
@@ -146,9 +149,10 @@ input { /* Override default which is smaller */
   transition: margin 1s cubic-bezier(0.17, 0.04, 0.03, 0.94);
   align-self: stretch;
   padding: 1rem;
+  padding-top: 0;
 }
 .gameBox.slide_down {
-  margin-bottom: calc(3.5em - 1rem); /* banner height less padding */
+  margin-bottom: calc(3.5em); /* banner height less padding -1rem */
 }
 button {
   font-family: Nunito;
@@ -160,6 +164,7 @@ button {
   display: block;
   text-align: center;
     padding: 0.5em 1em;
+    color: var(--almost-black)
 }
 button span {
   pointer-events: none;
@@ -174,9 +179,10 @@ button span {
 }
 #open_login_button {
   font-size: 1em;
-  padding: 0.2em;
+  font-weight: 600;
+  padding: 0.2em 0.4em;
   border: 0.1em solid var(--almost-black);
-  background-color: var(--wrong-color);
+  background-color: var(--light-bright-blue);
   z-index:1;
 }
 .material-icons-round {
@@ -299,7 +305,7 @@ input {
   margin-right: -1rem;
 }
 #message_banner.slide_down {
-  top: -1rem; /* Gamebox padding */
+  top: 0; /* Gamebox padding*/
 }
 
 #gameBox_wrapper {
@@ -317,9 +323,9 @@ input {
 }
 #gameBox_wrapper.slide_down {
     /* banner originally sits below gamebox padding. banner has been raised the padding 
-    so gamebox wrapper needs to also raise by that much, since 'top' is where banner would have originally sat*/
-    top: calc(3.5em - 1rem); 
-  margin-bottom: calc(3.5em - 1rem);
+    so gamebox wrapper needs to also raise by that much, since 'top' is where banner would have originally sat */
+    top: calc(3.5em); /* - 1rem */  
+  margin-bottom: calc(3.5em); /* - 1rem */  
 }
 
 
@@ -1091,7 +1097,7 @@ span.small {
   padding: 0.25em 0.5em;
   box-shadow: rgb(27, 143, 137) 0px 3px 2px 0px;
   text-transform: uppercase;
-  background-color: rgb(29, 207, 219);
+  background-color: var(--bright-blue);
   margin: 0.8em;
   border-width: 0.08em;
   
