@@ -677,9 +677,9 @@ function processAllGuesses(all_guess_data) {
     process_guess_styling(false)
 }
 
-function loadPuzzleAndGuesses() {
+async function loadPuzzleAndGuesses() {
     // start current puzzle, update attempt
-    startPuzzle()
+    await startPuzzle()
 
     // load guesses for both puzzles
     loadAllGuesses()
