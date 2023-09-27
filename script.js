@@ -22,6 +22,7 @@ let user = {
     'points': null,
     'last_version': '',
     'streak': null,
+    'max_streak': null,
     'ip': null
 }
 
@@ -313,9 +314,7 @@ function fetchPuzzle() {
     http.onload = function() {
         declare_puzzle(http.response) // easy and hard
 
-        // Get Leaderboard since puzzle_ids are in.
-
-        refreshLeaderboard()
+        
         
 
         // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
@@ -328,17 +327,18 @@ function fetchPuzzle() {
     }
 }
 
-function refreshLeaderboard() {
+async function refreshLeaderboard() {
     const leaderboard_params = {
         easy_id: todays_puzzles.easy.id,
         hard_id: todays_puzzles.hard.id,
         week_start: getMostRecentWeekday(6) //6 for saturday
     }
 
-    fetchPostWrapper('/leaderboard/all', leaderboard_params, loadFullLeaderboard)
+    await fetchPostWrapper('/leaderboard/all', leaderboard_params, loadFullLeaderboard)
 }
 
 function loadFullLeaderboard(httpResponse) {
+    // Loaded 
     const easy_leaderboard = httpResponse.easy
     const hard_leaderboard = httpResponse.hard
     const week_leaderboard = httpResponse.week
@@ -353,6 +353,29 @@ function loadFullLeaderboard(httpResponse) {
     loadDailyLeaderboard(hard_leaderboard, 'hard')
     loadLongerLeaderboard(week_leaderboard, 'week')
     loadLongerLeaderboard(all_leaderboard, 'all')
+    
+    loadProfileStats()
+    
+}
+
+function loadProfileStats() {
+    const weekly = leaderboards.week
+    const global = leaderboards.all
+
+    for (let i = 0; i < global.length; i++) {
+        if (global[i]['username'] == user.username) {
+            const rank = i + 1
+            document.getElementById('global-rank').innertText = rank
+            document.getElementById('scramblers').innerText = global[i]['n_puzzles']
+        }
+    }
+
+    for (let i = 0; i < weekly.length; i++) {
+        if (weekly[i]['username'] == user.username) {
+            const rank = i + 1
+            document.getElementById('weekly-rank').innertText = rank
+        }
+    }
     
     
 }
@@ -740,6 +763,9 @@ async function loadPuzzleAndGuesses() {
 
     // load guesses for both puzzles
     loadAllGuesses()
+
+    // Get Leaderboard since puzzle_ids are in.
+    await refreshLeaderboard()
     
 }
 
@@ -927,16 +953,26 @@ function displayLogin() {
     const username = user.username
     const points = user.points
     const streak = user.streak || 0
+    const max_streak = user.max_streak || 0
 
 
     document.getElementById("username").innerText = `Sup, ${username}!`
     document.getElementById("points").innerText = points
     document.getElementById('open_login_button').style.display = 'none'
 
+    var points_displays = document.getElementsByClassName('points')
+    for (let i = 0; i < points_displays.length; i++) {
+        points_displays[i].innerText = points
+    }
 
     var streaks = document.getElementsByClassName('streak')
     for (let i = 0; i < streaks.length; i++) {
         streaks[i].innerText = streak
+    }
+
+    var max_streaks = document.getElementsByClassName('max-streak')
+    for (let i = 0; i < max_streaks.length; i++) {
+        max_streaks[i].innerText = max_streak
     }
     
 }
@@ -1688,6 +1724,7 @@ const process_puzzle_complete = (data) => {
 
         user.points = data['total_points']
         user.streak = data['streak']
+        user.max_streak = data['max_streak']
 
         
         
@@ -2105,6 +2142,11 @@ function openFullscreenModal(e) {
 
     if (modal_id == 'deleteModal') {
         document.getElementById('overlay').classList.add('higher')
+    }
+
+    if (modal_id == 'profile_modal' && !user.id) {
+        alert('You need to be logged in.')
+        return
     }
     
     let modal = document.getElementById(modal_id)
