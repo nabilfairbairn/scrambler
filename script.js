@@ -2163,7 +2163,7 @@ async function deleteProfile(e) {
         const params = {
             user_id: user.id
         }
-        // await fetchPostWrapper('/users/delete', params, null)
+        await fetchPostWrapper('/users/delete', params, null)
         alert('Your profile has been successfully deleted.')
         location.reload()
     }
