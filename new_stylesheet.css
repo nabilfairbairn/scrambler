@@ -76,6 +76,7 @@ input { /* Override default which is smaller */
 #version_update_button {
   display: flex;
   align-self: flex-start;
+  background-color: var(--wrong-color);
 }
 
 .notify-button {
@@ -97,6 +98,10 @@ input { /* Override default which is smaller */
   pointer-events: none;
 }
 
+#deleteModal {
+  z-index: 30;
+}
+
 .fullscreen-modal {
     font-size: 0.6rem;
     line-height: 1.4em;
@@ -106,7 +111,7 @@ input { /* Override default which is smaller */
   right: var(--game-right);
   bottom: 0;
   overflow: scroll;
-  z-index: 20;
+  z-index: 15;
   padding: 1rem; 
   background-color: var(--dark-white);
   
@@ -115,7 +120,60 @@ input { /* Override default which is smaller */
   transform: translateY(100vh);
   transition: all 2s ease-in-out;
 }
+.fullscreen-modal.sidenav {
+  right: auto;
+  width: 18rem;
+  transform: translateX(calc(-18rem - 2rem)); /* Padding */
+  background: rgb(114, 231, 220);
+  font-weight: 600;
+}
+.fullscreen-modal.sidenav.opened {
+  transform: translateX(0%);
+  visibility: visible;
+}
 
+.fullscreen-modal-content {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.sidenav.vertical-flex-cont div {
+  font-size: 1.6em;
+  
+  padding: 1.3rem;
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+.sidenav.fullscreen-modal .header {
+  justify-content: flex-start;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+
+.sidenav.vertical-flex-cont div:active {
+  background: var(--light-bright-blue);
+  
+}
+
+.sidenav.vertical-flex-cont {
+  flex-grow: 1;
+}
+
+.disabled {
+  background: rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+}
+
+.copyright {
+  display: flex;
+  position: relative;
+  bottom: 0;
+
+}
+ 
 .fullscreen-modal.opened {
     top: 0;
     transform: translateY(0%);
@@ -166,6 +224,18 @@ button {
     padding: 0.5em 1em;
     color: var(--almost-black)
 }
+
+.large-button {
+  width: 8rem;
+  height: 5rem;
+  border-width: 0.1em;
+  font-size: 1rem;
+  margin: 1rem;
+}
+#delete_profile, #yes_delete {
+  background: var(--wrong-color)
+}
+
 button span {
   pointer-events: none;
   display: block;
@@ -183,7 +253,6 @@ button span {
   padding: 0.2em 0.4em;
   border: 0.1em solid var(--almost-black);
   background-color: var(--light-bright-blue);
-  z-index:1;
 }
 .material-icons-round {
   display: flex;
@@ -640,6 +709,83 @@ span.small {
   position: relative;
 }
 
+.wrapping-flexbox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 8em 5em;
+  padding: 8em 2em;
+
+}
+
+.stat {
+  display: flex;
+  position: relative;
+  height: 6em;
+  width: 6em;
+  border-radius: 1.5em;
+  background: rgba(0, 0, 0, 0.2);
+  justify-content: center;
+  align-items: center;
+
+  border: 0.2em solid var(--lighter-border);
+
+  box-sizing: border-box;
+  outline: none !important;
+}
+
+.stats-header {
+  position: absolute;
+  bottom: 3em;
+  width: 200%;
+  text-align: center;
+  font-size: 2em;
+  line-height: 1em;
+}
+
+.stats-value {
+  font-size: 3.6em;
+  color: teal;
+
+  text-shadow: 
+    var(--stroke-width) 0 0 var(--stroke-color),
+        calc(var(--stroke-width) * -1) 0 0 var(--stroke-color),
+        0 var(--stroke-width) 0 var(--stroke-color),
+        0 calc(var(--stroke-width) * -1) 0 var(--stroke-color);
+        text-shadow: calc(var(--stroke-width) * 1) calc(var(--stroke-width) * 0) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.9239) calc(var(--stroke-width) * 0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.7071) calc(var(--stroke-width) * 0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.3827) calc(var(--stroke-width) * 0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0) calc(var(--stroke-width) * 1) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.3827) calc(var(--stroke-width) * 0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.7071) calc(var(--stroke-width) * 0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.9239) calc(var(--stroke-width) * 0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -1) calc(var(--stroke-width) * 0) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.9239) calc(var(--stroke-width) * -0.3827) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.7071) calc(var(--stroke-width) * -0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * -0.3827) calc(var(--stroke-width) * -0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0) calc(var(--stroke-width) * -1) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.3827) calc(var(--stroke-width) * -0.9239) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.7071) calc(var(--stroke-width) * -0.7071) 0
+        var(--stroke-color),
+    calc(var(--stroke-width) * 0.9239) calc(var(--stroke-width) * -0.3827) 0
+        var(--stroke-color);
+}
+
 .vertical-flex-cont {
     position: relative;
     display: flex;
@@ -1049,7 +1195,7 @@ span.small {
 }
 
 .popup-modal.higher {
-  z-index: 15;
+  z-index: 20;
 }
 
 
@@ -1073,7 +1219,7 @@ span.small {
   position: absolute;
   z-index: 9;
   pointer-events: all;
-  background-color:rgba(0,0,0,0);
+  background-color:rgba(0,0,0,0.4);
   border: none;
   backdrop-filter: blur(5px);
   top: 0;
@@ -1087,7 +1233,7 @@ span.small {
 }
 
 .overlay.higher {
-  z-index: 11
+  z-index: 16
 }
 
 .button.answerButton {

@@ -46,9 +46,36 @@
           </div>
         
         <div>Usernames need to be <b>free of obscene language</b>. Using a vulgar username may result in your profile being deleted.</div>
-        <div class="horizontal-flex-cont one-child"><input type="submit" name="reset" class="input_button" id="pass_reset_button" value="Reset Password"></div>
+        <div class="horizontal-flex-cont">
+          <input type="submit" name="forgot_username" class="input_button" id="forgot_username_button" value="Forgot Username">
+          <input type="submit" name="reset" class="input_button" id="pass_reset_button" value="Reset Password">
+        </div>
         </form>
         <div id="login_loader" class="dot-spin"></div>
+      </div>
+      
+
+      <div id="send_forgot_username_modal" class="popup-modal higher">
+        <div class="header">
+          <button
+              type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
+                close
+                </span></button>
+          Forgot Username
+          <button
+          type="button", class='button square minimal close-fs-modal-button' for="send_forgot_username_modal"><span class="material-icons-round" >
+            close
+            </span></button>
+        </div>
+        <form id="forgot_username_form" class="vertical-flex-cont">
+            <input type="text" id="username_email_send" name="email" maxlength="50" placeholder="Email Address" class="textinput">
+            <div><br><i>Enter your email address. If a profile exists, you will be sent your username.</i></div>
+            <div class="horizontal-flex-cont one-child">
+              <input type="submit" name="get_username" value="Recover My Username" class="input_button">
+            </div>
+            
+        </form>
+        <div id="reset_loader_3" class="dot-spin"></div>
       </div>
   
       <div id="send_reset_email_modal" class="popup-modal higher">
@@ -63,9 +90,9 @@
             close
             </span></button>
         </div>
-        <form id="reset_token_form" class="vertical-flex-cont">
+        <form id="send_reset_email_form" class="vertical-flex-cont">
             <input type="text" id="reset_email_send" name="email" maxlength="50" placeholder="Email Address" class="textinput">
-            <div><br><i>Enter your email address. If an account exists, we will send a password reset token to use in the next step.</i></div>
+            <div><br><i>Enter your email address. If a profile exists, you will be sent a password reset token to use in the next step.</i></div>
           <div class="horizontal-flex-cont">
             <input type="submit" name="send_token" value="Request Reset Token" class="input_button">
             <input type="submit" name="input_token" value="Enter My Token" class="input_button">
@@ -89,7 +116,7 @@
         <form id="password_reset_form" class="vertical-flex-cont">
             <input type="text" id="reset_email" name="email" maxlength="50" placeholder="Email Address" class="textinput">
             <input type="password" id="new_pword" name="pword" maxlength="20" placeholder="New Password" class="textinput"/>
-            <input type="text" id="reset_token" name="reset_token" maxlength="50" placeholder="Reset Token" class="textinput">
+            <input type="text" id="forgot_username" name="forgot_username" maxlength="50" placeholder="Reset Token" class="textinput">
             <div><i>Enter the password reset token sent to your email above, along with your email and new password</i></div>
             <div class="horizontal-flex-cont one-child"><input type="submit" name="reset" value="Set New Password" class="input_button"></div>
         </form>
@@ -191,6 +218,16 @@
             close
             </span></button>
       </div>
+      <p><u>V1.1.0 - Sep 27 2023</u></p>
+
+      <ul>
+        <li><p>Added: username recovery</p></li>
+        <li><p>Added: Menu (mostly empty)</p></li>
+        <li><p>Added: Profile page, logout, delete profile</p></li>
+      </ul>
+
+      <br>
+      
       <p><u>V1.0.9 - Sep 25 2023</u></p>
 
       <ul>
@@ -224,6 +261,85 @@
         <li><p>Added: Streaks</p></li>
       </ul>
       
+    </div>
+
+    <div id="profile_modal" class="fullscreen-modal fromtop">
+      <div class="header">
+        <span>Profile</span>
+        <button
+          type="button" class='button square minimal close-fs-modal-button' for="profile_modal"><span  class="material-icons-round">
+            close
+            </span></button>
+      </div>
+      <div class="wrapping-flexbox">
+        <div class="stat">
+          <div class="stats-header">POINTS</div>
+          <div class="points stats-value">1245</div>
+        </div>
+        <div class="stat">
+          <div class="stats-header">STREAK</div>
+          <div class="streak stats-value">12</div>
+        </div>
+        <div class="stat">
+          <div class="stats-header">LONGEST STREAK</div>
+          <div class="max-streak stats-value">15</div>
+        </div>
+        <div class="stat">
+          <div class="stats-header">GLOBAL RANK</div>
+          <div class="rank stats-value">3</div>
+        </div>
+        <div class="stat">
+          <div class="stats-header">WEEKLY RANK</div>
+          <div class="rank-week stats-value">1</div>
+        </div>
+        <div class="stat">
+          <div class="stats-header">SCRAMBLES</div>
+          <div class="points stats-value">27</div>
+        </div>
+      </div>
+      <div class="horizontal-flex-cont">
+        <button id="logout" class="large-button">LOGOUT</button>
+        <button id="delete_profile" class="large-button">DELETE PROFILE</button>
+      </div>
+
+    </div>
+
+    <div id="deleteModal" class="popup-modal">
+      <div class="header">
+        <span>Permanently Delete Profile</span>
+        <button
+          type="button" class='button square minimal close-fs-modal-button' for="deleteModal"><span  class="material-icons-round">
+            close
+            </span></button>
+      </div>
+      <div>Deleting your profile can't be undone. Are you sure you'd like to do that?</div>
+      <div class="horizontal-flex-cont">
+        <button id="do_not_delete" class="large-button">NEVERMIND</button>
+        <button id="yes_delete" class="large-button">DELETE MY PROFILE</button>
+      </div>
+    </div>
+
+    <div id="sidenav" class="fullscreen-modal sidenav">
+      <div class="fullscreen-modal-content">
+        <div class="header">
+          <span>OTHER THINGS!</span>
+          <button
+            type="button" class='button square minimal close-fs-modal-button' for="sidenav"><span class="material-icons-round">
+              close
+              </span></button>
+        </div>
+          <div class="vertical-flex-cont sidenav">
+              <div id="profileNavButton" class="open-fs-modal-button nav-item" for="profile_modal">Profile</div>
+              <div id="pastPuzzlesNavButton" class="disabled">Past Puzzles</div>
+              <div id="weeklyChallengeNavButton" class="disabled">Weekly Challenge</div>
+              <div id="socialNavButton" class="disabled">Social Leaderboard</div>
+              <div id="roadmapNavButton" class="disabled">Feature Roadmap</div>
+              <div id="aboutNavButton" class="disabled">About</div>
+              <div id="contactNavButton" class="disabled">Contact</div>
+              
+          </div>
+        <div class="copyright">Copyright Nabil Fairbairn 2023</div>
+      </div>
     </div>
 
     <div id="howToModal", class='fullscreen-modal'>
@@ -288,8 +404,8 @@
       <button id="keyboardbutton" type="button" class='square flex-item'>
         <div><img src="keyboard.svg"/></div>
           </button>
-          <button id="pastPuzzlesButton" type="button" class="square flex-item">
-            <div><img src="past.svg"/></div>
+          <button id="menuButton" type="button" class="square flex-item open-fs-modal-button">
+            <div><img for="sidenav" src="menu.svg"/></div>
           </button>
       <div id="scrambler_title">
         <button class="notify-button invisible square"></button>

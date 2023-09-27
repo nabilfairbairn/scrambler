@@ -1,6 +1,6 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -440,6 +440,9 @@ function manageLoginError(errorResponse) {
     if (errorResponse.status >= 400) {
         // Timeout to allow loader to hide before raising alert.
         document.getElementById('login_loader').style.visibility = 'hidden'
+        document.getElementById('reset_loader_1').style.visibility = 'hidden'
+        document.getElementById('reset_loader_2').style.visibility = 'hidden'
+        document.getElementById('reset_loader_3').style.visibility = 'hidden'
 
         setTimeout(function() {
             errorResponse.json().then(errorData => {
@@ -453,6 +456,15 @@ function manageLoginError(errorResponse) {
                 })
           }, 100);
     }
+}
+
+function openForgotUsernameModal() {
+    // Open modal where user sends username to their email
+    document.getElementById('send_forgot_username_modal').classList.add('opened')
+    document.getElementById('login_loader').style.visibility = 'hidden'
+    document.getElementById('reset_loader_3').style.visibility = 'hidden'
+
+    document.getElementById('overlay').classList.add('higher') // add overlay to login modal
 }
 
 function openResetTokenModal() {
@@ -472,6 +484,43 @@ function openPasswordResetModal() {
     document.getElementById('reset_loader_1').style.visibility = 'hidden'
     document.getElementById('reset_loader_2').style.visibility = 'hidden'
     document.getElementById('login_loader').style.visibility = 'hidden'
+
+    const email = document.getElementById('reset_email_send').value
+
+    if (email) {
+        document.getElementById('reset_email').value = email
+    }
+}
+
+async function requestUsername(e) {
+    document.getElementById('reset_loader_3').style.visibility = 'visible'
+
+    e.preventDefault()
+
+    const submit_type = e.submitter.name
+
+     // requesting reset token be sent to email
+    const email = document.getElementById('username_email_send').value
+    // TODO: Regex check that email is valid
+
+    if (!email) {
+        alert('Please enter the email address you used to create your profile.')
+        document.getElementById('reset_loader_3').style.visibility = 'hidden'
+
+    } else { // email present
+
+        const params = {
+            email: email,
+        }
+        await fetchPostWrapper('/username/recover', params, null, manageResetError)
+        closeFullscreenModal('send_forgot_username_modal')
+        
+        setTimeout(function() {
+            alert('If a profile exists, an email has been sent containing your username.')
+        }, 1000)
+        
+    }
+    
 }
 
 
@@ -490,6 +539,7 @@ function requestResetToken(e) {
 
         if (!email) {
             alert('Please enter the email address you used to create your profile.')
+            document.getElementById('reset_loader_1').style.visibility = 'hidden'
 
         } else { // email present
 
@@ -498,7 +548,6 @@ function requestResetToken(e) {
             }
             fetchPostWrapper('/password/reset', params, openPasswordResetModal, manageResetError)
         }
-        
     }
 }
 
@@ -515,6 +564,7 @@ function submitNewPassword(e) {
 
     if (!email || !new_pword || !reset_token) {
         alert('Please fill all fields.')
+        document.getElementById('reset_loader_2').style.visibility = 'hidden'
     } else {
         const params = {
             email: email,
@@ -569,10 +619,17 @@ function fetchLogin(event) {
     // TOOD: validate email and that all fields exist.
 
     if (submit_type == 'create') {
-        not_logging_in = false
-        fetchPostWrapper('/users', params, finishLogin, manageLoginError)
+        if (!params.uname || !params.pword || !params.email) {
+            alert('Please include all fields.')
+        } else {
+            not_logging_in = false
+            fetchPostWrapper('/users', params, finishLogin, manageLoginError)
+        }
+        
     } else if (submit_type == 'reset') {
         openResetTokenModal()
+    } else if (submit_type == 'forgot_username') {
+        openForgotUsernameModal()
     } else {
         not_logging_in = false
         fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
@@ -589,14 +646,14 @@ function highlightVersionButton(httpResponse) {
         user.last_version = last_version_seen
         const version_button = document.getElementById('version_update_button')
 
-        if (last_version_seen != version) {
-            version_button.style.background = 'var(--wrong-color)'
+        if (last_version_seen == version) {
+            version_button.style.backgroundColor = 'lightgray'
         }
     }
     
 }
 
-function fetchPostWrapper(url_endpoint, params, response_function, error_function=null) {
+async function fetchPostWrapper(url_endpoint, params, response_function, error_function=null) {
     const full_url = `${api_url_base}${url_endpoint}` // endpoint starts with '/'
     const requestOptions = {
         method: 'POST',
@@ -607,7 +664,7 @@ function fetchPostWrapper(url_endpoint, params, response_function, error_functio
         body: JSON.stringify(params)
       };
     
-    fetch(full_url, requestOptions)
+    await fetch(full_url, requestOptions)
       .then(response => {
           if (!response.ok) {
             throw response;
@@ -624,6 +681,7 @@ function fetchPostWrapper(url_endpoint, params, response_function, error_functio
             if (response_function) {
                 response_function(data)
             }
+            return
         })
         .catch(errorResponse => {
             if (error_function) {
@@ -648,8 +706,7 @@ function fetchPostWrapper(url_endpoint, params, response_function, error_functio
             }
         }
         })
-        
-    
+    return
 }
 
 function loadAllGuesses() {
@@ -2033,17 +2090,98 @@ var keyboard = document.getElementById('keyboard-cont')
         }
         containall.style.paddingBottom = `${containallNewPaddingHeight - 12}px`
       }, 1000);
-
-    
-    
   }
 
+function openFullscreenModal(e) {
+    let modal_id;
+    let target;
+
+    if (typeof(e) == 'string') {
+        modal_id = e
+    } else {
+        target = e.target
+        modal_id = target.getAttribute('for')
+    }
+
+    if (modal_id == 'deleteModal') {
+        document.getElementById('overlay').classList.add('higher')
+    }
+    
+    let modal = document.getElementById(modal_id)
+
+    modal.classList.add('opened')
+    
+    if (target?.classList.contains('nav-item')) {
+        document.getElementById('sidenav').classList.remove('opened')
+    }
+
+    document.getElementById('overlay').classList.remove('closed')
+  }
+
+  function closeFullscreenModal(e) { // TODO: close rewards modal takes very long?
+    let modal_id;
+
+    if (typeof(e) == 'string') {
+        modal_id = e
+    } else { // e is event
+        let target = e.target
+        modal_id = target.getAttribute('for')
+    }
+    
+    let modal = document.getElementById(modal_id)
+
+    modal.classList.remove('opened')
+
+    if (['send_reset_email_modal', 'password_reset_modal', 'deleteModal'].includes(modal_id)) {
+        // if closing reset modal, remove login overlay
+        document.getElementById('overlay').classList.remove('higher')
+    } else {
+        document.getElementById('overlay').classList.add('closed')
+    }
+    if (modal_id == 'login_modal') {
+        not_logging_in = true
+        if (puzzle.id) { // if refusing login and puzzle is loaded, send start
+            loadPuzzleAndGuesses()
+        }
+    }
+
+  }
+
+function logout(e) {
+    // Eventually, will delete user_id cookie
+    location.reload()
+}
+
+function sureDelete(e) {
+    openFullscreenModal('deleteModal')
+}
+
+async function deleteProfile(e) {
+    if (!user.id) {
+        alert(`You aren't logged in.`)
+    } else {
+        const params = {
+            user_id: user.id
+        }
+        // await fetchPostWrapper('/users/delete', params, null)
+        alert('Your profile has been successfully deleted.')
+        location.reload()
+    }
+    
+
+}
 
 
 window.onload = function() {
 
-    document.getElementById('send_reset_email_modal').addEventListener('submit', requestResetToken)
-    document.getElementById('password_reset_modal').addEventListener('submit', submitNewPassword)
+    document.getElementById('logout').addEventListener('click', logout)
+    document.getElementById('delete_profile').addEventListener('click', sureDelete)
+    document.getElementById('yes_delete').addEventListener('click', deleteProfile)
+    document.getElementById('do_not_delete').addEventListener('click', () => closeFullscreenModal('deleteModal'))
+
+    document.getElementById('forgot_username_form').addEventListener('submit', requestUsername)
+    document.getElementById('send_reset_email_form').addEventListener('submit', requestResetToken)
+    document.getElementById('password_reset_form').addEventListener('submit', submitNewPassword)
 
     document.getElementById('login_modal').classList.add('opened')
 
@@ -2053,11 +2191,30 @@ window.onload = function() {
 
     message_banner = document.getElementById('message_banner')
 
-    document.getElementById('pastPuzzlesButton').addEventListener('click', (e) => {
-        alert(`You open the door to find nothing but a brick wall. 
-On it, a note: 
-"Come back soon and we'll have something cool here."`)
+    document.getElementById('pastPuzzlesNavButton').addEventListener('click', (e) => {
+        alert(`Soon my friends. Soon."`)
     })
+
+    document.getElementById('weeklyChallengeNavButton').addEventListener('click', (e) => {
+        alert(`Bigger puzzles, bigger rewards. Also bigger wait time D:"`)
+    })
+
+    document.getElementById('socialNavButton').addEventListener('click', (e) => {
+        alert(`Maybe you'll want a separate leaderboard with only your friends?"`)
+    })
+
+    document.getElementById('roadmapNavButton').addEventListener('click', (e) => {
+        alert(`We're lost. Send help."`)
+    })
+
+    document.getElementById('aboutNavButton').addEventListener('click', (e) => {
+        alert(`I made this by myself. If you like this kind of puzzle, get your friends to play so I can build more."`)
+    })
+
+    document.getElementById('contactNavButton').addEventListener('click', (e) => {
+        alert(`IYKYK. Also, scrambler.reset@gmail.com"`)
+    })
+
 
     document.getElementById('leaderboardButton').addEventListener('click', (e) => {
         loadUserStats()
@@ -2163,40 +2320,7 @@ On it, a note:
     }
   })
 
-  function openFullscreenModal(e) {
-    let target = e.target
-    let modal_id = target.getAttribute('for')
-    let modal = document.getElementById(modal_id)
-
-    const modal_height = modal.getBoundingClientRect().height 
-    
-    r.style.setProperty('--fade-height', `${modal_height*0.2}px`)
-
-    modal.classList.add('opened')
-    document.getElementById('overlay').classList.remove('closed')
-  }
-
-  function closeFullscreenModal(e) { // TODO: close rewards modal takes very long?
-    let target = e.target
-    let modal_id = target.getAttribute('for')
-    let modal = document.getElementById(modal_id)
-
-    modal.classList.remove('opened')
-
-    if (modal_id == 'send_reset_email_modal' || modal_id == 'password_reset_modal') {
-        // if closing reset modal, remove login overlay
-        document.getElementById('overlay').classList.remove('higher')
-    } else {
-        document.getElementById('overlay').classList.add('closed')
-    }
-    if (modal_id == 'login_modal') {
-        not_logging_in = true
-        if (puzzle.id) { // if refusing login and puzzle is loaded, send start
-            loadPuzzleAndGuesses()
-        }
-    }
-
-  }
+  
 
   //function close_reward_modal(e) {
   //  var caller = e.target || e.srcElement
