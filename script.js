@@ -362,8 +362,6 @@ function loadProfileStats() {
     const weekly = leaderboards.week
     const global = leaderboards.all
 
-    console.log(weekly)
-    console.log(global)
     for (let i = 0; i < global.length; i++) {
         if (global[i]['username'] == user.username) {
             const rank = i + 1
@@ -629,7 +627,7 @@ function manageResetError(errorResponse) {
     }
 
 
-function fetchLogin(event) {
+async function fetchLogin(event) {
     event.preventDefault()
 
     const submit_type = event.submitter.name
@@ -649,16 +647,17 @@ function fetchLogin(event) {
             alert('Please include all fields.')
         } else {
             not_logging_in = false
-            fetchPostWrapper('/users', params, finishLogin, manageLoginError)
+            await fetchPostWrapper('/users', params, finishLogin, manageLoginError)
+            openFullscreenModal('howToModal')
         }
         
     } else if (submit_type == 'reset') {
         openResetTokenModal()
     } else if (submit_type == 'forgot_username') {
         openForgotUsernameModal()
-    } else {
+    } else { // login
         not_logging_in = false
-        fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
+        await fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
     }
     
 }
@@ -2155,7 +2154,6 @@ function openFullscreenModal(e) {
     
     let modal = document.getElementById(modal_id)
 
-    console.log(modal_id)
     modal.classList.add('opened')
     
     if (target?.classList.contains('nav-item')) {
@@ -2185,11 +2183,12 @@ function openFullscreenModal(e) {
     } else {
         document.getElementById('overlay').classList.add('closed')
     }
-    if (modal_id == 'login_modal') {
+    if (modal_id == 'login_modal') { // only can reach this step through the close button
         not_logging_in = true
         if (puzzle.id) { // if refusing login and puzzle is loaded, send start
             loadPuzzleAndGuesses()
         }
+        openFullscreenModal('howToModal')
     }
 
   }
