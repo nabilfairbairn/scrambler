@@ -362,18 +362,21 @@ function loadProfileStats() {
     const weekly = leaderboards.week
     const global = leaderboards.all
 
+    console.log(weekly)
+    console.log(global)
     for (let i = 0; i < global.length; i++) {
         if (global[i]['username'] == user.username) {
             const rank = i + 1
-            document.getElementById('global-rank').innertText = rank
-            document.getElementById('scramblers').innerText = global[i]['n_puzzles']
+            document.getElementById('globalRank').innerText = rank
+            document.getElementById('scrambles').innerText = global[i]['n_puzzles']
         }
     }
 
     for (let i = 0; i < weekly.length; i++) {
         if (weekly[i]['username'] == user.username) {
             const rank = i + 1
-            document.getElementById('weekly-rank').innertText = rank
+            
+            document.getElementById('weekly-rank').innerText = rank;
         }
     }
     
@@ -942,6 +945,7 @@ function setUser(responseData) {
     user.username = responseData["username"]
     user.points = responseData["points"]
     user.streak = responseData['streak']
+    user.max_streak = responseData['max_streak']
 }
 
 
@@ -2151,6 +2155,7 @@ function openFullscreenModal(e) {
     
     let modal = document.getElementById(modal_id)
 
+    console.log(modal_id)
     modal.classList.add('opened')
     
     if (target?.classList.contains('nav-item')) {
