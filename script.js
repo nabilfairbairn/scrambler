@@ -678,26 +678,36 @@ function highlightVersionButton(httpResponse) {
 
 async function toast(error_bool, message=null) {
     // create generic error toast
-    const toast = document.getElementById('toast')
-    
 
-    message = message ? message : `Something went wrong. Don't worry - we're gonna look into it.`
-    document.getElementById('toast_message').innerText = message
-    
-    toast.classList.add('opened')
-
+    const toast = document.createElement('div')
+    toast.classList.add('popup-modal', 'fromtop', 'toast')
     if (error_bool) {
         toast.classList.add('error') //sets red background
     }
+    document.getElementById('modal_container').appendChild(toast)
 
-    await timersPromises.setTimeout(function() {
-        toast.classList.remove('opened')
-    }, 4500)
+    const toast_message = document.createElement('div')
+    toast_message.innerText = message ? message : `Something went wrong. Don't worry - we're gonna look into it.`
+    
+    toast.appendChild(toast_message)
 
-    // wait for toast to disappear before removing background
     setTimeout(function() {
-        toast.classList.remove('error') 
-    }, 2000)
+        toast.classList.add('opened') // required so modal begins above screen
+    }, 100)
+
+    
+    
+
+    setTimeout(function() {
+        toast.classList.remove('opened')
+        setTimeout(function() { // wait for toast to disappear before removing
+            document.getElementById('modal_container').removeChild(toast) 
+        }, 2000)
+        
+    }, 4000)
+
+    
+    
     
 }
 
