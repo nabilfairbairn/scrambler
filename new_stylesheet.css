@@ -1203,14 +1203,14 @@ div img {
   justify-content: center;
 }
 
-#error_toast {
+#toast {
   background-color: rgba(188, 188, 188, 0.9);
-  z-index: 30 !important;
+  z-index: 50 !important;
   padding: 1rem;
   font-size: 1em;
   font-weight: 600;
 }
-#error_toast.error {
+#toast.error {
   background-color: rgba(255, 188, 188, 0.9);
 }
 
