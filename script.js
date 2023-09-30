@@ -741,7 +741,8 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
             if (errorResponse.name) { // javascript error
                 errorResponse = {
                     name: errorResponse.name,
-                    message: errorResponse.message
+                    message: errorResponse.message,
+                    stack: errorResponse.stack ? errorResponse.stack : 'none'
                 }
             }
             const errorparams = {
@@ -887,9 +888,9 @@ function closeBannerMessage() {
 
 function update_attempt_banner() {
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
-    let rowholder_classes = !document.getElementById('rowHolder').classList
+    let rowholder_classes = !document.getElementById('rowHolder').classList // when checking classlist values, use contains
     
-    if (puzzle_attempt > 1 && rowholder_classes.includes('finished')) { // When finishing a puzzle not logged in, then logging in, resends attempt
+    if (puzzle_attempt > 1 && rowholder_classes.contains('finished')) { // When finishing a puzzle not logged in, then logging in, resends attempt
         goodBannerMessage(`Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`)
     }  else {
         closeBannerMessage()
