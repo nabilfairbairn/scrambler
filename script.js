@@ -1,6 +1,6 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -509,7 +509,7 @@ function openPasswordResetModal() {
     document.getElementById('reset_loader_2').style.visibility = 'hidden'
     document.getElementById('login_loader').style.visibility = 'hidden'
 
-    const email = document.getElementById('reset_email_send').value
+    const email = document.getElementById('reset_email_send').value.toLowerCase()
 
     if (email) {
         document.getElementById('reset_email').value = email
@@ -524,7 +524,7 @@ async function requestUsername(e) {
     const submit_type = e.submitter.name
 
      // requesting reset token be sent to email
-    const email = document.getElementById('username_email_send').value
+    const email = document.getElementById('username_email_send').value.toLowerCase()
     // TODO: Regex check that email is valid
 
     if (!email) {
@@ -558,7 +558,7 @@ function requestResetToken(e) {
     if (submit_type == 'input_token') {
         openPasswordResetModal()
     } else { // requesting reset token be sent to email
-        const email = document.getElementById('reset_email_send').value
+        const email = document.getElementById('reset_email_send').value.toLowerCase()
         // TODO: Regex check that email is valid
 
         if (!email) {
@@ -580,7 +580,7 @@ function submitNewPassword(e) {
 
     e.preventDefault()
 
-    const email = document.getElementById('reset_email').value
+    const email = document.getElementById('reset_email').value.toLowerCase()
     const new_pword = document.getElementById('new_pword').value
     const reset_token = document.getElementById('reset_token').value
 
@@ -635,7 +635,7 @@ async function fetchLogin(event) {
     var params = {
         uname: document.getElementById('uname').value,
         pword: document.getElementById('pword').value,
-        email: document.getElementById('email').value
+        email: document.getElementById('email').value.toLowerCase()
     }
 
     document.getElementById('login_loader').style.visibility = 'visible'
@@ -678,6 +678,10 @@ function highlightVersionButton(httpResponse) {
     
 }
 
+function toastError() {
+    // create generic error toast
+}
+
 async function fetchPostWrapper(url_endpoint, params, response_function, error_function=null) {
     const full_url = `${api_url_base}${url_endpoint}` // endpoint starts with '/'
     const requestOptions = {
@@ -711,25 +715,42 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
         .catch(errorResponse => {
             if (error_function) {
                 error_function(errorResponse)
+                return
             } else {
+            const errorparams = {
+                payload: params,
+                route: url_endpoint,
+                errorResponse: errorResponse,
+            }
+
+            // fetch send self error in email (with empty callback to avoid endless loop)
 
             if (errorResponse.status >= 400 && errorResponse.status < 500) {
-                // Only display the alert for 4XX client errors
-                errorResponse.json().then(errorData => {
-                if (errorData.err) {
-                    alert(errorData.err);
+                const contentType = errorResponse.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    errorResponse.json().then(errorData => {
+                        if (errorData.err) {
+                            alert(errorData.err);
+                            return
+                        } else {
+                            errorparams['errorData'] = errorData
+                            fetchPostWrapper('/logerror', errorparams, null, function() {return})
+                            
+                        }
+                    });
                 } else {
-                    alert(`Bad bad bad. Send this to Nabil please: 
-    ${errorData}`)
-                    console.error('An error occurred:', errorData);
+                    fetchPostWrapper('/logerror', errorparams, null, function() {return})
                 }
-                });
-            } else {
-                alert(`Bad bad bad. Send this to Nabil please: 
-    ${errorResponse}`)
-                throw(errorResponse)
+                
+                // Only display the alert for 4XX client errors
+                
+            } else { // 500 errors are all for internal server errors. 502 for bad request
+                fetchPostWrapper('/logerror', errorparams, null, function() {return})
             }
         }
+
+        // generic error toast
+
         })
     return
 }
@@ -776,57 +797,16 @@ async function startPuzzle() {
     // last guess requested separately
     // updates user_state value of current puzzle_attempt
 
-    const url = `${api_url_base}/completed_puzzles/start`
-
     const params = {
         user_id: user.id,
         puzzle_id: puzzle.id,
         user_ip: user.ip
     }
 
-    const requestOptions = {
-        method: 'POST',
-        // credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(params)
-      };
-
-    // returns
-    var last_guess;
-    const data = await fetch(url, requestOptions)
-    .then(response => {
-        if (!response.ok) {
-          throw response;
-        }
-        return response.json();
-      })
-      .catch(errorResponse => {
-        if (errorResponse.status >= 400 && errorResponse.status < 500) {
-          // Only display the alert for 4XX client errors
-          errorResponse.json().then(errorData => {
-            if (errorData.err) {
-              alert(errorData.err);
-            } else {
-                alert(`Bad bad bad. Send this to Nabil please: 
-${errorData}`)
-              console.error('An error occurred:', errorData);
-            }
-          });
-        } else {
-            alert(`Bad bad bad. Send this to Nabil please: 
-${errorResponse}`)
-          console.error('A server error occurred:', errorResponse.status);
-        }
-      })
-      .then(data => {
-        // Returns current attempt
-        var current_attempt = data['current_attempt']
-
-        user_states[getDiff()].puzzle_attempt = current_attempt
+    fetchPostWrapper('/completed_puzzles/start', params, function(data) {
+        user_states[getDiff()].puzzle_attempt = data['current_attempt']
     })
-       
+
 }
 
 function replace_user_state(all_guess_data) {
@@ -1034,24 +1014,32 @@ function focus_next_letter(element, event) {
     var word = document.getElementById(wordrow_id_prefix + depth.toString())
     var next_letter;
 
-    var word_letters = Array.from(word.querySelectorAll(`.letterInput`))
-    .filter(el => Number(el.getAttribute('order')) > order)
-    if (word_letters.length > 0) {
-        next_letter = word_letters[0]
-    } 
-    depth++;
-    word = document.getElementById(wordrow_id_prefix + depth.toString())
-    while (!next_letter && word) {
+    //For tutorial
+    if (!isNumeric(depth) && order < parseInt(4)) { //order only in 3rd tutorial puzzle
         
-        word_letters = word.querySelectorAll(`.letterInput`)
-        if (word_letters) {
-            next_letter = word_letters.item(0) //nodelist accessor 
-        }
-        
+        next_letter = document.getElementById(`tut-3-${parseInt(order) + 1}`)
+    } else {
+        var word_letters = Array.from(word.querySelectorAll(`.letterInput`))
+        .filter(el => Number(el.getAttribute('order')) > order)
+        if (word_letters.length > 0) {
+            next_letter = word_letters[0]
+        } 
         depth++;
-        let next_word_id = wordrow_id_prefix + depth.toString()
-        word = document.getElementById(next_word_id)
+        word = document.getElementById(wordrow_id_prefix + depth.toString())
+        while (!next_letter && word) {
+            
+            word_letters = word.querySelectorAll(`.letterInput`)
+            if (word_letters) {
+                next_letter = word_letters.item(0) //nodelist accessor 
+            }
+            
+            depth++;
+            let next_word_id = wordrow_id_prefix + depth.toString()
+            word = document.getElementById(next_word_id)
+        }
     }
+
+    
     if (next_letter) {
         next_letter.focus()    
     }
@@ -1104,12 +1092,31 @@ function remove_lower_word_styling(wordRow) {
     
     let depth = wordRow.id.slice(wordrow_id_prefix.length)
     // remove word style from later words
-    depth++
-    while (depth < puzzle.words.length) {
-        const [next_word, ng, na] = get_depth(depth) 
-        remove_word_style(next_word)
+    if (!isNumeric(depth)) { //for tutorial
+        let tut_puzz = depth.slice(0,1)
+        let depth_n = depth.slice(1) // now will be int
+        let puzz_len;
+        if (tut_puzz == 'a') {
+            puzz_len = 2
+        } else {
+            puzz_len = 3
+        }
+
+        while (depth_n < puzz_len) {
+            const [next_word, ng, na] = get_depth(depth)
+            remove_word_style(next_word)
+            depth_n++
+        }
+
+    } else { // normal puzzle
         depth++
+        while (depth < puzzle.words.length) {
+            const [next_word, ng, na] = get_depth(depth) 
+            remove_word_style(next_word)
+            depth++
+        }
     }
+    
 }
 
 function count_letters(str){
@@ -1177,34 +1184,80 @@ function determine_all_changed_letters() {
     }
 }
 
+function isNumeric(value) {
+    return /^-?\d+$/.test(value);
+}
+
 function determine_local_changed_letters(element) {
     var el_depth = element.getAttribute('depth')
+    
+    if (['a', 'b'].includes(el_depth.slice(0, 1))) {
+        return;
+    }
 
-    // function already ignored depths out of range of prev and next words
+    // tutorial elements don't have depth
+    if (el_depth) {
+        // function already ignored depths out of range of prev and next words
     // remove removed from above
     // remove all from this
     // remove added from below
-    var prev = document.getElementById(wordrow_id_prefix + (el_depth-1).toString())
+    let prev;
+    let prev_d;
+    if (isNumeric(el_depth)) {
+        prev = document.getElementById(wordrow_id_prefix + (el_depth-1).toString())
+        prev_d = el_depth - 1
+    } else { //tutorial
+        let d_value = el_depth.slice(-1)
+        
+        prev_d = el_depth.slice(0, -1) + (parseInt(d_value) - 1).toString()
+        
+        prev = document.getElementById(wordrow_id_prefix + prev_d)
+    }
+    
     if (prev) {
         remove_changed_styling(prev, 'below')
-        determine_changed_letters(el_depth-1)
+        determine_changed_letters(prev_d)
     }
 
     remove_changed_styling(document.getElementById(wordrow_id_prefix + (el_depth).toString()))
     determine_changed_letters(el_depth)
 
-    var next = document.getElementById(wordrow_id_prefix + (parseFloat(el_depth)+1).toString())
+    let next;
+    let next_d;
+    if (isNumeric(el_depth)) {
+        next = document.getElementById(wordrow_id_prefix + (parseInt(el_depth)+1).toString())
+        next_d = parseInt(el_depth) + 1
+    } else { //tutorial
+        let d_value = el_depth.slice(-1)
+        next_d = el_depth.slice(0, -1) + (parseInt(d_value) + 1).toString()
+        next = document.getElementById(wordrow_id_prefix + next_d)
+    }
+    
     if (next) {
         remove_changed_styling(next, 'above')
-        determine_changed_letters(parseFloat(el_depth)+1)
+        determine_changed_letters(next_d)
     }
+    } 
+    
 
 }
 
 function determine_changed_letters(depth) {
-    let [this_element, this_word, _] = get_depth(depth)
-    let prev_word = depth - 1 < 0 ? null : get_word(depth-1)
-    let next_word = parseFloat(depth) + 1 >= puzzle.words.length ? null : get_word(parseFloat(depth)+1)
+    // If tutorial, depth will be c0, c1, c2
+    let this_element, this_word, prev_word, next_word, _;
+
+    [this_element, this_word, _] = get_depth(depth)
+
+    if (!isNumeric(depth)) {
+        let prev_d = 'c' + (parseInt(depth.slice(-1)) - 1).toString()
+        let next_d = 'c' + (parseInt(depth.slice(-1)) + 1).toString()
+        prev_word = prev_d == 'c-1' ? null : get_word(prev_d)
+        next_word = next_d == 'c3' ? null : get_word(next_d)
+    } else {
+        prev_word = depth - 1 < 0 ? null : get_word(depth-1)
+        next_word = parseFloat(depth) + 1 >= puzzle.words.length ? null : get_word(parseFloat(depth)+1)
+    }
+    
     
     let this_letters_count = count_letters(this_word)
     if (next_word) {
@@ -1320,10 +1373,16 @@ function get_wordrow_letter_boxes(wordrow) {
 }
 
 function get_depth(d) {
-  let guess_wordrow = get_nth_word(d)
-
-  const answer_words = puzzle.answers[d]
-
+    let guess_wordrow
+    let answer_words
+    if (!isNumeric(d)) {    
+        guess_wordrow = document.getElementById(`${wordrow_id_prefix}${d}`)
+        answer_words = null
+        
+    } else {
+        guess_wordrow = get_nth_word(d)
+        answer_words = puzzle.answers[d]
+    }
 
   const guess_letters = get_wordrow_letter_boxes(guess_wordrow)
   var guess_received = ''
@@ -2132,6 +2191,8 @@ var keyboard = document.getElementById('keyboard-cont')
       }, 1000);
   }
 
+let keyboard_default_open = false;
+
 function openFullscreenModal(e) {
     let modal_id;
     let target;
@@ -2152,6 +2213,10 @@ function openFullscreenModal(e) {
         return
     }
     
+    if (modal_id == 'howToModal') {
+        keyboard_default_open = window.getComputedStyle(document.getElementById('keyboard-cont'))['display'] == 'flex'
+    }
+
     let modal = document.getElementById(modal_id)
 
     modal.classList.add('opened')
@@ -2177,7 +2242,14 @@ function openFullscreenModal(e) {
 
     modal.classList.remove('opened')
 
-    if (['send_reset_email_modal', 'password_reset_modal', 'deleteModal'].includes(modal_id)) {
+    if (modal_id == 'howToModal') {
+        if (keyboard_default_open) {
+            keyboard.style.display = 'flex'
+        }
+        keyboard.style.zIndex = 5
+    }
+
+    if (['send_reset_email_modal', 'password_reset_modal', 'deleteModal', 'send_forgot_username_modal'].includes(modal_id)) {
         // if closing reset modal, remove login overlay
         document.getElementById('overlay').classList.remove('higher')
     } else {
@@ -2217,8 +2289,116 @@ async function deleteProfile(e) {
 
 }
 
+const ex_inputs = document.getElementsByClassName('ex-input')
+for (let i = 0; i < ex_inputs.length; i++) {
+    let input = ex_inputs[i]
+    input.tabIndex = '-1'
+
+    input.onclick = function(e) {
+        keyboard.style.display = 'flex'
+        keyboard.style.zIndex = 25
+        input.focus()
+    }
+    input.onblur = function(event) {
+        blurred = this
+    }
+    input.addEventListener('keydown', function myfunc(event) {
+        process_input(input, event)
+        /*setTimeout(function(){focus_next_letter(input, event)},80)*/
+    })
+    /* tooltip.addEventListener("pointerleave", (event) => {
+        const tooltip = event.target
+        const tooltipText = tooltip.firstElementChild
+        tooltipText.style.display = 'none'
+    }) */
+}
+
+function evalTutorial1() {
+    const answer = document.getElementById('tutorial-1-answer').innerText
+    if (['T','P','H','C'].includes(answer)) {
+        document.getElementById('guess_number_a1').classList.add('correct')
+        document.getElementById('guess_number_a0').classList.add('correct')
+    } else {
+        document.getElementById('guess_number_a1').classList.add('wrong')
+        document.getElementById('guess_number_a0').classList.add('correct')
+    }
+}
+
+function evalTutorial2() {
+    const answer = document.getElementById('tutorial-2-answer').innerText
+    if (['G', 'K', 'R', 'L', 'V', 'D'].includes(answer)) {
+        document.getElementById('guess_number_b1').classList.add('correct')
+        document.getElementById('guess_number_b0').classList.add('correct')
+        document.getElementById('guess_number_b2').classList.add('correct')
+    } else {
+        document.getElementById('guess_number_b1').classList.add('correct')
+        document.getElementById('guess_number_b0').classList.add('correct')
+        document.getElementById('guess_number_b2').classList.add('wrong')
+    }
+}
+
+let tutorial_guesses = 0
+function evalTutorial3() {
+    tutorial_guesses++
+    const a1 = 'WOR' + document.getElementById('tut-3-1').innerText + document.getElementById('tut-3-2').innerText
+    const a2 = document.getElementById('tut-3-3').innerText + 'ROW' + document.getElementById('tut-3-4').innerText
+    console.log(a1)
+    console.log(a2)
+    document.getElementById('guess_number_c0').classList.add('correct')
+    let correct = false
+    if (['WORLD', 'WORMS', 'WORSE', 'WORST', 'WORKS'].includes(a1)) {
+        document.getElementById('guess_number_c1').classList.add('correct')
+
+        switch (a1) {
+            case 'WORLD':
+                if (['CROWD', 'PROWL', 'DROWN', 'GROWL'].includes(a2)) {
+                    document.getElementById('guess_number_c2').classList.add('correct')
+                    document.getElementById('tutorial-3').classList.add('finished')
+                    correct = true
+                } else {
+                    document.getElementById('guess_number_c2').classList.add('wrong')
+                }
+                break;
+            default:
+                if (['CROWS', 'BROWS', 'GROWS'].includes(a2)) {
+                    document.getElementById('guess_number_c2').classList.add('correct')
+                    document.getElementById('tutorial-3').classList.add('finished')
+                    correct = true
+                } else {
+                    document.getElementById('guess_number_c2').classList.add('wrong')
+                }
+                break;
+        }
+
+    } else {
+        document.getElementById('guess_number_c1').classList.add('wrong')
+    }
+    const params = {
+        user_id: user.id,
+        user_ip: user.ip,
+        puzzle_id: -1,
+        guess_n: tutorial_guesses,
+        attempt: 1,
+        words: JSON.stringify([correct.toString()])
+    }
+    fetchPostWrapper('/guesses', params, null)
+}
+
+
+function create_random_ip() {
+    const random_ip = Math.random().toString(36).substring(0,15);
+    user.ip = random_ip;
+    fetchPostWrapper('/visits', {ip: user.ip}, null)
+}
 
 window.onload = function() {
+
+    document.getElementById("tutorial-1-answer-button").addEventListener('click', evalTutorial1)
+    document.getElementById('tutorial-2-answer-button').addEventListener('click', evalTutorial2)
+    document.getElementById('tutorial-3-answer-button').addEventListener('click', evalTutorial3)
+    
+    var keyboard = document.getElementById('keyboard-cont')
+    
 
     document.getElementById('logout').addEventListener('click', logout)
     document.getElementById('delete_profile').addEventListener('click', sureDelete)
@@ -2274,7 +2454,7 @@ window.onload = function() {
     .then(response => response.json())
     .then(data => {
         user.ip = data.ip
-        fetchPostWrapper('/visit', {ip: data.ip}, null)
+        fetchPostWrapper('/visit', {ip: data.ip}, null, create_random_ip)
     });
 
 
@@ -2367,23 +2547,6 @@ window.onload = function() {
   })
 
   
-
-  //function close_reward_modal(e) {
-  //  var caller = e.target || e.srcElement
-  //  var modal_to_close = document.getElementById(caller.getAttribute('for'))
-
-  //  modal_to_close.classList.remove('show')
-
-  //}
-
-
-  document.addEventListener("keyup", function(event) {
-    if (event.key === 'Enter' && document.activeElement.id != 'email_input') {
-        process_guess()
-    }
-  })
-
-
   document.getElementById("answerBtn").onclick = function() {
     process_guess()
   }

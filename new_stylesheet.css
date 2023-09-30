@@ -808,11 +808,26 @@ span.small {
     height:  80%;
     width: 80%;
 }
-.flex-item div img {
+  
+div img {
     max-width: 80%;
     min-width: 80%;
 }
 
+.mock {
+  width: 14%;
+  margin: 0.5em
+  
+}
+.mock div {
+  border: 0.1em solid var(--almost-black);
+  border-radius: 1em;
+  padding: 0.4em;
+}
+.horizontal-flex-cont.desc {
+  font-size: 1.6em;
+  justify-content: flex-start;
+}
 
 .formodal .button {
   width: fit-content;
@@ -897,6 +912,19 @@ span.small {
     transform: scale(1.1);
     border-color: #040404;
     box-shadow: 0 0 8px 4px darkgray;
+}
+.letterInput.ex:focus {
+  background-color: #FBFBFB;
+    /*
+    box-shadow: 0px 0px 24.192px var(--box-focus), 
+    0px 0px 13.824px var(--box-focus), 
+    0px 0px 8.064px var(--box-focus), 
+    0px 0px 4.032px var(--box-focus), 
+    0px 0px 1.152px var(--box-focus), 
+    0px 0px 0.576px var(--box-focus);*/
+    transform: scale(1.1);
+    border-color: #040404;
+    box-shadow: 0 0 0.1em 0.05em darkgray;
 }
 
 /*
@@ -1002,17 +1030,19 @@ span.small {
 }
 
 .rowHolder.ex{
-    width: 67%;
+    width: 80%;
     
     margin-left: auto;
     margin-right: auto;
+    
 }
 .letterBox.ex {
-    font-size: 1.2rem;
-    margin: calc(var(--emLetterBoxMargin) * 0.67);
+    font-size: 1.5rem;
+    margin: calc(var(--emLetterBoxMargin) * 0.8);
 }
 .letterInput.ex {
-  --letterInput-border-radius: 24px;
+  --letterInput-border-radius: 0.5em;
+  
 }
 
 
@@ -1127,6 +1157,10 @@ span.small {
     background-color:rgba(80, 80, 80);
     z-index: 5;
   }
+
+#howToModal {
+  padding-bottom: 12rem; /* Same as keyboard height */
+}
 
   
   #keyboard-cont div {
@@ -1247,6 +1281,17 @@ span.small {
   border-width: 0.08em;
   
 }
+
+.vertical-flex-cont.ex {
+  align-items: center;
+}
+
+.ex .answerButton {
+  font-size: 1.7em;
+  width: 4.5em;
+
+}
+
 .button.answerButton:active {
   background-color: #7a0404;
 }
