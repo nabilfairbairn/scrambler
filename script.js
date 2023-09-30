@@ -2412,13 +2412,12 @@ function create_random_ip() {
 }
 
 window.onload = function() {
+    readjustContainallPadding()
 
     document.getElementById("tutorial-1-answer-button").addEventListener('click', evalTutorial1)
     document.getElementById('tutorial-2-answer-button').addEventListener('click', evalTutorial2)
     document.getElementById('tutorial-3-answer-button').addEventListener('click', evalTutorial3)
-    
-    var keyboard = document.getElementById('keyboard-cont')
-    
+      
 
     document.getElementById('logout').addEventListener('click', logout)
     document.getElementById('delete_profile').addEventListener('click', sureDelete)
@@ -2571,6 +2570,6 @@ window.onload = function() {
     process_guess()
   }
 
-  readjustContainallPadding()
+  
   
 }
