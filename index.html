@@ -21,6 +21,21 @@
         <div id="toast_message">Something went wrong. Don't worry - we're gonna look into it.</div>
       </div>
 
+      <div id="deleteModal" class="popup-modal">
+        <div class="header">
+          <span>Permanently Delete Profile</span>
+          <button
+            type="button" class='button square minimal close-fs-modal-button' for="deleteModal"><span  class="material-icons-round">
+              close
+              </span></button>
+        </div>
+        <div>Deleting your profile can't be undone. Are you sure you'd like to do that?</div>
+        <div class="horizontal-flex-cont">
+          <button id="do_not_delete" class="large-button">NEVERMIND</button>
+          <button id="yes_delete" class="large-button">DELETE MY PROFILE</button>
+        </div>
+      </div>
+
       <div id="login_modal" class="popup-modal">
         <div class="header">
           <button
@@ -222,6 +237,16 @@
             close
             </span></button>
       </div>
+      <p><u>V1.1.1 - Sep 30 2023</u></p>
+
+      <ul>
+        <li><p>Changed: Tutorial is now interactive!</p></li>
+        <li><p>Changed: Errors are now toasts. Logs are emailed to me for fixing</p></li>
+        <li><p>Fixed: Emails are no longer case sensitive.</p></li>
+      </ul>
+
+      <br>
+
       <p><u>V1.1.0 - Sep 27 2023</u></p>
 
       <ul>
@@ -306,21 +331,6 @@
         <button id="delete_profile" class="large-button">DELETE PROFILE</button>
       </div>
 
-    </div>
-
-    <div id="deleteModal" class="popup-modal">
-      <div class="header">
-        <span>Permanently Delete Profile</span>
-        <button
-          type="button" class='button square minimal close-fs-modal-button' for="deleteModal"><span  class="material-icons-round">
-            close
-            </span></button>
-      </div>
-      <div>Deleting your profile can't be undone. Are you sure you'd like to do that?</div>
-      <div class="horizontal-flex-cont">
-        <button id="do_not_delete" class="large-button">NEVERMIND</button>
-        <button id="yes_delete" class="large-button">DELETE MY PROFILE</button>
-      </div>
     </div>
 
     <div id="sidenav" class="fullscreen-modal sidenav">
