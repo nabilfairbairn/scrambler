@@ -1,6 +1,6 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -738,6 +738,12 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
             return
         })
         .catch(errorResponse => {
+            if (errorResponse.name) { // javascript error
+                errorResponse = {
+                    name: errorResponse.name,
+                    message: errorResponse.message
+                }
+            }
             const errorparams = {
                 payload: params,
                 route: url_endpoint,
@@ -793,17 +799,18 @@ function loadAllGuesses() {
         }
     }
 
-    fetchPostWrapper('/guesses/multiple', params ,processAllGuesses) // load guesses. send data to process
+    fetchPostWrapper('/guesses/multiple', params, processAllGuesses) // load guesses. send data to process
     
 
 }
 
 function processAllGuesses(all_guess_data) {
     replace_user_state(all_guess_data) // insert guess data for both easy and hard. manages possibility of no guess
-        
+    
     refreshUserInputs()
 
     process_guess_styling(false)
+    
 }
 
 async function loadPuzzleAndGuesses() {
@@ -880,8 +887,9 @@ function closeBannerMessage() {
 
 function update_attempt_banner() {
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
+    let rowholder_classes = !document.getElementById('rowHolder').classList
     
-    if (puzzle_attempt > 1 && !document.getElementById('rowHolder').classList.includes('finished')) { // When finishing a puzzle not logged in, then logging in, resends attempt
+    if (puzzle_attempt > 1 && rowholder_classes.includes('finished')) { // When finishing a puzzle not logged in, then logging in, resends attempt
         goodBannerMessage(`Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`)
     }  else {
         closeBannerMessage()
