@@ -881,7 +881,7 @@ function closeBannerMessage() {
 function update_attempt_banner() {
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
     
-    if (puzzle_attempt > 1) {
+    if (puzzle_attempt > 1 && !document.getElementById('rowHolder').classList.includes('finished')) { // When finishing a puzzle not logged in, then logging in, resends attempt
         goodBannerMessage(`Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`)
     }  else {
         closeBannerMessage()
