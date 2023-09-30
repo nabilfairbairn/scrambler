@@ -313,10 +313,6 @@ function fetchPuzzle() {
     http.send() // Make sure to stringify
     http.onload = function() {
         declare_puzzle(http.response) // easy and hard
-
-        
-        
-
         // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
         // Or, user refused login. closing modal set not_logging_in to true.
         // If user later decides to log in, clicking login button will set not_loggin_in to false
