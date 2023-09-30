@@ -1162,6 +1162,7 @@ div img {
   padding-bottom: 12rem; /* Same as keyboard height */
 }
 
+
   
   #keyboard-cont div {
     display: flex;
@@ -1201,6 +1202,19 @@ div img {
   justify-content: center;
 }
 
+#error_toast {
+  background-color: rgba(188, 188, 188, 0.9);
+  z-index: 30 !important;
+  padding: 1rem;
+  font-size: 1em;
+  font-weight: 600;
+}
+#error_toast.error {
+  background-color: rgba(255, 188, 188, 0.9);
+}
+
+
+
 .popup-modal { /* Can't get to have space between bottom and edge of screen when long */
     font-size: 0.8rem;
     position: fixed;
@@ -1225,6 +1239,9 @@ div img {
 
   visibility: collapse;
   transition: all 2s ease-in-out;
+}
+.fromtop {
+  transform: translateY(-100vh);
 }
 
 .popup-modal.higher {

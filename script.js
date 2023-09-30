@@ -146,7 +146,7 @@ async function switchDifficulty(e) {
     const new_diff = source_toggle.value
 
     if (new_diff == 'hard' && !user.id) { // if User isn't logged in, can't change difficulty
-        alert('You have to be logged in to play the hard puzzle.')
+        toast(true, 'You have to be logged in to play the hard puzzle.')
 
         // keep easy toggled
         document.getElementById('easy_radio').checked = true
@@ -460,7 +460,7 @@ function finishLogin(httpResponse) {
 }
 
 
-function manageLoginError(errorResponse) {
+function manageLoginError(errorResponse, errorParams) {
     if (errorResponse.status >= 400) {
         // Timeout to allow loader to hide before raising alert.
         document.getElementById('login_loader').style.visibility = 'hidden'
@@ -468,17 +468,21 @@ function manageLoginError(errorResponse) {
         document.getElementById('reset_loader_2').style.visibility = 'hidden'
         document.getElementById('reset_loader_3').style.visibility = 'hidden'
 
-        setTimeout(function() {
+        const contentType = errorResponse.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
             errorResponse.json().then(errorData => {
                 if (errorData.err) {
-                    alert(errorData.err);
+                    toast(true, errorData.err);
                 } else {
-                    alert(`Bad bad bad. Send this to Nabil please: 
-    ${errorData}`)
-                    console.error('An error occurred:', errorData);
+                    toast(true)
+                    fetchPostWrapper('/logerror', errorParams, null, function() {return})
                 }
-                })
-          }, 100);
+            })
+        } else {
+            toast(true)
+            fetchPostWrapper('/logerror', errorParams, null, function() {return})
+        }
+
     }
 }
 
@@ -528,7 +532,7 @@ async function requestUsername(e) {
     // TODO: Regex check that email is valid
 
     if (!email) {
-        alert('Please enter the email address you used to create your profile.')
+        toast(true, 'Please enter the email address you used to create your profile.')
         document.getElementById('reset_loader_3').style.visibility = 'hidden'
 
     } else { // email present
@@ -539,9 +543,8 @@ async function requestUsername(e) {
         await fetchPostWrapper('/username/recover', params, null, manageResetError)
         closeFullscreenModal('send_forgot_username_modal')
         
-        setTimeout(function() {
-            alert('If a profile exists, an email has been sent containing your username.')
-        }, 1000)
+        toast(false,'If a profile exists, an email has been sent containing your username.')
+        
         
     }
     
@@ -562,7 +565,7 @@ function requestResetToken(e) {
         // TODO: Regex check that email is valid
 
         if (!email) {
-            alert('Please enter the email address you used to create your profile.')
+            toast(true, 'Please enter the email address you used to create your profile.')
             document.getElementById('reset_loader_1').style.visibility = 'hidden'
 
         } else { // email present
@@ -587,7 +590,7 @@ function submitNewPassword(e) {
     // No checking submitter because only submit button is to send new password
 
     if (!email || !new_pword || !reset_token) {
-        alert('Please fill all fields.')
+        toast(true, 'Please fill all fields.')
         document.getElementById('reset_loader_2').style.visibility = 'hidden'
     } else {
         const params = {
@@ -606,9 +609,7 @@ function resetSuccess(httpResponse) {
     document.getElementById('overlay').classList.remove('higher')
     document.getElementById('password_reset_modal').classList.remove('opened')
 
-    setTimeout(function() {
-        alert(`Your password reset was successful. You can now login with your new password.`)
-    }, 100)
+    toast(false, `Your password reset was successful. You can now login with your new password.`)
 }
 
 function manageResetError(errorResponse) {
@@ -618,10 +619,7 @@ function manageResetError(errorResponse) {
         // Timeout to allow loader to hide before raising alert.
         document.getElementById('login_loader').style.visibility = 'hidden'
 
-        setTimeout(function() {
-            alert(`Your password reset failed. Check that the values were correct and your reset token hasn't expired or been used.`)
-            
-        }, 100)
+        toast(true, `Your password reset failed. Check that the values were correct and your reset token hasn't expired or been used.`)
           
         }
     }
@@ -644,7 +642,7 @@ async function fetchLogin(event) {
 
     if (submit_type == 'create') {
         if (!params.uname || !params.pword || !params.email) {
-            alert('Please include all fields.')
+            toast(true, 'Please include all fields.')
         } else {
             not_logging_in = false
             await fetchPostWrapper('/users', params, finishLogin, manageLoginError)
@@ -678,8 +676,29 @@ function highlightVersionButton(httpResponse) {
     
 }
 
-function toastError() {
+async function toast(error_bool, message=null) {
     // create generic error toast
+    const toast = document.getElementById('toast')
+    
+
+    message = message ? message : `Something went wrong. Don't worry - we're gonna look into it.`
+    document.getElementById('toast_message').innerText = message
+    
+    toast.classList.add('opened')
+
+    if (error_bool) {
+        toast.classList.add('error') //sets red background
+    }
+
+    await timersPromises.setTimeout(function() {
+        toast.classList.remove('opened')
+    }, 4500)
+
+    // wait for toast to disappear before removing background
+    setTimeout(function() {
+        toast.classList.remove('error') 
+    }, 2000)
+    
 }
 
 async function fetchPostWrapper(url_endpoint, params, response_function, error_function=null) {
@@ -713,16 +732,16 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
             return
         })
         .catch(errorResponse => {
-            if (error_function) {
-                error_function(errorResponse)
-                return
-            } else {
             const errorparams = {
                 payload: params,
                 route: url_endpoint,
                 errorResponse: errorResponse,
             }
 
+            if (error_function) {
+                error_function(errorResponse, errorparams)
+                return
+            } else {
             // fetch send self error in email (with empty callback to avoid endless loop)
 
             if (errorResponse.status >= 400 && errorResponse.status < 500) {
@@ -730,7 +749,7 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
                 if (contentType && contentType.indexOf("application/json") !== -1) {
                     errorResponse.json().then(errorData => {
                         if (errorData.err) {
-                            alert(errorData.err);
+                            toast(true, errorData.err);
                             return
                         } else {
                             errorparams['errorData'] = errorData
@@ -750,6 +769,7 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
         }
 
         // generic error toast
+        toast(true) // false for error
 
         })
     return
@@ -1863,14 +1883,8 @@ function process_guess_styling(real_guess) {
         }
         
 
-        try {
-            fetchPostWrapper('/guesses', params, null)
-            user_states[getDiff()].last_guess = complete_words // Update last_guess
-        } catch (error) {
-            alert(`Bad bad bad. Send this to Nabil please: 
-${error}`)
-            throw error
-        } 
+        fetchPostWrapper('/guesses', params, null)
+        user_states[getDiff()].last_guess = complete_words // Update last_guess
 
     }
 
@@ -2209,7 +2223,7 @@ function openFullscreenModal(e) {
     }
 
     if (modal_id == 'profile_modal' && !user.id) {
-        alert('You need to be logged in.')
+        toast(true, 'You need to be logged in to access your profile.')
         return
     }
     
@@ -2276,13 +2290,13 @@ function sureDelete(e) {
 
 async function deleteProfile(e) {
     if (!user.id) {
-        alert(`You aren't logged in.`)
+        toast(true, `You aren't logged in.`)
     } else {
         const params = {
             user_id: user.id
         }
         await fetchPostWrapper('/users/delete', params, null)
-        alert('Your profile has been successfully deleted.')
+        await toast(false, 'Your profile has been successfully deleted.')
         location.reload()
     }
     
@@ -2418,27 +2432,27 @@ window.onload = function() {
     message_banner = document.getElementById('message_banner')
 
     document.getElementById('pastPuzzlesNavButton').addEventListener('click', (e) => {
-        alert(`Soon my friends. Soon."`)
+        toast(false, `Soon my friends. Soon.`)
     })
 
     document.getElementById('weeklyChallengeNavButton').addEventListener('click', (e) => {
-        alert(`Bigger puzzles, bigger rewards. Also bigger wait time D:"`)
+        toast(false, `Bigger puzzles, bigger rewards. Also bigger wait time D:`)
     })
 
     document.getElementById('socialNavButton').addEventListener('click', (e) => {
-        alert(`Maybe you'll want a separate leaderboard with only your friends?"`)
+        toast(false, `Maybe you'll want a separate leaderboard with only your friends?`)
     })
 
     document.getElementById('roadmapNavButton').addEventListener('click', (e) => {
-        alert(`We're lost. Send help."`)
+        toast(false, `We're lost. Send help.`)
     })
 
     document.getElementById('aboutNavButton').addEventListener('click', (e) => {
-        alert(`I made this by myself. If you like this kind of puzzle, get your friends to play so I can build more."`)
+        toast(false, `I made this by myself. If you like this kind of puzzle, get your friends to play so I can build more.`)
     })
 
     document.getElementById('contactNavButton').addEventListener('click', (e) => {
-        alert(`IYKYK. Also, scrambler.reset@gmail.com"`)
+        toast(false, `IYKYK. Also, scrambler.reset@gmail.com`)
     })
 
 
