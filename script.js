@@ -2382,7 +2382,6 @@ function evalTutorial3() {
             case 'WORLD':
                 if (['CROWD', 'PROWL', 'DROWN', 'GROWL'].includes(a2)) {
                     document.getElementById('guess_number_c2').classList.add('correct')
-                    document.getElementById('tutorial-3').classList.add('finished')
                     correct = true
                 } else {
                     document.getElementById('guess_number_c2').classList.add('wrong')
@@ -2391,7 +2390,6 @@ function evalTutorial3() {
             default:
                 if (['CROWS', 'BROWS', 'GROWS'].includes(a2)) {
                     document.getElementById('guess_number_c2').classList.add('correct')
-                    document.getElementById('tutorial-3').classList.add('finished')
                     correct = true
                 } else {
                     document.getElementById('guess_number_c2').classList.add('wrong')

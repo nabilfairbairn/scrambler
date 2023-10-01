@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+  <meta property="og:title" content="Scrambler: A better word game"/>
+  <meta property="og:description" content="Swap and scramble letters, making new words to fill the puzzle. However, you're limited to swapping only 1 letter at a time. Can you top the global leaderboard?">
+  <meta property="og:url" content="https://scrambler.onrender.com/"/>
+  <meta property="og:image" content="https://scrambler.onrender.com/scrambler_thumbnail.png"/>
+  <meta property="og:type" content="website"/>
   <link rel="stylesheet" href="new_stylesheet.css">
   <!-- Google Icons -->
   
@@ -364,12 +368,14 @@
           <hr>
           <hr>
         <span>
-          <p>Welcome to Scrambler! This game is about re-arranging the letters to make new words, while also making small changes to which letters are used.</p>
+          <h5>Hey there!</h5>
+          <p>Welcome to Scrambler. This game is about swapping and scrambling letters to make new words and fill the puzzle.</p>
           
-          <p>Your goal is to solve the puzzle in as few guesses as possible. You can make guesses one row at a time, or try to solve multiple rows with one guess.</p>
+          <p>Your goal is to use as few guesses as possible to solve the puzzle. You can make guesses one row at a time, or try to solve multiple rows with one guess.</p>
           <hr>
-          <p>Between any word and the next one, <b>1 letter</b> will always be swapped out for a different one.</p> 
-          <p>Try solving the puzzle below by replacing the 'W' to make a new word:</p>
+          <h5>Swapping</h5>
+          <p>Every word will use the same letters as the previous word, except for <b>1 letter</b> that will be swapped.</p>
+          <div class="instruction"><p>Try solving the puzzle below by swapping the 'W' with another letter to make a new word:</p></div>
         </span>
         <div class="vertical-flex-cont ex">
         <div id="tutorial-1" class='rowHolder minimal ex'>
@@ -393,9 +399,10 @@
         <hr>
         <hr>
         <span>
+          <h5>Scrambling</h5>
           <p>In addition to swapping, the order of the letters might be <i>scrambled.</i></p>
           <p>Blue markings inside the boxes will show you which letters have repeated between one word and the next.</p>
-          <p>Go ahead and find a suitable letter for the next word:</p>
+          <div class="instruction"><p>Go ahead and find a suitable letter for the next word:</p></div>
         </span>
         <div class="vertical-flex-cont ex">
           <div id="tutorial-2" class='rowHolder minimal ex'>
@@ -425,12 +432,13 @@
         </div>
         <hr>
         <span>
+          <h5>Good luck!</h5>
           <p>When you make a guess, correct words will be coloured <span style="color: var(--correct-color);">green</span>, and incorrect words will be coloured <span style="color: var(--wrong-color)">orange</span>. </p>
           <p>You should know, some puzzles have more than one way to solve them, so keep your mind open.</p>
           <p>And if you're ever feeling overwhelmed, just remember: 4 of the letters you need are already in the previous word. And there's no harm in solving the puzzle one word at a time.</p>
         </span>
         <hr>
-        <p>Try this next puzzle by yourself:</p>
+        <div class="instruction"><p>Try this next puzzle by yourself:</p></div>
         <div class="vertical-flex-cont ex">
           <div id="tutorial-3" class='rowHolder minimal ex'>
             <div id="guess_number_c0" class='wordRow horizontal-flex-cont ex'> 
@@ -462,10 +470,11 @@
           <p>Have fun and thanks for playing!</p>
         </span>
         <hr>
+        <h5>Button Legend</h5>
         <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="keyboard.svg"/></div></div> - Keyboard Toggle</div>
         <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="menu.svg"/></div></div> - Navigation Menu</div>
         <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="leaderboard.svg"/></div></div> - Leaderboard</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="question.svg"/></div></div> - How To (You are here.)</div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="question.svg"/></div></div> - Tutorial (You are here.)</div>
         <br></br>
       </div> <!-- modal body div close -->
     </div> <!-- modal close -->
