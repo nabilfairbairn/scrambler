@@ -219,8 +219,9 @@ button {
   cursor: pointer;
   display: block;
   text-align: center;
-    padding: 0.5em 1em;
-    color: var(--almost-black)
+
+  padding: 0.5em 1em;
+  color: var(--almost-black) !important;
 }
 
 .large-button {
@@ -229,6 +230,9 @@ button {
   border-width: 0.1em;
   font-size: 1rem;
   margin: 1rem;
+}
+#start_playing {
+  background-color: var(--light-bright-blue);
 }
 #delete_profile, #yes_delete {
   background: var(--wrong-color)
@@ -833,6 +837,12 @@ span.small {
     height:  80%;
     width: 80%;
 }
+.has-img {
+  display: flex;
+  justify-content: center;
+  height: 80%;
+  width: 80%
+}
   
 div img {
     max-width: 80%;
@@ -1301,6 +1311,7 @@ div img {
   background-color:rgba(0,0,0,0.4);
   border: none;
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   top: 0;
   left: 0;
   right: 0;

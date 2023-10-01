@@ -629,7 +629,8 @@ async function fetchLogin(event) {
     var params = {
         uname: document.getElementById('uname').value,
         pword: document.getElementById('pword').value,
-        email: document.getElementById('email').value.toLowerCase()
+        email: document.getElementById('email').value.toLowerCase(),
+        user_ip: user.ip
     }
 
     document.getElementById('login_loader').style.visibility = 'visible'
@@ -2420,6 +2421,8 @@ function create_random_ip() {
 
 window.onload = function() {
     readjustContainallPadding()
+
+    document.getElementById('start_playing').addEventListener('click', function() {closeFullscreenModal('howToModal')})
 
     document.getElementById("tutorial-1-answer-button").addEventListener('click', evalTutorial1)
     document.getElementById('tutorial-2-answer-button').addEventListener('click', evalTutorial2)

@@ -157,7 +157,7 @@
           <div class="vertical_flex-cont bonus_col"> <!-- Early Bonus -->
             <span class="bonus_w_description horizontal-flex-cont">
               <div class="help-tip invisible"></div>
-              <div><img class="bonus_icon bonus square" src="flag_one.svg"/></div>
+              <div class="has-img"><img class="bonus_icon bonus square" src="flag_one.svg"/></div>
               <div class="help-tip">
                 <p class="tooltipText">Earned by being one of the first to complete the puzzle. First earns +200%. Next four earn +50%.</p>
               </div>
@@ -168,7 +168,7 @@
           <div id="centre_bonus" class="vertical_flex-cont bonus_col">
             <span class="bonus_w_description horizontal-flex-cont">
               <div class="help-tip invisible"></div>
-              <div><img class="bonus_icon bonus square" src="fast_bonus.svg"/></div>
+              <div class="has-img"><img class="bonus_icon bonus square" src="fast_bonus.svg"/></div>
               <div class="help-tip">
                 <p class="tooltipText">Earned by being one of the fastest to complete the puzzle. Fastest earns +75%. Next 3 earn +25%.</p>
               </div>
@@ -180,7 +180,7 @@
           <div class="vertical_flex-cont bonus_col">
             <span class="bonus_w_description horizontal-flex-cont">
               <div class="help-tip invisible"></div>
-              <div><img class="bonus_icon bonus square" src="strategy.svg"/></div>
+              <div class="has-img"><img class="bonus_icon bonus square" src="strategy.svg"/></div>
               <div class="help-tip">
                 <p class="tooltipText">Earned by completing the puzzle with fewer guesses than others. Fewest guesses earns +75%. Next 2 earn +25%.</p>
               </div>
@@ -237,6 +237,14 @@
             close
             </span></button>
       </div>
+      <p><u>V1.1.2 - Oct 2 2023</u></p>
+
+      <ul>
+        <li><p>Fixed: Visual inconsistencies on Firefox mobile browser.</p></li>
+      </ul>
+
+      <br>
+
       <p><u>V1.1.1 - Sep 30 2023</u></p>
 
       <ul>
@@ -471,20 +479,20 @@
         </span>
         <hr>
         <h5>Button Legend</h5>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="keyboard.svg"/></div></div> - Keyboard Toggle</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="menu.svg"/></div></div> - Navigation Menu</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="leaderboard.svg"/></div></div> - Leaderboard</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square"><img src="question.svg"/></div></div> - Tutorial (You are here.)</div>
-        <br></br>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square has-img"><img src="keyboard.svg"/></div></div> - Keyboard Toggle</div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square has-img"><img src="menu.svg"/></div></div> - Navigation Menu</div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square has-img"><img src="leaderboard.svg"/></div></div> - Leaderboard</div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square has-img"><img src="question.svg"/></div></div> - Tutorial (You are here.)</div>
+        <div class="vertical-flex-cont ex"><button id="start_playing" class="large-button">Start Playing</button></div>
       </div> <!-- modal body div close -->
     </div> <!-- modal close -->
 
     <div class='header horizontal-flex-cont'>
       <button id="keyboardbutton" type="button" class='square flex-item'>
-        <div><img src="keyboard.svg"/></div>
+        <div class="has-img"><img src="keyboard.svg"/></div>
           </button>
           <button id="menuButton" type="button" class="square flex-item open-fs-modal-button">
-            <div><img for="sidenav" src="menu.svg"/></div>
+            <div class="has-img"><img for="sidenav" src="menu.svg"/></div>
           </button>
       <div id="scrambler_title">
         <button class="notify-button invisible square"></button>
@@ -494,11 +502,11 @@
       </div>
       
       <button id="leaderboardButton" type="button" class='square flex-item open-fs-modal-button'>
-        <div><img for="fullLeaderboard" src="leaderboard.svg"/></div>
+        <div class="has-img"><img for="fullLeaderboard" src="leaderboard.svg"/></div>
       </button>
       <button id="modalbutton" for="howToModal" name="openmodalbutton" type="button" 
       class='square flex-item open-fs-modal-button'>
-        <div><img for="howToModal" src="question.svg"/></div>
+        <div class="has-img"><img for="howToModal" src="question.svg"/></div>
       </button>
 
     </div> <!-- page header close -->
@@ -689,7 +697,7 @@
           <button class="keyboard-button flex-item">l</button>
       </div>
       <div class="third-row">
-          <button class="keyboard-button square flex-item" value="enter"><div><img src="enter.svg"/></div></button>
+          <button class="keyboard-button square flex-item" value="enter"><div class="has-img"><img src="enter.svg"/></div></button>
           <button class="keyboard-button flex-item">z</button>
           <button class="keyboard-button flex-item">x</button>
           <button class="keyboard-button flex-item">c</button>
@@ -697,7 +705,7 @@
           <button class="keyboard-button flex-item">b</button>
           <button class="keyboard-button flex-item">n</button>
           <button class="keyboard-button flex-item">m</button>
-          <button class="keyboard-button square flex-item" value="backspace"><div><img src="backspace.svg"/></div></button>
+          <button class="keyboard-button square flex-item" value="backspace"><div class="has-img"><img src="backspace.svg"/></div></button>
       </div>
   </div>
 
