@@ -1,6 +1,6 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -2434,9 +2434,11 @@ async function sendContactMessage(event) {
     if (!params.message) {
         toast(true, `Well, you've gotta type something to send...`)
     } else {
-        fetchPostWrapper('/contact', params, null)
-        closeFullscreenModal('contactModal')
-        toast(false, 'Your message has been sent!')
+        fetchPostWrapper('/contact', params, function() {
+            closeFullscreenModal('contactModal')
+            toast(false, 'Your message has been sent!')
+        })
+        
     }
     
 }
