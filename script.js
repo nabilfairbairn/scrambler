@@ -673,7 +673,7 @@ function highlightVersionButton(httpResponse) {
     
 }
 
-async function toast(error_bool, message=null) {
+async function toast(error_bool, message=null, seconds=4) {
     // create generic error toast
 
     const toast = document.createElement('div')
@@ -701,7 +701,7 @@ async function toast(error_bool, message=null) {
             document.getElementById('modal_container').removeChild(toast) 
         }, 2000)
         
-    }, 4000)
+    }, seconds*1000)
 
     
     
@@ -2343,28 +2343,65 @@ for (let i = 0; i < ex_inputs.length; i++) {
     }) */
 }
 
+let t_1_guesses = 0
 function evalTutorial1() {
+    t_1_guesses++
+    let correct = false
     const answer = document.getElementById('tutorial-1-answer').innerText
     if (['T','P','H','C'].includes(answer)) {
         document.getElementById('guess_number_a1').classList.add('correct')
         document.getElementById('guess_number_a0').classList.add('correct')
+        correct = true
     } else {
         document.getElementById('guess_number_a1').classList.add('wrong')
         document.getElementById('guess_number_a0').classList.add('correct')
+        if (answer) {
+            toast(true, `Try to make any of the following words: 'TASTE', 'PASTE', 'HASTE', 'BASTE', or 'CASTE'`, 6)
+        } else {
+            toast(true, `Click on the empty box under the 'W' to place a letter`)
+        }
     }
+    const params = {
+        user_id: user.id,
+        user_ip: user.ip,
+        puzzle_id: -1,
+        guess_n: t_1_guesses,
+        attempt: 1,
+        words: JSON.stringify([correct.toString(), answer+'ASTE'])
+    }
+    fetchPostWrapper('/guesses', params, null)
+
 }
 
+let t_2_guesses = 0
 function evalTutorial2() {
+    t_2_guesses++
+    let correct = false
     const answer = document.getElementById('tutorial-2-answer').innerText
     if (['G', 'K', 'R', 'L', 'V', 'D'].includes(answer)) {
         document.getElementById('guess_number_b1').classList.add('correct')
         document.getElementById('guess_number_b0').classList.add('correct')
         document.getElementById('guess_number_b2').classList.add('correct')
+        correct = true
     } else {
         document.getElementById('guess_number_b1').classList.add('correct')
         document.getElementById('guess_number_b0').classList.add('correct')
         document.getElementById('guess_number_b2').classList.add('wrong')
+        if (answer) {
+            toast(true, `That word isn't valid. Try again!`)
+        } else {
+            toast(true, `You'll need to click on the empty box first to place a letter`)
+        }
     }
+    const params = {
+        user_id: user.id,
+        user_ip: user.ip,
+        puzzle_id: -2,
+        guess_n: t_2_guesses,
+        attempt: 1,
+        words: JSON.stringify([correct.toString(), 'STA'+answer+'E'])
+    }
+    fetchPostWrapper('/guesses', params, null)
 }
 
 let tutorial_guesses = 0
@@ -2386,6 +2423,10 @@ function evalTutorial3() {
                     correct = true
                 } else {
                     document.getElementById('guess_number_c2').classList.add('wrong')
+                    if (a2) {
+                        toast(false, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`)
+                    }
+                    
                 }
                 break;
             default:
@@ -2394,17 +2435,26 @@ function evalTutorial3() {
                     correct = true
                 } else {
                     document.getElementById('guess_number_c2').classList.add('wrong')
+                    if (a2) {
+                        toast(false, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`)
+                    }
                 }
                 break;
         }
 
     } else {
         document.getElementById('guess_number_c1').classList.add('wrong')
+        if (a1) {
+            toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 8)
+        } else {
+            toast(true, `Did you think you were hot stuff and skipped through the beginning of the tutorial? You click the boxes first to put in your answer.`, 6)
+        }
+        
     }
     const params = {
         user_id: user.id,
         user_ip: user.ip,
-        puzzle_id: -1,
+        puzzle_id: -3,
         guess_n: tutorial_guesses,
         attempt: 1,
         words: JSON.stringify([correct.toString(), a1, a2])
