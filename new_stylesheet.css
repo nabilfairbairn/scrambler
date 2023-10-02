@@ -1016,6 +1016,7 @@ div img {
 .letterBox {
   position: relative;
   background-color: var(--almost-white);
+  /* background-color: rgb(42, 46, 49); For runic theme */ 
   border: 0.08em solid var(--lighter-border);
   margin: var(--letterBoxMargin);
 

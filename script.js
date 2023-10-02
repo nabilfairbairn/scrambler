@@ -2407,7 +2407,7 @@ function evalTutorial3() {
         puzzle_id: -1,
         guess_n: tutorial_guesses,
         attempt: 1,
-        words: JSON.stringify([correct.toString()])
+        words: JSON.stringify([correct.toString(), a1, a2])
     }
     fetchPostWrapper('/guesses', params, null)
 }
