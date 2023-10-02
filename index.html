@@ -21,6 +21,32 @@
   <div id='containall' class="vertical-flex-cont">
     <div id="modal_container" class="modal-container">
 
+      <div id="roadmapModal" class="fullscreen-modal">
+        <div class="header">
+          <span>What's in store?</span>
+          <button
+            type="button" class='button square minimal close-fs-modal-button' for="roadmapModal"><span  class="material-icons-round">
+              close
+              </span></button>
+        </div>
+        <div>
+          <p>I don't have a strong order decided for building these - but this is what you can expect in the next 3 months, maybe sooner:</p>
+          <ul>
+            <li><p>Social groups. You'll be able to add friends and have a dedicated leaderboard tab for the people in your social group.</p></li>
+            <li><p>Sharable log of your puzzle guesses. You know the green and yellow emojis Wordle uses? Yeah like that.</p></li>
+            <li><p>Past Puzzles. You won't get any <i>bonuses</i> from playing them, but you will get the base points.</p></li>
+            <li><p>A real domain name. This will also come with a paid server, so there's no waiting for a puzzle to load</p></li>
+            <li><p>A new game-mode for finding all possible answers of a puzzle. This will feature a sweet branching tree that will mark your progress</p></li>
+            <li><p>Weekly Challenge. A much longer puzzle. This will also be where I test out different possible rule-sets</p></li>
+            <li><p>Suggest a word. You'll highlight the spot in a puzzle and what word you think it's missing. It'll get sent to me to review and add to the puzzle while it's still up</p></li>
+            <li><p>Updating the points system. Instead of getting bonuses as you finish, you'll get them at the end of the day. That way you're ranked against everyone who finished - not just those who finished before you.</p>
+            <p>Also, bronze medals.</p></li>
+            <li><p>Creating a visual theme for the puzzles. It'll give a unique feel rather than the slightly boring modern look.</p></li>
+          </ul>
+          <p>After most of the above, I'll be adding some discrete ads. I have an awesome idea in mind for adding an entirely new system to play with, but it'll need to be a full blown game. With a budget.</p>
+        </div>
+      </div>
+
       <div id="aboutModal" class="popup-modal">
         <div class="header">
           <span>What even is Scrambler?</span>
@@ -82,7 +108,10 @@
         <span>Without a profile, you will only be able to play the daily easy puzzle.</span>
         <form id="login_form" class="vertical-flex-cont">
             <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
-              <input type="password" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
+            <div class="help-tip">
+              <p class="tooltipText">Usernames are case sensitive. ScramblerPro ≠ scramblerpro</p>
+            </div>
+            <input type="password" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
 
             <div class="flex-box">
               <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address" class="textinput">
@@ -91,8 +120,8 @@
               </div>
             </div>
           <div class="horizontal-flex-cont">
-            <input type="submit" name="login" value="Login" class="input_button">
-            <input type="submit" name="create" value="Create Profile" class="input_button">
+            <input type="submit" name="login" value="Login" class="input_button light-blue">
+            <input type="submit" name="create" value="Create Profile" class="input_button green">
           </div>
         
         <div>Usernames need to be <b>free of obscene language</b>. Using a vulgar username may result in your profile being deleted.</div>
@@ -386,7 +415,7 @@
               <div id="pastPuzzlesNavButton" class="disabled">Past Puzzles</div>
               <div id="weeklyChallengeNavButton" class="disabled">Weekly Challenge</div>
               <div id="socialNavButton" class="disabled">Social Leaderboard</div>
-              <div id="roadmapNavButton" class="disabled">Feature Roadmap</div>
+              <div id="roadmapNavButton" class="open-fs-modal-button nav-item" for="roadmapModal">Feature Roadmap</div>
               <div id="aboutNavButton" class="open-fs-modal-button nav-item" for="aboutModal">About</div>
               <div id="contactNavButton" class="open-fs-modal-button nav-item" for="contactModal">Contact</div>
               <div id="suggestAWord" class="disabled">Suggest A Word</div>
@@ -608,7 +637,7 @@
                 type="button", class='button square minimal invisible close-fs-modal-button'><span class="material-icons-round">
                   close
                   </span></button>
-          Scrambler Leaderboard
+          GLOBAL LEADERBOARD
           <button
                 type="button", class='button square minimal close-fs-modal-button' for="fullLeaderboard"><span class="material-icons-round" >
                   close

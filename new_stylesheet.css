@@ -225,10 +225,11 @@ button {
 }
 
 .large-button {
-  width: 8rem;
-  height: 5rem;
+  width: 7rem;
+  height: 4.375rem;
   border-width: 0.1em;
   font-size: 1rem;
+  font-weight: 600;
   margin: 1rem;
 }
 #start_playing {
@@ -244,10 +245,20 @@ button span {
 }
 .input_button {
   font-size: 1em;
-    border-radius: 0.3em;
+  font-weight: 500;
+    border-radius: 0.8rem;
     margin-top: 1em;
     margin-bottom: 1em;
     padding: 0.2em;
+    width: 5.4rem;
+    height: 3rem;
+    text-wrap: wrap;
+}
+.light-blue {
+  background: var(--light-bright-blue)
+}
+.green {
+  background: var(--correct-color)
 }
 #open_login_button {
   font-size: 1em;
@@ -444,7 +455,7 @@ input {
   border-radius: 50%;
   width: 1em;
   height: 1em;
-  font-size: 0.8em;
+  font-size: 1em;
   line-height: 1em;
   cursor: default;
   align-items:center;
@@ -668,6 +679,7 @@ span.small {
   align-items: center;
   align-self: stretch;
   font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .header button {

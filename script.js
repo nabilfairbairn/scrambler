@@ -2482,11 +2482,6 @@ window.onload = function() {
         toast(false, `Maybe you'll want a separate leaderboard with only your friends?`)
     })
 
-    document.getElementById('roadmapNavButton').addEventListener('click', (e) => {
-        toast(false, `We're lost. Send help.`)
-    })
-
-
     document.getElementById('leaderboardButton').addEventListener('click', (e) => {
         loadUserStats()
     })
