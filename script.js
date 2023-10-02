@@ -2487,11 +2487,6 @@ window.onload = function() {
     })
 
 
-    document.getElementById('contactNavButton').addEventListener('click', (e) => {
-        toast(false, `IYKYK. Also, scrambler.reset@gmail.com`)
-    })
-
-
     document.getElementById('leaderboardButton').addEventListener('click', (e) => {
         loadUserStats()
     })
