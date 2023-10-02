@@ -2419,6 +2419,28 @@ function create_random_ip() {
     fetchPostWrapper('/visits', {ip: user.ip}, null)
 }
 
+document.getElementById('contact_form').addEventListener('submit', sendContactMessage)
+
+async function sendContactMessage(event) {
+    event.preventDefault()
+
+    var params = {
+        user_id: user.id,
+        user_ip: user.ip,
+        email: document.getElementById('return_email').value.toLowerCase(),
+        message: document.getElementById('contact_message').value
+    }
+
+    if (!params.message) {
+        toast(true, `Well, you've gotta type something to send...`)
+    } else {
+        fetchPostWrapper('/contact', params, null)
+        closeFullscreenModal('contactModal')
+        toast(false, 'Your message has been sent!')
+    }
+    
+}
+
 window.onload = function() {
     readjustContainallPadding()
 
@@ -2462,9 +2484,6 @@ window.onload = function() {
         toast(false, `We're lost. Send help.`)
     })
 
-    document.getElementById('aboutNavButton').addEventListener('click', (e) => {
-        toast(false, `I made this by myself. If you like this kind of puzzle, get your friends to play so I can build more.`)
-    })
 
     document.getElementById('contactNavButton').addEventListener('click', (e) => {
         toast(false, `IYKYK. Also, scrambler.reset@gmail.com`)

@@ -21,6 +21,37 @@
   <div id='containall' class="vertical-flex-cont">
     <div id="modal_container" class="modal-container">
 
+      <div id="aboutModal" class="popup-modal">
+        <div class="header">
+          <span>What even is Scrambler?</span>
+          <button
+            type="button" class='button square minimal close-fs-modal-button' for="aboutModal"><span  class="material-icons-round">
+              close
+              </span></button>
+        </div>
+        <div>
+          <p>Well, Scrambler is a little game that I came up with at a house party (I know, real rager). I drew the idea out on the back of a plastic plate and people actually like it!</p>
+          <p>It's been almost a year since then. I taught myself web-development to be able to build this (I code in Python otherwise) and share with all of you.</p>
+          <p>I've got <i>HUGE</i> ideas for things I'd like to do with this, but they all need players. Shout-out to my friends who've been my first playtesters. If you're enjoying the game, please share with your friends so I can build all the cool things I want to show you :)</p>
+        </div>
+      </div>
+
+      <div id="contactModal" class="popup-modal opened">
+        <div class="header">
+          <span>Contact Form</span>
+          <button
+            type="button" class='button square minimal close-fs-modal-button' for="contactModal"><span  class="material-icons-round">
+              close
+              </span></button>
+        </div>
+        <p>Tell me what's on your mind. If you leave an email I'll be happy to get back to you.</p>
+        <form id="contact_form" class="vertical-flex-cont">
+          <textarea id="contact_message" maxlength="2000" placeholder="Your message" class="textinput"></textarea>
+          <input type="text" id="return_email" name="email" maxlength="50" placeholder="Your Email" class="textinput">
+          <div class="horizontal-flex-cont one-child"><input type="submit" name="send_message" value="Send" class="input_button"></div>
+        </form> 
+      </div>
+
       <div id="deleteModal" class="popup-modal">
         <div class="header">
           <span>Permanently Delete Profile</span>
@@ -356,8 +387,9 @@
               <div id="weeklyChallengeNavButton" class="disabled">Weekly Challenge</div>
               <div id="socialNavButton" class="disabled">Social Leaderboard</div>
               <div id="roadmapNavButton" class="disabled">Feature Roadmap</div>
-              <div id="aboutNavButton" class="disabled">About</div>
-              <div id="contactNavButton" class="disabled">Contact</div>
+              <div id="aboutNavButton" class="open-fs-modal-button nav-item" for="aboutModal">About</div>
+              <div id="contactNavButton" class="open-fs-modal-button nav-item" for="contactModal">Contact</div>
+              <div id="suggestAWord" class="disabled">Suggest A Word</div>
               
           </div>
         <div class="copyright">Copyright Nabil Fairbairn 2023</div>
