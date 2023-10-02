@@ -2,7 +2,7 @@
 
 
 :root {
-    font-size: 4vw;
+    font-size: 4vw !important;
     -webkit-tap-highlight-color: transparent;
     --game-left: 0;
     --game-right: 0;
@@ -93,9 +93,7 @@ input { /* Override default which is smaller */
 }
 
 #version_update_text {
-    font-size: 0.8rem;
   text-align: left;
-  pointer-events: none;
 }
 
 #deleteModal {
@@ -103,8 +101,8 @@ input { /* Override default which is smaller */
 }
 
 .fullscreen-modal {
-    font-size: 0.6rem;
-    line-height: 1.4em;
+    font-size: 0.8rem;
+    line-height: 1rem;
     position: fixed; 
     top: 0%; /* Default is closed */
   left: var(--game-left);
@@ -125,6 +123,7 @@ input { /* Override default which is smaller */
   width: 18rem;
   transform: translateX(calc(-18rem - 2rem)); /* Padding */
   background: rgb(114, 231, 220);
+  font-size: 0.6rem;
   font-weight: 600;
 }
 .fullscreen-modal.sidenav.opened {
@@ -1401,7 +1400,7 @@ textarea {
 
 @media (min-aspect-ratio: 6/9) { /* Wider screens */
   :root {
-      font-size: 2.2vw;
+      font-size: 2.2vw !important;
       --game-left: 22.5%;
       --game-right: 22.5%;
   }

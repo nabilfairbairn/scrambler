@@ -1,13 +1,13 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.1.1'
+const version = 'V1.1.2'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
 
@@ -2285,7 +2285,7 @@ function openFullscreenModal(e) {
     } else {
         document.getElementById('overlay').classList.add('closed')
     }
-    if (modal_id == 'login_modal') { // only can reach this step through the close button
+    if (modal_id == 'login_modal') { // logging in / creating profile bysteps this function
         not_logging_in = true
         if (puzzle.id) { // if refusing login and puzzle is loaded, send start
             loadPuzzleAndGuesses()
