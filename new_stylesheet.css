@@ -62,10 +62,9 @@ body {
 input { /* Override default which is smaller */
     font-size: 1rem;
 }
-input[type="submit"] {
-  -webkit-appearance: none;
-}
+
 button {
+  appearance: none;
   -webkit-appearance: none;
 }
 
@@ -249,7 +248,9 @@ button span {
   pointer-events: none;
   display: block;
 }
-.input_button {
+input[type="submit"], .input_button {
+   appearance: none;
+  -webkit-appearance: none;
   font-size: 1em;
   font-weight: 500;
     border-radius: 0.8rem;
