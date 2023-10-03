@@ -60,7 +60,13 @@ body {
   margin: 0;
 }
 input { /* Override default which is smaller */
-    font-size: 1rem; 
+    font-size: 1rem;
+}
+input[type="submit"] {
+  -webkit-appearance: none;
+}
+button {
+  -webkit-appearance: none;
 }
 
 #scrambler_title {
@@ -221,6 +227,7 @@ button {
 
   padding: 0.5em 1em;
   color: var(--almost-black) !important;
+  background-color: var(--almost-white)
 }
 
 .large-button {
