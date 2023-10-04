@@ -1,6 +1,6 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -715,9 +715,15 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
         // credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(params)
+        }
       };
+    if (params) {
+        requestOptions['body'] = JSON.stringify(params)
+    }
+
+    if (user.id == 3 || params['uname'] == 'yourmom') {
+        requestOptions['credentials'] = 'include'
+    }
     
     await fetch(full_url, requestOptions)
       .then(response => {
@@ -2251,8 +2257,11 @@ function openFullscreenModal(e) {
 
     modal.classList.add('opened')
     
-    if (target?.classList.contains('nav-item')) {
+    if (target?.classList.contains('nav-item') || target?.id == 'godmode_button') {
         document.getElementById('sidenav').classList.remove('opened')
+    }
+    if (target?.classList.contains('godnav')) {
+        document.getElementById('godmode_nav').classList.remove('opened')
     }
 
     document.getElementById('overlay').classList.remove('closed')
@@ -2409,8 +2418,6 @@ function evalTutorial3() {
     tutorial_guesses++
     const a1 = 'WOR' + document.getElementById('tut-3-1').innerText + document.getElementById('tut-3-2').innerText
     const a2 = document.getElementById('tut-3-3').innerText + 'ROW' + document.getElementById('tut-3-4').innerText
-    console.log(a1)
-    console.log(a2)
     document.getElementById('guess_number_c0').classList.add('correct')
     let correct = false
     if (['WORLD', 'WORMS', 'WORSE', 'WORST', 'WORKS'].includes(a1)) {
@@ -2495,9 +2502,64 @@ async function sendContactMessage(event) {
 
 function areYouGod() {
     if (user.id == 3) {
-        openFullscreenModal('dictionary')
-        //fetchPostWrapper('/')
+        openFullscreenModal('godmode_nav')
+        fetchPostWrapper('/words/get_all', null, loadDictWords)
     }
+}
+
+const wordlist_holder = document.getElementById('dictionary_word_list')
+
+function loadDictWords(dict) {
+
+
+    dict.forEach(({ word }) => {
+        let row = document.createElement('div')
+        row.classList.add('horizontal-flex-cont')
+        row.classList.add('dict_row')
+        row.id = `dict_word_${word}`
+
+        let accept = document.createElement('div')
+        accept.classList.add('accept_button')
+        accept.setAttribute('for', word)
+        accept.addEventListener('click', acceptWord)
+
+        let reject = document.createElement('div')
+        reject.classList.add('reject_button')
+        reject.setAttribute('for', word)
+        reject.addEventListener('click', rejectWord)
+
+        let wordbox = document.createElement('wordbox')
+        wordbox.innerText = word.toUpperCase()
+
+        row.appendChild(reject)
+        row.appendChild(wordbox)
+        row.appendChild(accept)
+        wordlist_holder.appendChild(row)
+    })
+}
+
+function acceptWord(e) { // DISCARD = FALSE IF KEEPING
+    const word = e.target.getAttribute('for')
+
+
+    const params = { word, status: false} 
+
+    fetchPostWrapper('/words/accept_reject', params, function() {
+        const dict_row = document.getElementById(`dict_word_${word}`)
+        wordlist_holder.removeChild(dict_row)
+    })
+}
+
+function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
+    const word = e.target.getAttribute('for')
+
+
+    const params = { word, status: true}
+
+    fetchPostWrapper('/words/accept_reject', params, function() {
+        const dict_row = document.getElementById(`dict_word_${word}`)
+        wordlist_holder.removeChild(dict_row)
+    })
 }
 
 window.onload = async function() {
