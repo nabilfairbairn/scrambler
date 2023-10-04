@@ -2493,7 +2493,7 @@ async function sendContactMessage(event) {
     
 }
 
-window.onload = function() {
+window.onload = async function() {
     readjustContainallPadding()
 
     document.getElementById('start_playing').addEventListener('click', function() {closeFullscreenModal('howToModal')})
@@ -2539,13 +2539,7 @@ window.onload = function() {
     const refresh_guess_button = document.getElementById('refresh_guess')
     refresh_guess_button.addEventListener('click', refreshLastGuess)
 
-    // send load info and IP to db
-    fetch('https://api.ipify.org?format=json')
-    .then(response => response.json())
-    .then(data => {
-        user.ip = data.ip
-        fetchPostWrapper('/visit', {ip: data.ip}, null, create_random_ip)
-    });
+    
 
 
     const allTooltips = document.getElementsByClassName('help-tip');
@@ -2641,6 +2635,15 @@ window.onload = function() {
     process_guess()
   }
 
-  
+  // send load info and IP to db
+  await fetch('https://api.ipify.org?format=json')
+  .then(response => response.json())
+  .then(data => {
+      user.ip = data.ip
+      fetchPostWrapper('/visit', {ip: data.ip}, null)
+  });
+  if (!user.ip) {
+      create_random_ip()
+  }
   
 }

@@ -215,6 +215,10 @@ button {
   margin-bottom: calc(3.5em); /* banner height less padding -1rem */
 }
 button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
   font-family: Nunito;
   border-width: 0.2em;
   border-radius: 0.5rem;
@@ -226,7 +230,8 @@ button {
 
   padding: 0.5em 1em;
   color: var(--almost-black) !important;
-  background-color: var(--almost-white)
+  background-color: var(--almost-white);
+
 }
 
 .large-button {
@@ -248,9 +253,13 @@ button span {
   pointer-events: none;
   display: block;
 }
+
 input[type="submit"], .input_button {
-   appearance: none;
+   
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--almost-white);
   font-size: 1em;
   font-weight: 500;
     border-radius: 0.8rem;
@@ -262,10 +271,10 @@ input[type="submit"], .input_button {
     text-wrap: wrap;
 }
 .light-blue {
-  background: var(--light-bright-blue)
+  background: var(--light-bright-blue) !important;
 }
 .green {
-  background: var(--correct-color)
+  background: var(--correct-color) !important;
 }
 #open_login_button {
   font-size: 1em;
