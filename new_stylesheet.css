@@ -231,6 +231,7 @@ button {
   padding: 0.5em 1em;
   color: var(--almost-black) !important;
   background-color: var(--almost-white);
+  border-color: var(--almost-black);
 
 }
 
@@ -260,6 +261,8 @@ input[type="submit"], .input_button {
   -moz-appearance: none;
   appearance: none;
   background-color: var(--almost-white);
+  border: 0.05em solid var(--almost-black);
+  color: var(--almost-black);
   font-size: 1em;
   font-weight: 500;
     border-radius: 0.8rem;
@@ -268,7 +271,9 @@ input[type="submit"], .input_button {
     padding: 0.2em;
     width: 5.4rem;
     height: 3rem;
-    text-wrap: wrap;
+    text-wrap: wrap !important;
+    white-space: normal;
+    
 }
 .light-blue {
   background: var(--light-bright-blue) !important;

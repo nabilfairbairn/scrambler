@@ -2493,8 +2493,17 @@ async function sendContactMessage(event) {
     
 }
 
+function areYouGod() {
+    if (user.id == 3) {
+        openFullscreenModal('dictionary')
+        //fetchPostWrapper('/')
+    }
+}
+
 window.onload = async function() {
     readjustContainallPadding()
+
+    document.getElementById('godmode_button').addEventListener('click', areYouGod)
 
     document.getElementById('start_playing').addEventListener('click', function() {closeFullscreenModal('howToModal')})
 
