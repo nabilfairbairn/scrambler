@@ -10,6 +10,10 @@
     --game-bottom: 0;
 
     
+  --loader-start-position: -9999em; /* Actual dot is technically off-screen */
+  --loader-distance-between: -0.5em;
+
+    
 
     --wrongglow: 0px 0px 24.192px rgb(247, 107, 26), 
     0px 0px 13.824px rgb(247, 107, 26), 
@@ -255,31 +259,69 @@ button span {
   display: block;
 }
 
+input, .input_button {
+  font-size: 1rem;
+  margin-top: 0.5em;
+}
+
+input[type="text"], input[type="password"] {
+  margin-left: 0;
+  margin-right: 0;
+}
+
 input[type="submit"], .input_button {
-   
+   display: flex;
+   justify-content: center;
+   line-height: normal;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   background-color: var(--almost-white);
   border: 0.05em solid var(--almost-black);
   color: var(--almost-black);
-  font-size: 1em;
   font-weight: 500;
-    border-radius: 0.8rem;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    padding: 0.2em;
-    width: 5.4rem;
-    height: 3rem;
+    border-radius: 0.5rem;
+    padding: 0.4em;
+    /* width: 5.4rem; */
     text-wrap: wrap !important;
     white-space: normal;
-    
+    align-self: stretch;
+    text-align: center;
+    align-items: center;
+}
+#guest_button, #close_forgot_button, #close_reset_password_button, #close_create_button {
+  margin-top: 0;
+}
+
+.buttontext {
+  display: flex;
+  line-height: 1em;
+  pointer-events: none;
+  height: 1em;
+  align-items: center;
+}
+
+.right_text {
+  align-self: flex-end;
+}
+.left_text {
+  align-self: flex-start;
+}
+.link {
+  color: blue;
+  cursor: pointer;
+}
+.link:active {
+  color: purple;
 }
 .light-blue {
   background: var(--light-bright-blue) !important;
 }
 .green {
   background: var(--correct-color) !important;
+}
+.thick {
+  border-width: 4px;
 }
 #open_login_button {
   font-size: 1em;
@@ -295,9 +337,6 @@ input[type="submit"], .input_button {
     align-self: center;
     text-align: center;
     align-items: center;
-}
-input {
-  margin: 0.25rem;
 }
 
 .switch-field {
@@ -482,12 +521,13 @@ input {
   align-items:center;
   justify-content: center;
   position: relative;
+  right: -2em;
 }
 
 input ~ .help-tip {
   position: absolute;
-  right: -1em;
-  top: 0;
+  right: -1.3em;
+  top: 0.5em;
 }
 
 .help-tip:before{
@@ -642,6 +682,30 @@ span.small {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.dot-carousel {
+  position: relative;
+  left: var(--loader-start-position);
+  width: 0.35em;
+  height: 0.35em;
+  border-radius: 0.25em;
+  background-color: var(--almost-black);
+  color: var(--almost-black);
+  box-shadow: calc((var(--loader-start-position) * -1) - var(--loader-distance-between)) 0 0 0 var(--almost-black), calc((var(--loader-start-position) * -1)) 0 0 0 var(--almost-black) calc((var(--loader-start-position) * -1) + var(--loader-distance-between)) 0 0 0 var(--almost-black);
+  animation: dot-carousel 1.5s infinite ease-in-out;
+}
+
+@keyframes dot-carousel {
+  0% {
+    box-shadow: calc((var(--loader-start-position) * -1) - var(--loader-distance-between)) 0 0 -1px var(--almost-black), calc((var(--loader-start-position) * -1)) 0 0 1px var(--almost-black), calc((var(--loader-start-position) * -1) + var(--loader-distance-between)) 0 0 -1px var(--almost-black);
+  }
+  50% {
+    box-shadow: calc((var(--loader-start-position) * -1) + var(--loader-distance-between)) 0 0 -1px var(--almost-black), calc((var(--loader-start-position) * -1) - var(--loader-distance-between)) 0 0 -1px var(--almost-black), calc((var(--loader-start-position) * -1)) 0 0 1px var(--almost-black);
+  }
+  100% {
+    box-shadow: calc((var(--loader-start-position) * -1)) 0 0 1px var(--almost-black), calc((var(--loader-start-position) * -1) + var(--loader-distance-between)) 0 0 -1px var(--almost-black), calc((var(--loader-start-position) * -1) - var(--loader-distance-between)) 0 0 -1px var(--almost-black);
+  }
 }
 
 .dot-spin {
@@ -1392,7 +1456,7 @@ div img {
 }
 .textinput {
   height: 1.2em;
-  margin: 0.3em;
+  margin-bottom: 0;
   text-align: center;
   border-width: 0px;
   padding: 0.25em 0.7em;

@@ -7,7 +7,7 @@ const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.1.2'
+const version = 'V1.1.3'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
 
@@ -457,89 +457,63 @@ function finishLogin(httpResponse) {
 
 
 function manageLoginError(errorResponse, errorParams) {
-    if (errorResponse.status >= 400) {
-        // Timeout to allow loader to hide before raising alert.
-        document.getElementById('login_loader').style.visibility = 'hidden'
-        document.getElementById('reset_loader_1').style.visibility = 'hidden'
-        document.getElementById('reset_loader_2').style.visibility = 'hidden'
-        document.getElementById('reset_loader_3').style.visibility = 'hidden'
-
-        const contentType = errorResponse.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-            errorResponse.json().then(errorData => {
-                if (errorData.err) {
-                    toast(true, errorData.err);
-                } else {
-                    toast(true)
-                    fetchPostWrapper('/logerror', errorParams, null, function() {return})
-                }
-            })
-        } else {
-            toast(true)
-            fetchPostWrapper('/logerror', errorParams, null, function() {return})
-        }
-
+    // replace loader with original text
+    if (document.getElementById('login_button').firstElementChild.firstElementChild == carousel_loader) {
+        document.getElementById('login_button').firstElementChild.removeChild(carousel_loader)
+        document.getElementById('login_button').firstElementChild.innerText = 'Login'
     }
+
+    if (document.getElementById('submit_profile_button').firstElementChild.firstElementChild == carousel_loader) {
+        document.getElementById('submit_profile_button').firstElementChild.removeChild(carousel_loader)
+        document.getElementById('submit_profile_button').firstElementChild.innerText = 'Create Profile'
+    }
+        
+
+    
 }
 
-function openForgotUsernameModal() {
-    // Open modal where user sends username to their email
-    document.getElementById('send_forgot_username_modal').classList.add('opened')
-    document.getElementById('login_loader').style.visibility = 'hidden'
-    document.getElementById('reset_loader_3').style.visibility = 'hidden'
-
-    document.getElementById('overlay').classList.add('higher') // add overlay to login modal
-}
-
-function openResetTokenModal() {
-    // Open modal where user send reset token to their email
-    document.getElementById('send_reset_email_modal').classList.add('opened')
-    document.getElementById('reset_loader_1').style.visibility = 'hidden'
-    document.getElementById('login_loader').style.visibility = 'hidden'
-
-    document.getElementById('overlay').classList.add('higher') // add overlay to login modal
-}
 
 function openPasswordResetModal() {
     // close previous modal.
     // Open new modal to input reset token and new password
-    document.getElementById('password_reset_modal').classList.add('opened')
-    document.getElementById('send_reset_email_modal').classList.remove('opened')
-    document.getElementById('reset_loader_1').style.visibility = 'hidden'
-    document.getElementById('reset_loader_2').style.visibility = 'hidden'
-    document.getElementById('login_loader').style.visibility = 'hidden'
 
-    const email = document.getElementById('reset_email_send').value.toLowerCase()
+    closeFullscreenModal('forgot_login_modal')
+    openFullscreenModal('password_reset_modal')
+
+    toast(false, 'If a profile exists, an email has been sent with a token for you to reset your password with.')
+
+    // replace loader
+    document.getElementById('send_password_reset_button').firstElementChild.removeChild(carousel_loader)
+    document.getElementById('send_password_reset_button').firstElementChild.innerText = 'Send Password Reset'
+
+    const email = document.getElementById('email_send').value // copy over email with capitals and all
 
     if (email) {
         document.getElementById('reset_email').value = email
     }
 }
 
-async function requestUsername(e) {
-    document.getElementById('reset_loader_3').style.visibility = 'visible'
-
-    e.preventDefault()
-
-    const submit_type = e.submitter.name
+async function requestUsername(event) {
+    
 
      // requesting reset token be sent to email
-    const email = document.getElementById('username_email_send').value.toLowerCase()
+    const email = document.getElementById('email_send').value.toLowerCase()
     // TODO: Regex check that email is valid
 
     if (!email) {
         toast(true, 'Please enter the email address you used to create your profile.')
-        document.getElementById('reset_loader_3').style.visibility = 'hidden'
 
     } else { // email present
 
         const params = {
             email: email,
         }
-        await fetchPostWrapper('/username/recover', params, null, manageResetError)
-        closeFullscreenModal('send_forgot_username_modal')
+        await fetchPostWrapper('/username/recover', params, function() {
+            closeFullscreenModal('forgot_login_modal')
+            openFullscreenModal('login_modal')
+            toast(false, 'If a profile exists, an email has been sent containing your username.')
+        })
         
-        toast(false,'If a profile exists, an email has been sent containing your username.')
         
         
     }
@@ -547,37 +521,35 @@ async function requestUsername(e) {
 }
 
 
-function requestResetToken(e) {
-    document.getElementById('reset_loader_1').style.visibility = 'visible'
+function requestResetToken(event) {
+    // requesting reset token be sent to email
 
-    e.preventDefault()
+    const email = document.getElementById('email_send').value.toLowerCase()
+    
 
-    const submit_type = e.submitter.name
+    if (!email) {
+        toast(true, 'Please enter the email address you used to create your profile.')
 
-    if (submit_type == 'input_token') {
-        openPasswordResetModal()
-    } else { // requesting reset token be sent to email
-        const email = document.getElementById('reset_email_send').value.toLowerCase()
-        // TODO: Regex check that email is valid
+    } else { // email present
 
-        if (!email) {
-            toast(true, 'Please enter the email address you used to create your profile.')
-            document.getElementById('reset_loader_1').style.visibility = 'hidden'
-
-        } else { // email present
-
-            const params = {
-                email: email,
-            }
-            fetchPostWrapper('/password/reset', params, openPasswordResetModal, manageResetError)
+        const params = {
+            email: email,
         }
+        // loader
+        let original_login_child = event.target.firstElementChild
+        original_login_child.innerText = ''
+        original_login_child.appendChild(carousel_loader)
+
+        fetchPostWrapper('/password/reset', params, openPasswordResetModal, function() {
+            event.target.firstElementChild.removeChild(carousel_loader)
+            event.target.firstElementChild.innerText = 'Send Password Reset'
+        })
     }
+    
 }
 
-function submitNewPassword(e) {
-    document.getElementById('reset_loader_2').style.visibility = 'visible'
+function submitNewPassword(event) {
 
-    e.preventDefault()
 
     const email = document.getElementById('reset_email').value.toLowerCase()
     const new_pword = document.getElementById('new_pword').value
@@ -587,23 +559,29 @@ function submitNewPassword(e) {
 
     if (!email || !new_pword || !reset_token) {
         toast(true, 'Please fill all fields.')
-        document.getElementById('reset_loader_2').style.visibility = 'hidden'
     } else {
         const params = {
             email: email,
             new_pword: new_pword,
             reset_token: reset_token
         }
+        // loader
+        let original_login_child = event.target.firstElementChild
+        original_login_child.innerText = ''
+        original_login_child.appendChild(carousel_loader)
+
         fetchPostWrapper('/password/new', params, resetSuccess, manageResetError)
     }
-    
-    
 }
 
 function resetSuccess(httpResponse) {
+    // reset loader
+    document.getElementById('reset_password_button').firstElementChild.removeChild(carousel_loader)
+    document.getElementById('reset_password_button').firstElementChild.innerText = 'Set New Password'
+
     
-    document.getElementById('overlay').classList.remove('higher')
-    document.getElementById('password_reset_modal').classList.remove('opened')
+    closeFullscreenModal('password_reset_modal')
+    openFullscreenModal('login_modal')
 
     toast(false, `Your password reset was successful. You can now login with your new password.`)
 }
@@ -611,50 +589,68 @@ function resetSuccess(httpResponse) {
 function manageResetError(errorResponse) {
     // User gets generic error
 
-    if (errorResponse.status >= 400) {
-        // Timeout to allow loader to hide before raising alert.
-        document.getElementById('login_loader').style.visibility = 'hidden'
+    document.getElementById('reset_password_button').firstElementChild.removeChild(carousel_loader)
+    document.getElementById('reset_password_button').firstElementChild.innerText = 'Set New Password'
+}
 
-        toast(true, `Your password reset failed. Check that the values were correct and your reset token hasn't expired or been used.`)
-          
-        }
-    }
+let carousel_loader = document.createElement('div')
+carousel_loader.classList.add('dot-carousel')
 
-
-async function fetchLogin(event) {
+async function login(event) {
     event.preventDefault()
-
-    const submit_type = event.submitter.name
 
     var params = {
         uname: document.getElementById('uname').value,
         pword: document.getElementById('pword').value,
-        email: document.getElementById('email').value.toLowerCase(),
         user_ip: user.ip
     }
 
-    document.getElementById('login_loader').style.visibility = 'visible'
+    // remove LOGIN text. append loader child to buttontext
 
-    // TOOD: validate email and that all fields exist.
+    let original_login_child = event.target.firstElementChild
 
-    if (submit_type == 'create') {
-        if (!params.uname || !params.pword || !params.email) {
-            toast(true, 'Please include all fields.')
-        } else {
-            not_logging_in = false
-            await fetchPostWrapper('/users', params, finishLogin, manageLoginError)
+    original_login_child.innerText = ''
+
+    original_login_child.appendChild(carousel_loader)
+
+    not_logging_in = false
+    await fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
+    
+}
+
+async function playGuest(event) {
+    closeFullscreenModal('login_modal')
+    not_logging_in = true
+    if (puzzle.id) { // if refusing login and puzzle is loaded, send start
+        loadPuzzleAndGuesses()
+    }
+    openFullscreenModal('howToModal')
+}
+
+async function createProfile(event) {
+    const params = {
+        uname: document.getElementById('create_uname').value,
+        pword: document.getElementById('create_pword').value,
+        email: document.getElementById('create_email').value.toLowerCase(),
+        user_ip: user.ip
+    }
+    if (!params.uname || !params.pword || !params.email) {
+        toast(true, 'Please include all fields.')
+    } else {
+        not_logging_in = false
+
+        // loader
+        let original_login_child = event.target.firstElementChild
+        original_login_child.innerText = ''
+        original_login_child.appendChild(carousel_loader)
+
+        await fetchPostWrapper('/users', params, finishLogin, manageLoginError)
+        if (user.id) { // create successful
+            closeFullscreenModal('create_profile_modal')
             openFullscreenModal('howToModal')
         }
         
-    } else if (submit_type == 'reset') {
-        openResetTokenModal()
-    } else if (submit_type == 'forgot_username') {
-        openForgotUsernameModal()
-    } else { // login
-        not_logging_in = false
-        await fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
     }
-    
 }
 
 // if user's last login was on a previous version, highlight updates
@@ -758,10 +754,12 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
                 errorResponse: errorResponse,
             }
 
-            if (error_function) {
-                error_function(errorResponse, errorparams)
+            if (errorparams.route == '/logerror') {
+                toast(true, `Something went wrong but we couldn't log the error. Please send an email to scrambler.reset@gmail.com`, 7)
                 return
-            } else {
+            }
+
+            
             // fetch send self error in email (with empty callback to avoid endless loop)
 
             if (errorResponse.status >= 400 && errorResponse.status < 500) {
@@ -769,8 +767,7 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
                 if (contentType && contentType.indexOf("application/json") !== -1) {
                     errorResponse.json().then(errorData => {
                         if (errorData.err) {
-                            toast(true, errorData.err);
-                            return
+                            toast(true, errorData.err)
                         } else {
                             errorparams['errorData'] = errorData
                             fetchPostWrapper('/logerror', errorparams, null, function() {return})
@@ -783,13 +780,18 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
                 
                 // Only display the alert for 4XX client errors
                 
-            } else { // 500 errors are all for internal server errors. 502 for bad request
+            } else { // 500 errors are all for internal server errors. 
                 fetchPostWrapper('/logerror', errorparams, null, function() {return})
             }
-        }
+        
 
-        // generic error toast
-        toast(true) // false for error
+            // if no errorData.err, send generic error toast
+            toast(true) // true for error
+
+            if (error_function) {
+                error_function(errorResponse, errorparams)
+                return
+            }
 
         })
     return
@@ -970,9 +972,47 @@ function setUser(responseData) {
 }
 
 
+// login functionality
+document.getElementById('login_button').addEventListener('click', login)
 
-const loginForm = document.getElementById("login_form")
-loginForm.addEventListener('submit', fetchLogin)
+// guest functionality
+document.getElementById('guest_button').addEventListener('click', playGuest)
+
+// create profile functionality
+document.getElementById('create_profile_button').addEventListener('click', function() {
+    closeFullscreenModal('login_modal')
+    openFullscreenModal('create_profile_modal')
+})
+
+document.getElementById('close_create_button').addEventListener('click', function() {
+    closeFullscreenModal('create_profile_modal')
+    openFullscreenModal('login_modal')
+})
+
+document.getElementById('close_forgot_button').addEventListener('click', function() {
+    closeFullscreenModal('forgot_login_modal')
+    openFullscreenModal('login_modal')
+})
+
+document.getElementById('close_reset_password_button').addEventListener('click', function() {
+    closeFullscreenModal('password_reset_modal')
+    openFullscreenModal('login_modal')
+})
+
+
+document.getElementById('forgot_login_button').addEventListener('click', function() {
+    closeFullscreenModal('login_modal')
+    openFullscreenModal('forgot_login_modal')
+})
+
+document.getElementById('enter_reset_token_button').addEventListener('click', function() {
+    closeFullscreenModal('forgot_login_modal')
+    openFullscreenModal('password_reset_modal')
+})
+
+
+
+document.getElementById('submit_profile_button').addEventListener('click', createProfile)
 
 function displayLogin() {
     const username = user.username
@@ -2288,18 +2328,11 @@ function openFullscreenModal(e) {
         keyboard.style.zIndex = 5
     }
 
-    if (['send_reset_email_modal', 'password_reset_modal', 'deleteModal', 'send_forgot_username_modal'].includes(modal_id)) {
+    if (['deleteModal'].includes(modal_id)) {
         // if closing reset modal, remove login overlay
         document.getElementById('overlay').classList.remove('higher')
     } else {
         document.getElementById('overlay').classList.add('closed')
-    }
-    if (modal_id == 'login_modal') { // logging in / creating profile bysteps this function
-        not_logging_in = true
-        if (puzzle.id) { // if refusing login and puzzle is loaded, send start
-            loadPuzzleAndGuesses()
-        }
-        openFullscreenModal('howToModal')
     }
 
   }
@@ -2579,9 +2612,10 @@ window.onload = async function() {
     document.getElementById('yes_delete').addEventListener('click', deleteProfile)
     document.getElementById('do_not_delete').addEventListener('click', () => closeFullscreenModal('deleteModal'))
 
-    document.getElementById('forgot_username_form').addEventListener('submit', requestUsername)
-    document.getElementById('send_reset_email_form').addEventListener('submit', requestResetToken)
-    document.getElementById('password_reset_form').addEventListener('submit', submitNewPassword)
+    document.getElementById('send_username_button').addEventListener('click', requestUsername)
+    document.getElementById('send_password_reset_button').addEventListener('click', requestResetToken)
+
+    document.getElementById('reset_password_button').addEventListener('click', submitNewPassword)
 
     document.getElementById('login_modal').classList.add('opened')
 

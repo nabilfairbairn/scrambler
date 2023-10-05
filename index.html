@@ -21,6 +21,30 @@
   <div id='containall' class="vertical-flex-cont">
     <div id="modal_container" class="modal-container">
 
+      <div id="login_modal" class="popup-modal">
+        <div class="header">
+          Login or Play as a Guest
+        </div>
+        <span>*Guests can only play the daily Easy puzzle.</span>
+        <form id="login_form" class="vertical-flex-cont">
+            <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
+            <div class="help-tip">
+              <p class="tooltipText">Usernames are case sensitive. ScramblerPro ≠ scramblerpro</p>
+            </div>
+            <input type="password" id="pword" name="pword" maxlength="50" placeholder="Password" class="textinput"/>
+            <div class="horizontal-flex-cont">
+              <div id="create_profile_button" class="left_text link">Create A Profile</div>
+              <div id="forgot_login_button" class="right_text link">Forgot Login?</div>
+            </div>
+            <hr>
+            <div id="login_button" class="input_button light-blue"><div class="buttontext">Login</div></div>
+            <hr><div><hr class="thick"></div><hr>
+            <div id="guest_button" class="input_button green"><div class="buttontext">Play as Guest</div></div>
+            <!-- <div id="login_loader" class="dot-carousel"></div> -->
+        </form>
+        
+      </div>
+
       <div id="roadmapModal" class="fullscreen-modal">
         <div class="header">
           <span>What's in store?</span>
@@ -93,113 +117,68 @@
         </div>
       </div>
 
-      <div id="login_modal" class="popup-modal">
+      <div id="create_profile_modal" class="popup-modal">
         <div class="header">
-          <button
-              type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
-                close
-                </span></button>
-          Login or Create a Profile
-          <button
-              type="button", class='button square minimal close-fs-modal-button' for="login_modal"><span class="material-icons-round" >
-                close
-                </span></button>
+          Create a Profile
         </div>
-        <span>Without a profile, you will only be able to play the daily easy puzzle.</span>
-        <form id="login_form" class="vertical-flex-cont">
-            <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
+        <form id="create_profile_form" class="vertical-flex-cont">
+            <input type="text" id="create_uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
             <div class="help-tip">
               <p class="tooltipText">Usernames are case sensitive. ScramblerPro ≠ scramblerpro</p>
             </div>
-            <input type="password" id="pword" name="pword" maxlength="20" placeholder="Password" class="textinput"/>
+            <input type="password" id="create_pword" name="pword" maxlength="50" placeholder="Password" class="textinput"/>
 
             <div class="flex-box">
-              <input type="text" id="email" name="email" maxlength="50" placeholder="Email Address" class="textinput">
+              <input type="text" id="create_email" name="email" maxlength="50" placeholder="Email Address" class="textinput">
               <div class="help-tip">
                 <p class="tooltipText">Your passwords are hashed in a database and can only be reset by email.</p>
               </div>
             </div>
-          <div class="horizontal-flex-cont">
-            <input type="submit" name="login" value="Login" class="input_button light-blue">
-            <input type="submit" name="create" value="Create Profile" class="input_button green">
-          </div>
-        
-        <div>Usernames need to be <b>free of obscene language</b>. Using a vulgar username may result in your profile being deleted.</div>
+            <div>Usernames need to be <b>free of obscene language</b>. Using a vulgar username may result in your profile being deleted.</div>
+            <hr>
+            <div id="submit_profile_button" class="input_button light-blue"><div class="buttontext">Create Profile</div></div>
+            <hr><div><hr class="thick"></div><hr>
+            <div id="close_create_button" class="input_button green"><div class="buttontext">Return to Login</div></div>
+
         <div class="horizontal-flex-cont">
-          <input type="submit" name="forgot_username" class="input_button" id="forgot_username_button" value="Forgot Username">
-          <input type="submit" name="reset" class="input_button" id="pass_reset_button" value="Reset Password">
         </div>
         </form>
-        <div id="login_loader" class="dot-spin"></div>
       </div>
       
 
-      <div id="send_forgot_username_modal" class="popup-modal higher">
+      <div id="forgot_login_modal" class="popup-modal higher">
         <div class="header">
-          <button
-              type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
-                close
-                </span></button>
-          Forgot Username
-          <button
-          type="button", class='button square minimal close-fs-modal-button' for="send_forgot_username_modal"><span class="material-icons-round" >
-            close
-            </span></button>
+          Forgot Login
         </div>
-        <form id="forgot_username_form" class="vertical-flex-cont">
-            <input type="text" id="username_email_send" name="email" maxlength="50" placeholder="Email Address" class="textinput">
-            <div><br><i>Enter your email address. If a profile exists, you will be sent your username.</i></div>
-            <div class="horizontal-flex-cont one-child">
-              <input type="submit" name="get_username" value="Recover My Username" class="input_button">
-            </div>
+        <form id="forgot_login_form" class="vertical-flex-cont">
+            <input type="text" id="email_send" name="email" maxlength="50" placeholder="Email Address" class="textinput">
+            <div id="enter_reset_token_button" class="left_text link">Enter my Reset Token</div>
+            
+            <hr>
+            <div id="send_password_reset_button" class="input_button"><div class="buttontext">Send Password Reset</div></div>
+            <div id="send_username_button" class="input_button"><div class="buttontext">Send Username</div></div>
+            <hr><div><hr class="thick"></div><hr>
+            <div id="close_forgot_button" class="input_button green"><div class="buttontext">Return to Login</div></div>
+            
             
         </form>
-        <div id="reset_loader_3" class="dot-spin"></div>
-      </div>
-  
-      <div id="send_reset_email_modal" class="popup-modal higher">
-        <div class="header">
-          <button
-              type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
-                close
-                </span></button>
-          Password Reset
-          <button
-          type="button", class='button square minimal close-fs-modal-button' for="send_reset_email_modal"><span class="material-icons-round" >
-            close
-            </span></button>
-        </div>
-        <form id="send_reset_email_form" class="vertical-flex-cont">
-            <input type="text" id="reset_email_send" name="email" maxlength="50" placeholder="Email Address" class="textinput">
-            <div><br><i>Enter your email address. If a profile exists, you will be sent a password reset token to use in the next step.</i></div>
-          <div class="horizontal-flex-cont">
-            <input type="submit" name="send_token" value="Request Reset Token" class="input_button">
-            <input type="submit" name="input_token" value="Enter My Token" class="input_button">
-          </div>
-        </form>
-        <div id="reset_loader_1" class="dot-spin"></div>
       </div>
   
       <div id="password_reset_modal" class="popup-modal higher">
         <div class="header">
-          <button
-              type="button", class='button square minimal close-fs-modal-button invisible'><span class="material-icons-round">
-                close
-                </span></button>
           Password Reset
-          <button
-          type="button", class='button square minimal close-fs-modal-button' for="password_reset_modal"><span class="material-icons-round" >
-            close
-            </span></button>
         </div>
         <form id="password_reset_form" class="vertical-flex-cont">
             <input type="text" id="reset_email" name="email" maxlength="50" placeholder="Email Address" class="textinput">
-            <input type="password" id="new_pword" name="pword" maxlength="20" placeholder="New Password" class="textinput"/>
-            <input type="text" id="forgot_username" name="forgot_username" maxlength="50" placeholder="Reset Token" class="textinput">
+            <input type="text" id="reset_token" name="reset_token" maxlength="50" placeholder="Reset Token" class="textinput">
+            <input type="password" id="new_pword" name="pword" maxlength="50" placeholder="New Password" class="textinput"/>
+            
             <div><i>Enter the password reset token sent to your email above, along with your email and new password</i></div>
-            <div class="horizontal-flex-cont one-child"><input type="submit" name="reset" value="Set New Password" class="input_button"></div>
+            <hr>
+            <div id="reset_password_button" class="input_button light-blue"><div class="buttontext">Set New Password</div></div>
+            <hr><div><hr class="thick"></div><hr>
+            <div id="close_reset_password_button" class="input_button green"><div class="buttontext">Return to Login</div></div>
         </form>
-        <div id="reset_loader_2" class="dot-spin"></div>
       </div>
   
       <div id="puzzle_reward" class="popup-modal">
@@ -297,6 +276,15 @@
             close
             </span></button>
       </div>
+      <p><u>V1.1.3 - Oct 5 2023</u></p>
+
+      <ul>
+        <li><p>Changed: Login had been redesigned</p></li>
+        <li><p>Fixed: iOS browsers now render buttons correctly</p></li>
+      </ul>
+
+      <br>
+
       <p><u>V1.1.2 - Oct 2 2023</u></p>
 
       <ul>
