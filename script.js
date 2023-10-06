@@ -1,6 +1,6 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -1567,8 +1567,18 @@ async function is_word_valid(guess_word, guess_received, answer_words, valid_dep
     if (!exists) {
         return -2
     }
-    
     let depth = word_depth(guess_word)
+
+    let fits_puzzle = await fetchPostWrapper('/puzzles/check', {word: guess_received, puzzle_id: puzzle.id, depth: depth + 1}, null)
+    fits_puzzle = fits_puzzle['fits']
+
+    if (!fits_puzzle) {
+        return -2
+    }
+    // Problem. Word needs to be one of the valid options which has potential connections in the next word.
+    // Need to have a puzzle answers defined.
+    
+    
     
     // (word complete, and in answers)
     // first word
@@ -1920,7 +1930,7 @@ async function process_guess_styling(real_guess) {
         valid_depths.push(false)
       } else {
         let validity_status = await is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
-        
+        console.log(guess_received, validity_status)
         // Track answers received for pushing full guess to API
         if (validity_status == -2 || validity_status == 1) {
             complete_words.push(guess_received) // string
@@ -2625,7 +2635,7 @@ function acceptWord(e) { // DISCARD = FALSE IF KEEPING
 
     
     
-    const params = { word, status: false} 
+    const params = { word, status: true} 
 
     fetchPostWrapper('/words/accept_reject', params, function() {
         document.getElementById(`dict_word_${word}`).addEventListener('transitionend', function(){wordlist_holder.removeChild(this)})
@@ -2639,7 +2649,7 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
     const word = e.target.getAttribute('for')
 
 
-    const params = { word, status: true}
+    const params = { word, status: false}
 
     fetchPostWrapper('/words/accept_reject', params, function() {
         document.getElementById(`dict_word_${word}`).addEventListener('transitionend', function(){wordlist_holder.removeChild(this)})
