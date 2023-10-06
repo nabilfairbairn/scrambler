@@ -720,8 +720,8 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
     if (user.id == 3 || params['uname'] == 'yourmom') {
         requestOptions['credentials'] = 'include'
     }
-    
-    fetch(full_url, requestOptions)
+
+    let return_value = await fetch(full_url, requestOptions)
       .then(response => {
           if (!response.ok) {
             throw response;
@@ -797,7 +797,7 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
             }
 
         })
-    return
+    return return_value
 }
 
 function loadAllGuesses() {
@@ -1520,11 +1520,9 @@ function get_word(word_number) {
 }
 
 async function word_exists(word, answer_list) {
-    let valid;
-    await fetchPostWrapper('/words/valid', { word }, function(response) {
-        valid = response['valid']
-    })
-    return answer_list.includes(word)
+    let valid = await fetchPostWrapper('/words/valid', { word }, null)
+    valid = valid['valid']
+    return valid
 }
 
 function word_complete(word, answer_list) {
@@ -1577,16 +1575,11 @@ async function is_word_valid(guess_word, guess_received, answer_words, valid_dep
     if (depth == 0) {
         return 1
     }
-    // Only answer
-    if (answer_words.length == 1) {
-        return 1
-    }
-    // 
+    
     // Prev word valid?
     if (valid_depths[depth-1]) {
         // obeys rule
         if (one_letter_diff(guess_received, get_word(depth-1)) == 1) {
-            console.log('thisone')
             return 1
         }
     }
@@ -1926,9 +1919,8 @@ async function process_guess_styling(real_guess) {
       if (!follows_rule) {
         valid_depths.push(false)
       } else {
-        
         let validity_status = await is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
-
+        
         // Track answers received for pushing full guess to API
         if (validity_status == -2 || validity_status == 1) {
             complete_words.push(guess_received) // string
