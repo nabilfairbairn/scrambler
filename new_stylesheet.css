@@ -191,6 +191,7 @@ button {
 #containall { /* on Phones */
   display: flex;
   width: 100%;
+  padding-bottom: 100vh;
   margin-left: auto;
   margin-right: auto;
   background-color: rgb(231, 243, 239);
@@ -747,9 +748,6 @@ span.small {
     }
   }
 
-#login_loader {
-  visibility: hidden;
-}
 
 .header {
     display: flex;
@@ -777,6 +775,13 @@ span.small {
     margin-top: 0; 
     margin-left: -0.5rem;
     margin-right: -0.5rem;
+    margin-bottom: 2rem;
+    box-shadow: -1rem -1rem 0 0 rgb(36, 177, 170), /*Top left, topright, bottomleft, bottomright */
+    1rem -1rem 0 0 rgb(36, 177, 170),
+    -1rem 1rem 0 0 rgb(36, 177, 170),
+    1rem 1rem 0 0 rgb(36, 177, 170),
+    0 0 0 1.2rem black; 
+    background-color: rgb(36, 177, 170);
 }
 
 .close-fs-modal-button {
@@ -1486,11 +1491,17 @@ textarea {
 .dict_row {
   font-size: 2.5em;
   margin: 0.4em;
+  transform-origin: top;
+  transition: 0.5s all ease-in-out
+}
+.collapsed {
+  transform: scaleY(0%);
+  margin-bottom: -4em;
 }
 .accept_button {
   display: flex;
-  width: 4em;
-  height: 4em;
+  width: 3em;
+  height: 3em;
   background-color: var(--correct-color);
   border: 0.05em solid var(--almost-black);
   border-radius: 0.2em;
@@ -1499,8 +1510,8 @@ textarea {
 }
 .reject_button {
   display: flex;
-  width: 4em;
-  height: 4em;
+  width: 3em;
+  height: 3em;
   background-color: var(--wrong-color);
   border: 0.05em solid var(--almost-black);
   border-radius: 0.2em;
@@ -1509,8 +1520,7 @@ textarea {
 }
 .wordbox {
   display: flex;
-  flex: 1;
-  font-size: 6em;
+  font-size: 4em;
   justify-content: center;
   align-items: center;
   height: 1em;

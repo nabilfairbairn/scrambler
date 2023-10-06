@@ -42,7 +42,27 @@
             <div id="guest_button" class="input_button green"><div class="buttontext">Play as Guest</div></div>
             <!-- <div id="login_loader" class="dot-carousel"></div> -->
         </form>
-        
+      </div>
+
+      <div id="suggestAWordModal" class="popup-modal">
+        <div class="header">
+          Suggest a Word
+          <button
+            type="button" class='button square minimal close-fs-modal-button' for="suggestAWordModal"><span  class="material-icons-round">
+              close
+              </span></button>
+        </div>
+        <p>The puzzle uses a finite set of words, with some real, but extremely obscure words left out.</p>
+        <p>If you feel like there is a word that you should be able to play, you can enter it here.</p>
+        <form id="suggestion_form" class="vertical-flex-cont">
+            <input type="text" id="suggestion" name="word" maxlength="5" placeholder="Enter your word" class="textinput"/>
+            <div class="help-tip">
+              <p class="tooltipText">5 letter words only, at the moment.</p>
+            </div>
+            <hr>
+            <div id="suggestion_button" class="input_button light-blue"><div class="buttontext">Suggest it!</div></div>
+            <!-- <div id="login_loader" class="dot-carousel"></div> -->
+        </form>
       </div>
 
       <div id="roadmapModal" class="fullscreen-modal">
@@ -62,7 +82,7 @@
             <li><p>A real domain name. This will also come with a paid server, so there's no waiting for a puzzle to load</p></li>
             <li><p>A new game-mode for finding all possible answers of a puzzle. This will feature a sweet branching tree that will mark your progress</p></li>
             <li><p>Weekly Challenge. A much longer puzzle. This will also be where I test out different possible rule-sets</p></li>
-            <li><p>Suggest a word. You'll highlight the spot in a puzzle and what word you think it's missing. It'll get sent to me to review and add to the puzzle while it's still up</p></li>
+            <li><p><s>Suggest a word. You'll highlight the spot in a puzzle and what word you think it's missing. It'll get sent to me to review and add to the puzzle while it's still up</s></p></li>
             <li><p>Updating the points system. Instead of getting bonuses as you finish, you'll get them at the end of the day. That way you're ranked against everyone who finished - not just those who finished before you.</p>
             <p>Also, bronze medals.</p></li>
             <li><p>Creating a visual theme for the puzzles. It'll give a unique feel rather than the slightly boring modern look.</p></li>
@@ -276,10 +296,13 @@
             close
             </span></button>
       </div>
-      <p><u>V1.1.3 - Oct 5 2023</u></p>
+      <p><u>V1.1.3 - Oct 6 2023</u></p>
 
       <ul>
+        <li><p>Added: Suggest a Word!</p></li>
         <li><p>Changed: Login had been redesigned</p></li>
+        <li><p>Changed: Minor restyling of the headers in fullscreen windows</p></li>
+        <li><p>Fixed: Game now accepts 9001 words (Or more if you find any missing ones)! As opposed to < 4000 previously.</p></li>
         <li><p>Fixed: iOS browsers now render buttons correctly</p></li>
       </ul>
 
@@ -408,7 +431,7 @@
               <div id="roadmapNavButton" class="open-fs-modal-button nav-item" for="roadmapModal">Feature Roadmap</div>
               <div id="aboutNavButton" class="open-fs-modal-button nav-item" for="aboutModal">About</div>
               <div id="contactNavButton" class="open-fs-modal-button nav-item" for="contactModal">Contact</div>
-              <div id="suggestAWord" class="disabled">Suggest A Word</div>
+              <div id="suggestAWord" class="open-fs-modal-button nav-item" for="suggestAWordModal">Suggest A Word</div>
               
           </div>
         <div id="godmode_button" class="copyright">Copyright Nabil Fairbairn 2023</div>
@@ -442,6 +465,7 @@
               close
               </span></button>
         </div>
+          <div>Words Reviewed: <span id="n_completed"></span></div>
           <div id="dictionary_word_list" class="vertical-flex-cont">
               
           </div>
@@ -457,8 +481,6 @@
             </span></button>
       </div> <!-- modal header close -->
       <div>
-          <hr>
-          <hr>
         <span>
           <h5>Hey there!</h5>
           <p>Welcome to Scrambler. This game is about swapping and scrambling letters to make new words and fill the puzzle.</p>

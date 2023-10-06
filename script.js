@@ -1,6 +1,6 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -189,7 +189,7 @@ async function switchDifficulty(e) {
 }
 
 
-function saveCurrentInput() {
+async function saveCurrentInput() {
     var complete_words = [] // empty strings for incomplete words
 
     var valid_depths = [] // not used in this function
@@ -199,7 +199,7 @@ function saveCurrentInput() {
     let w ;
     for (w = 0; w < puzzle.words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
-      let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
+      let validity_status = await is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
 
       if (validity_status == -2 || validity_status == 1) {
         complete_words.push(guess_received) // string
@@ -721,7 +721,7 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
         requestOptions['credentials'] = 'include'
     }
     
-    await fetch(full_url, requestOptions)
+    fetch(full_url, requestOptions)
       .then(response => {
           if (!response.ok) {
             throw response;
@@ -737,8 +737,11 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
             // if no function supplied, ignore
             if (response_function) {
                 response_function(data)
+                return
+            } else {
+                return data
             }
-            return
+            
         })
         .catch(errorResponse => {
             if (errorResponse.name) { // javascript error
@@ -1517,9 +1520,10 @@ function get_word(word_number) {
 }
 
 async function word_exists(word, answer_list) {
-    const response = await fetchPostWrapper('/words/valid', { word }, null)
-    const valid = response.data['valid']
-    console.log(valid)
+    let valid;
+    await fetchPostWrapper('/words/valid', { word }, function(response) {
+        valid = response['valid']
+    })
     return answer_list.includes(word)
 }
 
@@ -1561,7 +1565,8 @@ async function is_word_valid(guess_word, guess_received, answer_words, valid_dep
         return -1
     }
     // not in depth answers
-    if (!await word_exists(guess_received, answer_words)) {
+    const exists = await word_exists(guess_received, answer_words)
+    if (!exists) {
         return -2
     }
     
@@ -1581,6 +1586,7 @@ async function is_word_valid(guess_word, guess_received, answer_words, valid_dep
     if (valid_depths[depth-1]) {
         // obeys rule
         if (one_letter_diff(guess_received, get_word(depth-1)) == 1) {
+            console.log('thisone')
             return 1
         }
     }
@@ -1881,7 +1887,7 @@ const process_puzzle_complete = (data) => {
     showPointsPopup(data) //popup with points earned summary
 }
 
-function process_guess_styling(real_guess) {
+async function process_guess_styling(real_guess) {
     remove_all_word_style()
     var printing = ''
     var actual_answer = ''
@@ -1921,7 +1927,7 @@ function process_guess_styling(real_guess) {
         valid_depths.push(false)
       } else {
         
-        let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
+        let validity_status = await is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
 
         // Track answers received for pushing full guess to API
         if (validity_status == -2 || validity_status == 1) {
@@ -2551,10 +2557,50 @@ function areYouGod() {
     }
 }
 
+
+
+document.getElementById('suggestion_button').addEventListener('click', suggestWord)
+
+function suggestWord(e) {
+    const word = document.getElementById('suggestion').value
+    if (!word) {
+        return
+    } else if (word.length != 5) {
+        toast(true, '5-letter words only.')
+    } else if (!/^[a-zA-Z]+$/.test(word)) {
+        toast(true, 'Can only have a-z letters')
+    } else {
+        const params = {
+            word: word,
+            user_id: user.id,
+            user_ip: user.ip
+        }
+        e.target.firstElementChild.innerText = ''
+        e.target.firstElementChild.appendChild(carousel_loader)
+
+        fetchPostWrapper('/words/suggest', params, function(response) {
+            e.target.firstElementChild.removeChild(carousel_loader)
+            e.target.firstElementChild.innerText = 'Suggest it!'
+            if (response['exists']) {
+                toast(false, `${word.toUpperCase()} is actually on the list already.`)
+            } else {
+                toast(false, `Your word's been sent for judgement`)
+            }
+        })
+    }
+}
+
 const wordlist_holder = document.getElementById('dictionary_word_list')
+let n_words_reviewed = 0;
+let total_to_review = 0;
 
-function loadDictWords(dict) {
+function loadDictWords(data) {
+    n_words_reviewed = parseInt(data['n_complete'])
+    total_to_review = parseInt(data['total'])
 
+    document.getElementById('n_completed').innerText = `${n_words_reviewed}/${total_to_review}`
+
+    const dict = data['words']
 
     dict.forEach(({ word }) => {
         let row = document.createElement('div')
@@ -2585,12 +2631,15 @@ function loadDictWords(dict) {
 function acceptWord(e) { // DISCARD = FALSE IF KEEPING
     const word = e.target.getAttribute('for')
 
-
+    
+    
     const params = { word, status: false} 
 
     fetchPostWrapper('/words/accept_reject', params, function() {
-        const dict_row = document.getElementById(`dict_word_${word}`)
-        wordlist_holder.removeChild(dict_row)
+        document.getElementById(`dict_word_${word}`).addEventListener('transitionend', function(){wordlist_holder.removeChild(this)})
+        document.getElementById(`dict_word_${word}`).classList.add('collapsed')
+        n_words_reviewed++
+        document.getElementById('n_completed').innerText = `${n_words_reviewed}/${total_to_review}`
     })
 }
 
@@ -2601,8 +2650,10 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
     const params = { word, status: true}
 
     fetchPostWrapper('/words/accept_reject', params, function() {
-        const dict_row = document.getElementById(`dict_word_${word}`)
-        wordlist_holder.removeChild(dict_row)
+        document.getElementById(`dict_word_${word}`).addEventListener('transitionend', function(){wordlist_holder.removeChild(this)})
+        document.getElementById(`dict_word_${word}`).classList.add('collapsed')
+        n_words_reviewed++
+        document.getElementById('n_completed').innerText = `${n_words_reviewed}/${total_to_review}`
     })
 }
 
