@@ -125,7 +125,7 @@ button {
 
   visibility: collapse;
   transform: translateY(100vh);
-  transition: all 2s ease-in-out;
+  transition: all 1.2s ease-in-out;
 }
 .fullscreen-modal.sidenav {
   right: auto;
@@ -1348,7 +1348,7 @@ div img {
   font-size: 1em;
   font-weight: 600;
   top: 4rem;
-  transition: all 1.5s ease-in-out;
+  transition: all 1.2s ease-in-out;
   transform: translateY(-15rem); /* top is 7rem */
 }
 .toast.error {
@@ -1380,7 +1380,7 @@ div img {
 
 
   visibility: collapse;
-  transition: all 2s ease-in-out;
+  transition: all 1.2s ease-in-out;
 }
 .fromtop {
   transform: translateY(-100vh);
