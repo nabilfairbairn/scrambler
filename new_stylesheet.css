@@ -1492,7 +1492,7 @@ textarea {
   font-size: 2.5em;
   margin: 0.4em;
   transform-origin: top;
-  transition: 0.5s all ease-in-out
+  transition: 0.3s all ease-in-out
 }
 .collapsed {
   transform: scaleY(0%);
@@ -1505,7 +1505,7 @@ textarea {
   background-color: var(--correct-color);
   border: 0.05em solid var(--almost-black);
   border-radius: 0.2em;
-  transition: 1s all ease-in-out;
+  transition: 0.3s all ease-in-out;
   cursor: pointer;
 }
 .reject_button {
@@ -1515,7 +1515,7 @@ textarea {
   background-color: var(--wrong-color);
   border: 0.05em solid var(--almost-black);
   border-radius: 0.2em;
-  transition: 1s all ease-in-out;
+  transition: 0.3s all ease-in-out;
   cursor: pointer;
 }
 .wordbox {
@@ -1524,7 +1524,7 @@ textarea {
   justify-content: center;
   align-items: center;
   height: 1em;
-  transition: 1s all ease-in-out;
+  transition: 0.3s all ease-in-out;
   margin: 1em;
   
 }
