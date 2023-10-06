@@ -1516,12 +1516,15 @@ function get_word(word_number) {
     return guess_received
 }
 
-function word_exists(word, answer_list) {
+async function word_exists(word, answer_list) {
+    const response = await fetchPostWrapper('/words/valid', { word }, null)
+    const valid = response.data['valid']
+    console.log(valid)
     return answer_list.includes(word)
 }
 
 function word_complete(word, answer_list) {
-    return (word.length == answer_list[0].length && !word.includes('_'))
+    return (!word.includes('_'))
 }
 
 function word_depth(wordrow) {
@@ -1548,7 +1551,7 @@ function word_attempted(wordrow) {
 }
                         
 
-function is_word_valid(guess_word, guess_received, answer_words, valid_depths) {
+async function is_word_valid(guess_word, guess_received, answer_words, valid_depths) {
     // empty
     if (!word_attempted(guess_word)) {
         return 0
@@ -1558,7 +1561,7 @@ function is_word_valid(guess_word, guess_received, answer_words, valid_depths) {
         return -1
     }
     // not in depth answers
-    if (!word_exists(guess_received, answer_words)) {
+    if (!await word_exists(guess_received, answer_words)) {
         return -2
     }
     
@@ -1892,36 +1895,44 @@ function process_guess_styling(real_guess) {
     var complete_words = [] // empty strings for incomplete words
     
     for (let w = 0; w < puzzle.words.length; w++) {
-      const [guess_word, guess_received, answer_words] = get_depth(w)
-      let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
+        const [guess_word, guess_received, answer_words] = get_depth(w)
 
-      // Track answers received for pushing full guess to API
-      if (validity_status == -2 || validity_status == 1) {
-        complete_words.push(guess_received) // string
-      } else {
-        complete_words.push('')
-      }
-
-      valid_depths.push(validity_status == 1 ? true : false)
-
-      style_guessword(guess_word, validity_status)
-      
+      let follows_rule = true
       // If !one-letter-diff-shown and w < words.length-1 and w and w+1 are complete, check one-letter-diff. If violated, one-letter-diff-shown and show rule
-      if (!one_letter_diff_shown && w < puzzle.words.length -1) {
-        const [next_word, next_received, next_answers] = get_depth(w+1)
-        if (word_complete(guess_received, answer_words) && word_complete(next_received, next_answers)) {
-            const n_letters_changed = one_letter_diff(guess_received, next_received)
+      if (!one_letter_diff_shown && w > 0) { // > 0
+        const [prev_word, prev_received, prev_answers] = get_depth(w-1) // prev_word, prev_received, prev_answers = get_depth(w-1)
+        if (word_complete(guess_received, answer_words) && word_complete(prev_received, prev_answers)) { // check if word complete w/o answers?
+            const n_letters_changed = one_letter_diff(guess_received, prev_received) // prec_received
             if (n_letters_changed != 1) {
+                follows_rule = false
                 one_letter_diff_shown = true
-                rule_break_notice = `Careful! You changed more than one letter between ${guess_received} and ${next_received}.`
+                rule_break_notice = `Careful! You changed more than one letter between ${prev_received} and ${guess_received}.`
 
                 // If words contain same letters, change warning
                 if (n_letters_changed == 0) {
-                    rule_break_notice = `Whoops! You didn't change any letters between ${guess_received} and ${next_received}`
+                    rule_break_notice = `Whoops! You didn't change any letters between ${prev_received} and ${guess_received}.`
                 }
 
             }
         }
+      }
+
+      if (!follows_rule) {
+        valid_depths.push(false)
+      } else {
+        
+        let validity_status = is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
+
+        // Track answers received for pushing full guess to API
+        if (validity_status == -2 || validity_status == 1) {
+            complete_words.push(guess_received) // string
+        } else {
+            complete_words.push('')
+        }
+
+        valid_depths.push(validity_status == 1 ? true : false)
+
+        style_guessword(guess_word, validity_status)
       }
       
     }
