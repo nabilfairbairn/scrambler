@@ -717,7 +717,7 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
         requestOptions['body'] = JSON.stringify(params)
     }
 
-    if (user.id == 3 || params['uname'] == 'yourmom') {
+    if (user.id == 3 || params['uname'] == 'ScramblerGod') {
         requestOptions['credentials'] = 'include'
     }
 
