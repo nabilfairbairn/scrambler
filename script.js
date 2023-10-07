@@ -64,7 +64,9 @@ let user_states = {
         'last_guess': [],  // on change, last input should not be styled
         'word_styling': {},
         'answer_button_state': [],
-        'whole_puzzle_state': []
+        'whole_puzzle_state': [],
+        'message': '', // sent by server
+        'validity': [] // sent by server
     },
     'hard': {
         'guesses_made': 0,
@@ -73,7 +75,9 @@ let user_states = {
         'last_guess': [],
         'word_styling': {},
         'answer_button_state': [],
-        'whole_puzzle_state': []
+        'whole_puzzle_state': [],
+        'message': '',
+        'validity': []
     }
 }
 
@@ -180,10 +184,7 @@ async function switchDifficulty(e) {
         if (new_diff == 'hard' && !opened_hard_puzzle) {
             await startPuzzle()
             opened_hard_puzzle = true
-    
-            // first open of Hard puzzle. Existing input in user_states is from last_guess (if exists)
-            // should be styled
-            process_guess_styling(false)
+
         }
     }
 }
@@ -199,16 +200,13 @@ async function saveCurrentInput() {
     let w ;
     for (w = 0; w < puzzle.words.length; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
-      let validity_status = await is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
 
-      if (validity_status == -2 || validity_status == 1) {
+      if (word_complete(guess_received)) {
         complete_words.push(guess_received) // string
       } else {
         complete_words.push('')
       }
       
-      valid_depths.push(validity_status == 1 ? true : false)
-
       // save classes on       
       user_states[getDiff()].word_styling[w] = [...guess_word.classList]
     }
@@ -820,10 +818,33 @@ function loadAllGuesses() {
 function processAllGuesses(all_guess_data) {
     replace_user_state(all_guess_data) // insert guess data for both easy and hard. manages possibility of no guess
     
-    refreshUserInputs()
-
-    process_guess_styling(false)
     
+    update_guess_count()
+
+    fill_puzzle_with_guess(user_states[getDiff()].last_guess)
+    update_message_banner()
+    add_validity_styling()
+
+    update_attempt_banner() // show banner if current_attempt > 1
+    
+}
+
+function add_validity_styling() {
+    const validity_list = user_states[getDiff()]['validity']
+    for (let i = 0; i < validity_list.length; i++) {
+        const validity = validity_list[i]
+        const wordrow = document.getElementById(`${wordrow_id_prefix}${i}`)
+
+        const word = get_word(i)
+        if (word_complete(word)) { // dont style incomplete words
+            style_guessword(wordrow, validity)
+        }
+        
+    }
+    if (validity_list?.length) { // if no guess, first word is always correct
+        
+        style_guessword(document.getElementById(`${wordrow_id_prefix}0`), true)
+    } 
 }
 
 async function loadPuzzleAndGuesses() {
@@ -864,8 +885,12 @@ function replace_user_state(all_guess_data) {
             user_states[diff]['guesses_made'] = guess_data['guess_number']
             user_states[diff]['last_guess'] = guess_data['words']
             user_states[diff]['last_input'] = guess_data['words']
+            user_states[diff]['message'] = guess_data['message']
+            user_states[diff]['validity'] = guess_data['validity']
         }
     })
+
+
     
 }
 
@@ -898,21 +923,27 @@ function closeBannerMessage() {
     readjustContainallPadding()
 }
 
+function update_message_banner() {
+    var message = user_states[getDiff()]['message']
+
+    if (message) {
+        badBannerMessage(message)
+    }
+}
+
 function update_attempt_banner() {
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
     // let rowholder_classes = !document.getElementById('rowHolder').classList // when checking classlist values, use contains
     
     if (puzzle_attempt > 1 && !document.getElementById('rowHolder').classList.contains('finished')) { // When finishing a puzzle not logged in, then logging in, resends attempt
         goodBannerMessage(`Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`)
-    }  else {
-        closeBannerMessage()
     }
     
 }
 
 function refreshUserInputs() {
-    update_attempt_banner() // show banner if current_attempt > 1
-    
+    update_message_banner()
+
     update_guess_count() 
 
     // fill inputs with last input if one exists
@@ -920,9 +951,12 @@ function refreshUserInputs() {
         fill_puzzle_with_guess(user_states[getDiff()].last_input)
     }
     
+    add_validity_styling()
     
     // update input styling
-    reload_word_styling() // Don't send guess to API
+    reload_word_styling() // styling from last input, in case it's newer than last submitted guess
+
+    update_attempt_banner() // show banner if current_attempt > 1
 }
 
 function reload_word_styling() {
@@ -1224,43 +1258,33 @@ function create_count_map(str) {
     return ans;   
 }
 
-// function return true or false if word1 and word2 have only 1 letter difference
-function one_letter_diff(word1, word2) {
-    let w1_dict = count_letters(word1); // dictionary with (letter: count) pairs
-    let w2_dict = count_letters(word2);
-    let net_letters = new Map(); // dictionary with how many letters added or subtracted to get to 2nd word
+function removeFirstOccurrence(arr, element) {
+    const index = arr.indexOf(element);
+    
+    if (index !== -1) {
+      arr.splice(index, 1);
+    }
+  
+    return arr;
+  }
 
-    for (const [key, value] of w1_dict) { // for each letter of the first word
-        if (w2_dict.has(key)) { // if letter in 2nd
-            let difference = w2_dict.get(key) - value 
-            net_letters.set(key, difference) // net_letters is w2 - w1 count. BONNY -> BONEY = N: -1
+// function return true or false if word1 and word2 have only 1 letter difference
+function calc_letters_changed(word1, word2) {
+    let w1_array = word1.split('')
+    let w2_array = word2.split('')
+
+    let changed = 0
+    for (let letter of word1) {
+        w1_array = removeFirstOccurrence(w1_array, letter)
+        let w2_index = w2_array.indexOf(letter)
+        if (w2_index == -1) {
+            changed++
         } else {
-            net_letters.set(key, -value) // If 2nd word doesn't have letter, count of letter in word 1 is removed.
+            w2_array = removeFirstOccurrence(w2_array, letter)
         }
     }
-    for (const [key, value] of w2_dict) { // for letters in word2
-        if (!(net_letters.has(key))) { // that aren't in word1
-            net_letters.set(key, value) // net increase of however many time it appears in word 2
-        }
-    }
-    let plus_one = 0 // how many times is a letter added
-    let minus_one = 0 // how many times is a letter removed
-    for (const [key, value] of net_letters) {
-        if (value > 0) {
-            plus_one += value
-        }
-        if (value < 0) {
-            minus_one += value
-        }
-    }
-    // plus_one and minus_one should be symmetrical in equal length word pairs
-    if (plus_one == 1 && minus_one == -1) {
-        return 1
-    }
-    if (plus_one == 0 && minus_one == 0) {
-        return 0
-    }
-    return plus_one
+
+    return changed
 }
 
 function determine_all_changed_letters() {
@@ -1481,6 +1505,7 @@ function get_depth(d) {
   return [guess_wordrow, guess_received, answer_words] // guess_wordrow = DOM element, guess_received = word string, answer_words = list of all valid answers for this word
 }
 
+
 function reaches_word(thisword, thisdepth, wuc, wuc_depth) {
     // wuc = word under consideration
 
@@ -1492,7 +1517,7 @@ function reaches_word(thisword, thisdepth, wuc, wuc_depth) {
     let nextdepth = thisdepth + 1
     let joined_words = []
     puzzle.answers[nextdepth].forEach((word) => { // no concern of over-indexing, since this function can't be called on the last word.
-        if (one_letter_diff(thisword, word) == 1) {
+        if (calc_letters_changed(thisword, word) == 1) {
             joined_words.push(word)
         }
     })
@@ -1589,7 +1614,7 @@ async function is_word_valid(guess_word, guess_received, answer_words, valid_dep
     // Prev word valid?
     if (valid_depths[depth-1]) {
         // obeys rule
-        if (one_letter_diff(guess_received, get_word(depth-1)) == 1) {
+        if (calc_letters_changed(guess_received, get_word(depth-1)) == 1) {
             return 1
         }
     }
@@ -1627,22 +1652,16 @@ function puzzle_done(valid_words) {
 }
     
 function style_guessword(wordrow, validity) {
-    // 0: unattempted, 1: correct, -1: incomplete, -2: wrong
-    switch(validity) {
-        case 1:
-            wordrow.classList.add('correct')
-            break;
-        case -2:
-            wordrow.classList.add('wrong')
-        case -1:
-            const guess_letters = wordrow.querySelectorAll('.letterInput')
-            guess_letters.forEach((letterbox) => {
-                if (letterbox.innerText == null || letterbox.innerText == '') {
-                    letterbox.classList.add('missing')
-                }
-            })
-            break;
-            
+
+    wordrow.classList.remove('correct')
+    wordrow.classList.remove('wrong')
+
+
+    // true or false, correct or wrong
+    if (validity) {
+        wordrow.classList.add('correct')
+    } else {
+        wordrow.classList.add('wrong')
     }
 }
     
@@ -1892,57 +1911,23 @@ const process_puzzle_complete = (data) => {
 
 async function process_guess_styling(real_guess) {
     remove_all_word_style()
-    var printing = ''
-    var actual_answer = ''
-    var curr_input_id = 0
     
     var valid_depths = []
 
-    var one_letter_diff_shown = false
-    var rule_break_notice;
+    var mistake_banner_raised = false
 
     var complete_words = [] // empty strings for incomplete words
+    var guesswords = []
     
     for (let w = 0; w < puzzle.words.length; w++) {
         const [guess_word, guess_received, answer_words] = get_depth(w)
+        guesswords.push(guess_word)
 
-      let follows_rule = true
-      // If !one-letter-diff-shown and w < words.length-1 and w and w+1 are complete, check one-letter-diff. If violated, one-letter-diff-shown and show rule
-      if (!one_letter_diff_shown && w > 0) { // > 0
-        const [prev_word, prev_received, prev_answers] = get_depth(w-1) // prev_word, prev_received, prev_answers = get_depth(w-1)
-        if (word_complete(guess_received, answer_words) && word_complete(prev_received, prev_answers)) { // check if word complete w/o answers?
-            const n_letters_changed = one_letter_diff(guess_received, prev_received) // prec_received
-            if (n_letters_changed != 1) {
-                follows_rule = false
-                one_letter_diff_shown = true
-                rule_break_notice = `Careful! You changed more than one letter between ${prev_received} and ${guess_received}.`
-
-                // If words contain same letters, change warning
-                if (n_letters_changed == 0) {
-                    rule_break_notice = `Whoops! You didn't change any letters between ${prev_received} and ${guess_received}.`
-                }
-
-            }
-        }
-      }
-
-      if (!follows_rule) {
-        valid_depths.push(false)
-      } else {
-        let validity_status = await is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
-        console.log(guess_received, validity_status)
-        // Track answers received for pushing full guess to API
-        if (validity_status == -2 || validity_status == 1) {
-            complete_words.push(guess_received) // string
+        if (word_complete(guess_received)) {
+            complete_words.push(guess_received)
         } else {
             complete_words.push('')
         }
-
-        valid_depths.push(validity_status == 1 ? true : false)
-
-        style_guessword(guess_word, validity_status)
-      }
-      
     }
 
     // If guess is same as last one, don't send to API
@@ -1951,6 +1936,8 @@ async function process_guess_styling(real_guess) {
         real_guess = false
     }
 
+    let validity;
+    let message;
     if (real_guess) {
         // Push guess to API
         // Always send with IP. if not logged in, server manages
@@ -1961,16 +1948,17 @@ async function process_guess_styling(real_guess) {
             guess_n: user_states[getDiff()].guesses_made + 1, // When 2 guesses made, this guess is 3rd.
             words: JSON.stringify(complete_words), // prepare array to be read as json
             user_ip: user.ip
-        }
-        
+        };
 
-        fetchPostWrapper('/guesses', params, null)
+        ({ validity, message } = await fetchPostWrapper('/guesses', params, null)) // valid words is list of bools, representing whether the submitted word is a possible answer
         user_states[getDiff()].last_guess = complete_words // Update last_guess
+        user_states[getDiff()].message = message
+        user_states[getDiff()].validity = validity
 
     }
 
     // If all words are valid and correct
-    if (!valid_depths.some(x => x === false)) {
+    if (!validity.some(x => x === false)) {
         document.getElementById('rowHolder').classList.add('finished') // removed on switch
         document.getElementById('answerBtn').classList.add('finished')
 
@@ -1991,18 +1979,70 @@ async function process_guess_styling(real_guess) {
 
     if (real_guess) {
 
-        if (puzzle_done(valid_depths)) { // Finished puzzle
+        if (puzzle_done(validity)) { // Finished puzzle
             closeBannerMessage()
             // setTimeout(function(){goodBannerMessage(`Nailed it!`)},1000) // Time for close banner to finish closing
             
-        } else if (rule_break_notice) { // Breaking core rules
-            badBannerMessage(rule_break_notice)
+        } else if (message) { // Breaking core rules
+            badBannerMessage(message)
         } else {
             closeBannerMessage()
         }
     }
+
+    
+
+    for (let i = 0; i < guesswords.length; i++) {
+        if (complete_words[i].length) {
+            
+            style_guessword(guesswords[i], validity[i])
+        }
+        
+    }
     
     return real_guess
+
+      let follows_rule = true
+      // If !one-letter-diff-shown and w < words.length-1 and w and w+1 are complete, check one-letter-diff. If violated, one-letter-diff-shown and show rule
+      if (!mistake_banner_raised && w > 0) { // > 0
+        const [prev_word, prev_received, prev_answers] = get_depth(w-1) // prev_word, prev_received, prev_answers = get_depth(w-1)
+        if (word_complete(guess_received, answer_words) && word_complete(prev_received, prev_answers)) { // check if word complete w/o answers?
+            const n_letters_changed = calc_letters_changed(guess_received, prev_received) // prec_received
+            if (n_letters_changed != 1) {
+                follows_rule = false
+                mistake_banner_raised = true
+                rule_break_notice = `Careful! You changed more than one letter between ${prev_received} and ${guess_received}.`
+
+                // If words contain same letters, change warning
+                if (n_letters_changed == 0) {
+                    rule_break_notice = `Whoops! You didn't change any letters between ${prev_received} and ${guess_received}.`
+                }
+
+            }
+        }
+      }
+
+       
+        let validity_status = await is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
+        console.log(guess_received, validity_status)
+        // Track answers received for pushing full guess to API
+        if (validity_status == -2 || validity_status == 1) {
+            complete_words.push(guess_received) // string
+        } else {
+            complete_words.push('')
+        }
+
+        if (!follows_rule) {
+            valid_depths.push(false)
+          } else {
+            valid_depths.push(validity_status == 1 ? true : false)
+          }
+        
+
+        
+      
+      
+    
     
 }
 
@@ -2044,6 +2084,9 @@ function create_puzzle() {
   for (let i = 0; i < n_words; i++) {
     var row = document.createElement("div");
     row.className = "wordRow horizontal-flex-cont";
+    if (i == 0) {
+        row.className += ' correct'
+    }
     row.id = wordrow_id_prefix + i.toString()
     
 
@@ -2109,16 +2152,14 @@ function create_puzzle() {
         reset_holder.classList.add('button', 'square', 'minimal', 'reset', 'flex-item');
         return reset_holder;
     }
-    process_guess_styling(false)
+    add_validity_styling()
     readjustContainallPadding()
 }
 
 function refreshLastGuess(e) {
     // reload last guess
     fill_puzzle_with_guess(user_states[getDiff()].last_guess)
-
-    // restyle puzzle worrows
-    process_guess_styling(false)
+    
 } 
 
 function logVersionSeen(e) {
@@ -2709,8 +2750,6 @@ window.onload = async function() {
     refresh_guess_button.addEventListener('click', refreshLastGuess)
 
     
-
-
     const allTooltips = document.getElementsByClassName('help-tip');
     for (let i = 0; i < allTooltips.length; i++) {
         var tooltip = allTooltips[i]
