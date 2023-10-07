@@ -2159,6 +2159,7 @@ function create_puzzle() {
 function refreshLastGuess(e) {
     // reload last guess
     fill_puzzle_with_guess(user_states[getDiff()].last_guess)
+    add_validity_styling()
     
 } 
 
