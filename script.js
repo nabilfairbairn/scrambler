@@ -1,13 +1,13 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.1.3'
+const version = 'V1.1.4'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
 
@@ -143,6 +143,76 @@ function set_global_style_variables(words) {
     r.style.setProperty('--letterBoxMargin', `${fontsize * 0.21}rem`  ) // in rem so it can be referenced by elements outside gamebox
     r.style.setProperty('--stroke-width', '0.05em')
     // stroke width ratio of font-size
+}
+
+function weightedRandomizer(input, messagetype) {
+    let weightFunction
+    switch (messagetype) {
+        case 'greeting':
+            weightFunction = weightedGreeting
+            break;
+        case 'celebration':
+            weightFunction = weightedCelebration
+            break;
+    }
+
+    let { weights, lowest } = weightFunction(input)
+    return draw_random(weights, lowest)
+}
+
+function draw_random(inverted_weights, lowest) {
+    const real_weights = {}
+    Object.entries(inverted_weights).forEach(([message, inverted_weight]) => {
+        let weight = Math.floor( (1 / inverted_weight) * lowest )
+        real_weights[message] = weight
+    })
+
+    function getRandomWeightedMessage(messages) {
+        const messageKeys = Object.keys(messages);
+        const totalWeight = messageKeys.reduce((sum, message) => sum + messages[message], 0);
+        let randomWeight = Math.random() * totalWeight;
+      
+        for (const message of messageKeys) {
+          randomWeight -= messages[message];
+          if (randomWeight <= 0) {
+            return message;
+          }
+        }
+      }
+
+    return getRandomWeightedMessage(real_weights)
+}
+
+function weightedGreeting(input) {
+    const weights = {}
+    weights[`Hey ${input} 😉`] = 10
+    weights[`Good to see you, ${input}!`] = 5
+    weights[`The man! The myth! The legend! ${input}!!!`] = 20
+    weights[`Look! It's ${input}!`] = 5
+    weights[`Damn, you lookin' fine today, ${input}`] = 10
+    weights[`Commander ${input}; at your service!`] = 20
+    weights[`I think you're gonna crush this one, ${input}!`] = 10
+    weights[`You are ${input}. I am Scrambler.`] = 15
+    weights[`Ah ${input}, you're back! :D`] = 5
+    weights[`${input} 😍😍😍`] = 25
+    weights[`Captain ${input}! 💪`] = 25
+
+    let lowest = 40
+    return { weights, lowest }
+}
+
+function weightedCelebration(input) { //doesnt use input
+    const weights = {}
+    weights['🎉Congratulations!🎉'] = 5
+    weights['🎆🎇🎆'] = 5
+    weights['Never doubted you for a minute!💪💪'] = 5
+    weights['☀️Absolutely Godlike!☀️'] = 10
+    weights['🌌Out of this world!🪐'] = 15
+    weights['Way to go! 💯'] = 5
+    weights[`That's what I'm talking about!🔥`] = 5
+    
+    let lowest = 15
+    return { weights, lowest }
 }
 
 async function switchDifficulty(e) {
@@ -443,6 +513,8 @@ function finishLogin(httpResponse) {
     
 
     displayLogin()
+
+    document.getElementById("username").innerText = weightedRandomizer(user.username, 'greeting')
     // Login successful
     document.getElementById('login_modal').classList.remove('opened')
     document.getElementById('overlay').classList.add('closed')
@@ -831,20 +903,23 @@ function processAllGuesses(all_guess_data) {
 
 function add_validity_styling() {
     const validity_list = user_states[getDiff()]['validity']
-    for (let i = 0; i < validity_list.length; i++) {
-        const validity = validity_list[i]
-        const wordrow = document.getElementById(`${wordrow_id_prefix}${i}`)
 
-        const word = get_word(i)
-        if (word_complete(word)) { // dont style incomplete words
-            style_guessword(wordrow, validity)
-        }
-        
-    }
-    if (validity_list?.length) { // if no guess, first word is always correct
-        
+    if (validity_list === undefined) { // if no guess, first word is always correct
         style_guessword(document.getElementById(`${wordrow_id_prefix}0`), true)
-    } 
+    } else {
+        for (let i = 0; i < validity_list.length; i++) {
+            const validity = validity_list[i]
+            const wordrow = document.getElementById(`${wordrow_id_prefix}${i}`)
+    
+            const word = get_word(i)
+            if (word_complete(word)) { // dont style incomplete words
+                style_guessword(wordrow, validity)
+            }
+            
+        }
+    }
+    
+    
 }
 
 async function loadPuzzleAndGuesses() {
@@ -870,7 +945,7 @@ async function startPuzzle() {
         user_ip: user.ip
     }
 
-    fetchPostWrapper('/completed_puzzles/start', params, function(data) {
+    await fetchPostWrapper('/completed_puzzles/start', params, function(data) {
         user_states[getDiff()].puzzle_attempt = data['current_attempt']
     })
 
@@ -928,6 +1003,8 @@ function update_message_banner() {
 
     if (message) {
         badBannerMessage(message)
+    } else {
+        closeBannerMessage()
     }
 }
 
@@ -1058,7 +1135,6 @@ function displayLogin() {
     const max_streak = user.max_streak || 0
 
 
-    document.getElementById("username").innerText = `Sup, ${username}!`
     document.getElementById("points").innerText = points
     document.getElementById('open_login_button').style.display = 'none'
 
@@ -1682,7 +1758,7 @@ function remove_all_word_style() {
     })
 }
 
-function process_guess() {
+async function process_guess() {
     var focused_element = null;
     if (
         document.hasFocus() &&
@@ -1696,7 +1772,7 @@ function process_guess() {
     }
 
     // function returns bool - real_guess. If new guess same as last, don't increment guesses
-    const new_guess_bool = process_guess_styling(true) // Process real guess -> send guess to API
+    const new_guess_bool = await process_guess_styling(true) // Process real guess -> send guess to API
 
     if (new_guess_bool) {
         user_states[getDiff()].guesses_made++;
@@ -1743,6 +1819,7 @@ function showPointsPopup(data) {
     var base_points = data.puzzle_points - data.total_bonus
 
     const congrat_title = document.getElementById("reward_title") // TODO: auto change title
+    congrat_title.innerText = weightedRandomizer(null, 'celebration')
 
     const base_points_span = document.getElementById("reward_base_points")
     base_points_span.innerText = `${base_points} Points`
@@ -1918,6 +1995,8 @@ async function process_guess_styling(real_guess) {
 
     var complete_words = [] // empty strings for incomplete words
     var guesswords = []
+
+    let empty_guess = true // make sure not to send to api if guess is empty
     
     for (let w = 0; w < puzzle.words.length; w++) {
         const [guess_word, guess_received, answer_words] = get_depth(w)
@@ -1925,15 +2004,22 @@ async function process_guess_styling(real_guess) {
 
         if (word_complete(guess_received)) {
             complete_words.push(guess_received)
+            if (w > 0) {
+                empty_guess = false
+            }
         } else {
             complete_words.push('')
         }
     }
 
     // If guess is same as last one, don't send to API
+    // TODO Or of hasn't put any words.
     // JSON.stringfy because can't compare arrays natively
-    if (JSON.stringify(complete_words) == JSON.stringify(user_states[getDiff()].last_guess)) {
+    if (JSON.stringify(complete_words) == JSON.stringify(user_states[getDiff()].last_guess) || empty_guess) {
         real_guess = false
+        if (empty_guess) {
+            toast(false, 'I know, the first step is usually the hardest. ')
+        }
     }
 
     let validity;
@@ -1958,7 +2044,8 @@ async function process_guess_styling(real_guess) {
     }
 
     // If all words are valid and correct
-    if (!validity.some(x => x === false)) {
+    // CANT use truey value of validity because array of bools with any false will return false
+    if (real_guess && !validity.some(x => x === false)) {
         document.getElementById('rowHolder').classList.add('finished') // removed on switch
         document.getElementById('answerBtn').classList.add('finished')
 
@@ -1973,7 +2060,6 @@ async function process_guess_styling(real_guess) {
             }
             fetchPostWrapper('/completed_puzzles', params, process_puzzle_complete)
         }
-        
     }
 
 
@@ -1991,14 +2077,8 @@ async function process_guess_styling(real_guess) {
     }
 
     
-
-    for (let i = 0; i < guesswords.length; i++) {
-        if (complete_words[i].length) {
-            
-            style_guessword(guesswords[i], validity[i])
-        }
-        
-    }
+    // if no validity because repeated same guess, pull validity from past guess
+    add_validity_styling()
     
     return real_guess
 
