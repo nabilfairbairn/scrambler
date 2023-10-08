@@ -223,6 +223,14 @@ function clear_puzzle() {
     document.getElementById('rowHolder').textContent = ''    
     document.getElementById('rowHolder').classList.remove('finished')
     document.getElementById('answerBtn').classList.remove('finished')
+
+    puzzle = {
+        'id': null,
+        'words': null,
+        'answers': null,
+        'difficulty': null,
+        'base_points': null
+    }
 }
 
 async function switchDifficulty(e) {
@@ -2792,10 +2800,8 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
 }
 
 window.onload = async function() {
-    // clear old puzzle
-    document.getElementById('rowHolder').textContent = ''    
-    document.getElementById('rowHolder').classList.remove('finished')
-    document.getElementById('answerBtn').classList.remove('finished')
+    clear_puzzle()
+    // Need solution for resetting all user variables
 
     
 
