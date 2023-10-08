@@ -19,6 +19,70 @@ window.onbeforeunload = function(){
       window.scrollTop(0);
 };
 
+function clear_puzzle() {
+    // clear old puzzle
+    document.getElementById('rowHolder').textContent = ''    
+    document.getElementById('rowHolder').classList.remove('finished')
+    document.getElementById('answerBtn').classList.remove('finished')
+
+    puzzle = {
+        'id': null,
+        'words': null,
+        'answers': null,
+        'difficulty': null,
+        'base_points': null
+    }
+    todays_puzzles = {
+        'easy': null,
+        'hard': null
+    }
+    
+    opened_hard_puzzle = false
+    leaderboards = {
+        'easy': null,
+        'hard': null,
+        'week': null,
+        'all': null
+    }
+}
+
+function clear_user() {
+    user = {
+        'id': null,
+        'username': null,
+        'points': null,
+        'last_version': '',
+        'streak': null,
+        'max_streak': null,
+        'ip': null
+    }
+    user_states = {
+        'easy': {
+            'guesses_made': 0,
+            'puzzle_attempt': 1,
+            'last_input': [], // last guess has styling provided
+            'last_guess': [],  // on change, last input should not be styled
+            'word_styling': {},
+            'answer_button_state': [],
+            'whole_puzzle_state': [],
+            'message': '', // sent by server
+            'validity': [] // sent by server
+        },
+        'hard': {
+            'guesses_made': 0,
+            'puzzle_attempt': 1,
+            'last_input': [],
+            'last_guess': [],
+            'word_styling': {},
+            'answer_button_state': [],
+            'whole_puzzle_state': [],
+            'message': '',
+            'validity': []
+        }
+    }
+
+}
+
 let user = {
     'id': null,
     'username': null,
@@ -96,7 +160,8 @@ function getDiff() {
     var diff_scale = ['easy', 'hard']
     return diff_scale[puzzle.difficulty - 1] // 1 indexed difficulty
 }
-fetchPuzzle()
+
+
 
 var message_banner; // Used for banner messages
 
@@ -218,20 +283,7 @@ function weightedCelebration(input) { //doesnt use input
     return { weights, lowest }
 }
 
-function clear_puzzle() {
-    // clear old puzzle
-    document.getElementById('rowHolder').textContent = ''    
-    document.getElementById('rowHolder').classList.remove('finished')
-    document.getElementById('answerBtn').classList.remove('finished')
 
-    puzzle = {
-        'id': null,
-        'words': null,
-        'answers': null,
-        'difficulty': null,
-        'base_points': null
-    }
-}
 
 async function switchDifficulty(e) {
     const source_toggle = e.target
@@ -2803,6 +2855,9 @@ window.onload = async function() {
     clear_puzzle()
     // Need solution for resetting all user variables
 
+    fetchPuzzle()
+
+    clear_user()
     
 
     document.getElementById('godmode_button').addEventListener('click', areYouGod)
