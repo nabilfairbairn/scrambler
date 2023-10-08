@@ -1,4 +1,7 @@
 // 'https://scrambler-server-development.onrender.com'
+
+const { clear } = require("console");
+
 // 'https://scrambler-api.onrender.com'
 const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
@@ -215,6 +218,13 @@ function weightedCelebration(input) { //doesnt use input
     return { weights, lowest }
 }
 
+function clear_puzzle() {
+    // clear old puzzle
+    document.getElementById('rowHolder').textContent = ''    
+    document.getElementById('rowHolder').classList.remove('finished')
+    document.getElementById('answerBtn').classList.remove('finished')
+}
+
 async function switchDifficulty(e) {
     const source_toggle = e.target
     const new_diff = source_toggle.value
@@ -238,10 +248,7 @@ async function switchDifficulty(e) {
         // replace visible puzzle
         puzzle = todays_puzzles[new_diff]
     
-        // clear old puzzle
-        document.getElementById('rowHolder').textContent = ''    
-        document.getElementById('rowHolder').classList.remove('finished')
-        document.getElementById('answerBtn').classList.remove('finished')
+        clear_puzzle()
     
         // display current puzzle
         create_puzzle()
@@ -505,6 +512,9 @@ function finishLogin(httpResponse) {
         user_ip: user.ip
     }
     fetchPostWrapper('/version/get', newparams, highlightVersionButton)
+
+    // When user returns to page, javascript refreshes but DOM persists.
+    // User logs in, but puzzle already exists?????
 
     if (puzzle.id) {
         newparams['puzzle_id'] = todays_puzzles.easy.id // user can only play easy puzzle while not logged in.
@@ -2782,7 +2792,12 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
 }
 
 window.onload = async function() {
-    readjustContainallPadding()
+    // clear old puzzle
+    document.getElementById('rowHolder').textContent = ''    
+    document.getElementById('rowHolder').classList.remove('finished')
+    document.getElementById('answerBtn').classList.remove('finished')
+
+    
 
     document.getElementById('godmode_button').addEventListener('click', areYouGod)
 
@@ -2805,9 +2820,7 @@ window.onload = async function() {
 
     document.getElementById('login_modal').classList.add('opened')
 
-    
-   
-    r.style.setProperty('--pageHeight', `${windowHeight}px`)
+    readjustContainallPadding()
 
     message_banner = document.getElementById('message_banner')
 
