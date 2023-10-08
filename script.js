@@ -25,28 +25,10 @@ function clear_puzzle() {
     document.getElementById('rowHolder').classList.remove('finished')
     document.getElementById('answerBtn').classList.remove('finished')
 
-    puzzle = {
-        'id': null,
-        'words': null,
-        'answers': null,
-        'difficulty': null,
-        'base_points': null
-    }
-    todays_puzzles = {
-        'easy': null,
-        'hard': null
-    }
     
-    opened_hard_puzzle = false
-    leaderboards = {
-        'easy': null,
-        'hard': null,
-        'week': null,
-        'all': null
-    }
 }
 
-function clear_user() {
+function clear_variables() {
     user = {
         'id': null,
         'username': null,
@@ -79,6 +61,25 @@ function clear_user() {
             'message': '',
             'validity': []
         }
+    }
+    puzzle = {
+        'id': null,
+        'words': null,
+        'answers': null,
+        'difficulty': null,
+        'base_points': null
+    }
+    todays_puzzles = {
+        'easy': null,
+        'hard': null
+    }
+    
+    opened_hard_puzzle = false
+    leaderboards = {
+        'easy': null,
+        'hard': null,
+        'week': null,
+        'all': null
     }
 
 }
@@ -2855,9 +2856,9 @@ window.onload = async function() {
     clear_puzzle()
     // Need solution for resetting all user variables
 
-    fetchPuzzle()
+    clear_variables()
 
-    clear_user()
+    fetchPuzzle()
     
 
     document.getElementById('godmode_button').addEventListener('click', areYouGod)
