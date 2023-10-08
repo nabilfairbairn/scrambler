@@ -1,8 +1,6 @@
 // 'https://scrambler-server-development.onrender.com'
-
-const { clear } = require("console");
-
 // 'https://scrambler-api.onrender.com'
+
 const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
