@@ -588,7 +588,9 @@ function finishLogin(httpResponse) {
     document.getElementById('login_modal').classList.remove('opened')
     document.getElementById('overlay').classList.add('closed')
 
-
+    if (user.id == 7) {
+        toast(false, `Happy Birthday Alix!! Love you love you love you`)
+    }
 
     // TODO: visit request is first to be sent to server. Should return cookie if exists. 
     // Send callback here to parse cookie
