@@ -2936,6 +2936,8 @@ window.onload = async function() {
     clear_variables()
 
     fetchPuzzle()
+
+    document.getElementById('send_message').addEventListener('click', sendContactMessage)
     
     document.getElementById('expand_message_banner_button').addEventListener('click', openCloseMessageBanner)
     document.getElementById('privacy_button').addEventListener('click', function() {openFullscreenModal('privacy_modal')})
