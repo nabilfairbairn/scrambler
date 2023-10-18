@@ -1228,7 +1228,10 @@ document.getElementById('enter_reset_token_button').addEventListener('click', fu
 document.getElementById('privacy_button').addEventListener('click', function() {
     closeFullscreenModal('login_modal')
     openFullscreenModal('privacy_modal')
-    toast(false, 'no problems')
+    let box = document.getElementById('privacy_modal')
+    let visibility = window.getComputedStyle(box)['visibility']
+    let top = box.getBoundingClientRect().y
+    toast(false, `${visibility} | ${top}`)
 })
 document.getElementById('close_privacy_button').addEventListener('click', function() {
     closeFullscreenModal('privacy_modal')

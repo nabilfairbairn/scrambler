@@ -1018,6 +1018,7 @@ div img {
 .banner {
   
   position: absolute;
+  display: flex;
     width: 19rem;
     height: 2.5rem;
     border-right: 0.2rem solid var(--gray-text-colour);
@@ -1029,6 +1030,8 @@ div img {
     /* margin-bottom: calc(-2.5rem + 1rem + 0.2rem);  -2.5 + 1 + 0.2 
     margin-top: 0rem; */
     top: 0.2rem;
+
+    justify-content: center;
     
     transition: all 1.2s ease-in-out;
     transform-origin: top;
@@ -1039,6 +1042,12 @@ div img {
     /* space bottom: this margin + letterboxmargin 
       space top: this margin + 1rem
     */
+}
+.banner.good {
+  background: rgba(57, 134, 33, 0.3);
+}
+.banner.bad {
+  background: rgba(156, 28, 28, 0.3);
 }
 .banner.opened {
   transform: translateY(0);
