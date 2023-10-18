@@ -1225,13 +1225,19 @@ document.getElementById('enter_reset_token_button').addEventListener('click', fu
     closeFullscreenModal('forgot_login_modal')
     openFullscreenModal('password_reset_modal')
 })
-document.getElementById('privacy_button').addEventListener('click', function() {
+document.getElementById('privacy_button').addEventListener('click', async function() {
     closeFullscreenModal('login_modal')
-    openFullscreenModal('privacy_modal')
-    let box = document.getElementById('privacy_modal')
-    let visibility = window.getComputedStyle(box)['visibility']
-    let top = box.getBoundingClientRect().y
-    toast(false, `${visibility} | ${top}`)
+    await openFullscreenModal('privacy_modal')
+    
+    
+    setTimeout(function() {
+
+        let box = document.getElementById('privacy_modal')
+        let visibility = window.getComputedStyle(box)['visibility']
+        let top = box.getBoundingClientRect().y
+        toast(false, `${visibility} | ${top}`)
+    }, 2000)
+    
 })
 document.getElementById('close_privacy_button').addEventListener('click', function() {
     closeFullscreenModal('privacy_modal')
@@ -2557,7 +2563,7 @@ var keyboard = document.getElementById('keyboard-cont')
 
 let keyboard_default_open = false;
 
-function openFullscreenModal(e) {
+async function openFullscreenModal(e) {
     let modal_id;
     let target;
 
