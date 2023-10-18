@@ -1228,6 +1228,7 @@ document.getElementById('enter_reset_token_button').addEventListener('click', fu
 document.getElementById('privacy_button').addEventListener('click', function() {
     closeFullscreenModal('login_modal')
     openFullscreenModal('privacy_modal')
+    toast(false, 'no problems')
 })
 document.getElementById('close_privacy_button').addEventListener('click', function() {
     closeFullscreenModal('privacy_modal')
@@ -2556,8 +2557,6 @@ let keyboard_default_open = false;
 function openFullscreenModal(e) {
     let modal_id;
     let target;
-
-    
 
     if (typeof(e) == 'string') {
         modal_id = e
