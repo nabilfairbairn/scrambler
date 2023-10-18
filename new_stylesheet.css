@@ -1309,9 +1309,9 @@ div img {
     padding: 0.2rem;
     height: 11rem;
     width: 23.5rem;
-    border-radius: 0.4rem;
+    border-radius: 0.7rem;
     position: fixed;
-    bottom: 2%;
+    bottom: 1%;
     left: 50%;
     transform: translateX(-50%);
     margin-left: auto;
@@ -1321,7 +1321,8 @@ div img {
     flex-direction: column;
     align-items: center;
     row-gap: 0.05em;
-    background-color:rgba(80, 80, 80);
+    background-color:var(--neutral-dark-text-colour);
+    color: var(--neutral-dark-text-colour);
     z-index: 5;
   }
 
