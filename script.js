@@ -1233,7 +1233,7 @@ document.getElementById('privacy_button').addEventListener('click', async functi
 
         if (display == 'none') {
             toast(true, `Looks like your browser isn't all that smart. It blocked our Privacy Policy thinking it was a cookie banner.`)
-            document.getElementById('overlay').classList.add('closed')
+            openFullscreenModal('login_modal')
         }
     }, 2000)
     
