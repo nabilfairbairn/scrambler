@@ -2549,12 +2549,16 @@ function openFullscreenModal(e) {
     let modal_id;
     let target;
 
+    
+
     if (typeof(e) == 'string') {
         modal_id = e
     } else {
         target = e.target
         modal_id = target.getAttribute('for')
     }
+    
+    toast(false, `${target} | ${modal_id}`, 8)
 
     if (['deleteModal'].includes(modal_id)) {
         document.getElementById('overlay').classList.add('higher')
