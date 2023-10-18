@@ -187,11 +187,12 @@ button {
   justify-content: flex-start;
   margin-left: 0;
   margin-right: 0;
+  margin-bottom: 1.2rem;
 }
 
 
 .sidenav.vertical-flex-cont div:active {
-  background: var(--light-bright-blue);
+  background: var(--accent-shadow);
   
 }
 
@@ -784,13 +785,14 @@ span.small {
 }
 
 
-.close-fs-modal-button {
+.close-fs-modal-button, #close_privacy_button {
     display: flex;
     position: absolute;
     right: 0;
     align-items: center;
     justify-content: center;
 }
+
 
 .horizontal-flex-cont {
     display: flex;

@@ -1225,6 +1225,14 @@ document.getElementById('enter_reset_token_button').addEventListener('click', fu
     closeFullscreenModal('forgot_login_modal')
     openFullscreenModal('password_reset_modal')
 })
+document.getElementById('privacy_button').addEventListener('click', function() {
+    closeFullscreenModal('login_modal')
+    openFullscreenModal('privacy_modal')
+})
+document.getElementById('close_privacy_button').addEventListener('click', function() {
+    closeFullscreenModal('privacy_modal')
+    openFullscreenModal('login_modal')
+})
 
 
 
@@ -2607,7 +2615,7 @@ function openFullscreenModal(e) {
         keyboard.style.zIndex = 5
     }
 
-    if (['deleteModal', 'privacy_modal'].includes(modal_id)) {
+    if (['deleteModal'].includes(modal_id)) {
         // if closing reset modal, remove login overlay
         document.getElementById('overlay').classList.remove('higher')
     } else {
