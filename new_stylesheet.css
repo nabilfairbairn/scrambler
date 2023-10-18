@@ -1531,6 +1531,9 @@ textarea {
   align-items: flex-start;
   align-content: flex-start;
 }
+#contact_form {
+  margin-bottom: 1rem;
+}
 #return_email {
   text-align: left;
 }
