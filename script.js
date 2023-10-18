@@ -1235,7 +1235,10 @@ document.getElementById('privacy_button').addEventListener('click', async functi
         let box = document.getElementById('privacy_modal')
         let visibility = window.getComputedStyle(box)['visibility']
         let top = box.getBoundingClientRect().y
-        toast(false, `${visibility} | ${top}`)
+        let left = box.getBoundingClientRect().x
+        let height = box.getBoundingClientRect().height
+        let width = box.getBoundingClientRect().width
+        toast(false, `v:${visibility} | t:${top} | l:${left} | h:${height} | w${width}`)
     }, 2000)
     
 })
