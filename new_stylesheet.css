@@ -142,7 +142,7 @@ button {
     font-size: 0.85rem;
     line-height: 1rem;
     position: fixed; 
-    top: 0%; /* Default is closed */
+    top: 0; /* Default is closed */
   left: var(--game-left);
   right: var(--game-right);
   bottom: 0;
@@ -1291,11 +1291,14 @@ div img {
     margin-right: auto;
 
 }
-.letterBox.below:after {
+.letterBox.letterRemoved:after {
   transform: translateY(0)
 }
-.letterBox.above:before {
+.letterBox.letterAdded:before {
   transform: translateY(0)
+}
+.letterBox.bad:after, .letterBox.bad:before {
+  background: var(--wrong-letter-accent);
 }
 
 .letterInput{

@@ -583,10 +583,6 @@ function finishLogin(httpResponse) {
     document.getElementById('login_modal').classList.remove('opened')
     document.getElementById('overlay').classList.add('closed')
 
-    if (user.id == 7) {
-        toast(false, `Happy Birthday Alix!! Love you love you love you`)
-    }
-
     // TODO: visit request is first to be sent to server. Should return cookie if exists. 
     // Send callback here to parse cookie
 }
@@ -1238,7 +1234,9 @@ document.getElementById('privacy_button').addEventListener('click', async functi
         let left = box.getBoundingClientRect().x
         let height = box.getBoundingClientRect().height
         let width = box.getBoundingClientRect().width
-        toast(false, `v:${visibility} | t:${top} | l:${left} | h:${height} | w${width}`)
+        let display = window.getComputedStyle(box)['display']
+        let classes = box.classList
+        toast(false, `v:${visibility} | t:${top} | l:${left} | h:${height} | w${width} | d${display} | c${classes}`)
     }, 2000)
     
 })
@@ -1499,7 +1497,7 @@ function isNumeric(value) {
 function determine_local_changed_letters(element) {
     var el_depth = element.getAttribute('depth')
     
-    if (['a', 'b'].includes(el_depth.slice(0, 1))) {
+    if (['a'].includes(el_depth.slice(0, 1))) {
         return;
     }
 
@@ -1557,10 +1555,12 @@ function determine_changed_letters(depth) {
     [this_element, this_word, _] = get_depth(depth)
 
     if (!isNumeric(depth)) {
-        let prev_d = 'c' + (parseInt(depth.slice(-1)) - 1).toString()
-        let next_d = 'c' + (parseInt(depth.slice(-1)) + 1).toString()
-        prev_word = prev_d == 'c-1' ? null : get_word(prev_d)
-        next_word = next_d == 'c3' ? null : get_word(next_d)
+        let tut_n = depth.slice(0, 1)
+
+        let prev_d = tut_n + (parseInt(depth.slice(-1)) - 1).toString()
+        let next_d = tut_n + (parseInt(depth.slice(-1)) + 1).toString()
+        prev_word = prev_d.slice(1) == '-1' ? null : get_word(prev_d)
+        next_word = next_d.slice(1) == '3' ? null : get_word(next_d)
     } else {
         prev_word = depth - 1 < 0 ? null : get_word(depth-1)
         next_word = parseFloat(depth) + 1 >= puzzle.words.length ? null : get_word(parseFloat(depth)+1)
@@ -1568,6 +1568,7 @@ function determine_changed_letters(depth) {
     
     
     let this_letters_count = count_letters(this_word)
+    
     if (next_word) {
         let next_letters_count = count_letters(next_word)
         var same_letters = new Map();
@@ -1602,9 +1603,9 @@ function determine_changed_letters(depth) {
             }
         }
         for (let [letter, val] of same_letters) {
-            add_changed_letter_styling(this_element, letter, val, 'letterRemoved')
+            add_changed_letter_styling(this_element, letter, val, ['letterRemoved'])
             if (total_letters > 1) {
-                add_changed_letter_styling(this_element, letter, val, 'bad')
+                add_changed_letter_styling(this_element, letter, val, ['bad'])
             }
         }
     }
@@ -1632,9 +1633,9 @@ function determine_changed_letters(depth) {
             }
         }
         for (let [letter, val] of added_letters) {
-            add_changed_letter_styling(this_element, letter, val, 'letterAdded')
+            add_changed_letter_styling(this_element, letter, val, ['letterAdded'])
             if (total_letters > 1) {
-                add_changed_letter_styling(this_element, letter, val, 'bad')
+                add_changed_letter_styling(this_element, letter, val, ['bad'])
             }
         }
 
@@ -1666,6 +1667,10 @@ function remove_changed_styling(wordrow, changetype) {
             word_letter.classList.remove('below')
         }
         word_letter.classList.remove('sameLetter')
+        
+        word_letter.classList.remove('bad')
+        word_letter.classList.remove('letterAdded')
+        word_letter.classList.remove('letterRemoved')
     })
 }
 
