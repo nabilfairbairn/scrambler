@@ -163,6 +163,7 @@ function getDiff() {
 
 
 var message_banner; // Used for banner messages
+var stats_banner;
 
 //var puzzle_index = (days_between(start_date, date_today) - 1) % puzzles.length
 //var [words, answers] = puzzles[puzzle_index]
@@ -288,41 +289,35 @@ async function switchDifficulty(e) {
     const source_toggle = e.target
     const new_diff = source_toggle.value
 
-    if (new_diff == 'hard' && !user.id) { // if User isn't logged in, can't change difficulty
-        toast(true, 'You have to be logged in to play the hard puzzle.')
-
-        // keep easy toggled
-        document.getElementById('easy_radio').checked = true
-    } else {
-        if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
+    if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
             return
         }
     
-        // On save input, need to isolate last guess (with styling) and preceding input
-        // on reload, only put styling on last guess
-    
-        // save current Input, including word styling
-        saveCurrentInput()
-    
-        // replace visible puzzle
-        puzzle = todays_puzzles[new_diff]
-    
-        clear_puzzle()
-    
-        // display current puzzle
-        create_puzzle()
-    
-        // if first time displaying hard, startPuzzle
-    
-        // refresh user state, load in new guess
-        refreshUserInputs() // loads in last input and existing styling
-    
-        if (new_diff == 'hard' && !opened_hard_puzzle) {
-            await startPuzzle()
-            opened_hard_puzzle = true
+    // On save input, need to isolate last guess (with styling) and preceding input
+    // on reload, only put styling on last guess
 
-        }
+    // save current Input, including word styling
+    saveCurrentInput()
+
+    // replace visible puzzle
+    puzzle = todays_puzzles[new_diff]
+
+    clear_puzzle()
+
+    // display current puzzle
+    create_puzzle()
+
+    // if first time displaying hard, startPuzzle
+
+    // refresh user state, load in new guess
+    refreshUserInputs() // loads in last input and existing styling
+
+    if (new_diff == 'hard' && !opened_hard_puzzle) {
+        await startPuzzle()
+        opened_hard_puzzle = true
+
     }
+    
 }
 
 
@@ -804,7 +799,7 @@ function highlightVersionButton(httpResponse) {
         const version_button = document.getElementById('version_update_button')
 
         if (last_version_seen == version) {
-            version_button.style.backgroundColor = 'lightgray'
+            version_button.style.backgroundColor = 'var(--text-backdrop-grayblue)'
         }
     }
     
@@ -1044,29 +1039,65 @@ function update_guess_count() {
     document.getElementById('guesses_made').innerText = user_states[getDiff()].guesses_made
 }
 
-function goodBannerMessage(message) {
+async function goodBannerMessage(message) {
+    await closeAllBanners()
+
     message_banner.innerText = message
-    message_banner.style.backgroundColor = 'var(--correct-color)'
-    message_banner.classList.add('slide_down')
-    document.getElementById('gameBox_wrapper').classList.add('slide_down')
-    document.getElementById('gameBox').classList.add('slide_down')
+    message_banner.classList.add('opened', 'good')
+    banner_holder.classList.add('opened')
+    banner_button.classList.add('opened')
     readjustContainallPadding()
 }
 
-function badBannerMessage(message) {
+async function badBannerMessage(message) {
+    await closeAllBanners()
+
     message_banner.innerText = message
-    message_banner.style.backgroundColor = 'var(--wrong-color)'
-    message_banner.classList.add('slide_down')
-    document.getElementById('gameBox_wrapper').classList.add('slide_down')
-    document.getElementById('gameBox').classList.add('slide_down')
+    message_banner.classList.add('opened', 'bad')
+    banner_holder.classList.add('opened')
+    banner_button.classList.add('opened')
     readjustContainallPadding()
 }
 
-function closeBannerMessage() {
-    message_banner.classList.remove('slide_down')
-    document.getElementById('gameBox_wrapper').classList.remove('slide_down')
-    document.getElementById('gameBox').classList.remove('slide_down')
-    readjustContainallPadding()
+async function closeAllBanners() {
+    return new Promise(resolve => {
+        message_banner.classList.remove('opened', 'good', 'bad');
+        stats_banner.classList.remove('opened');
+        banner_button.classList.remove('opened');
+        banner_holder.classList.remove('opened');
+        readjustContainallPadding()
+        setTimeout(function() {
+            
+            resolve(); // Resolve the promise once the setTimeout is done
+        }, 1200);
+    });
+    
+}
+
+async function closeBannerMessage() {
+    if (message_banner.classList.contains('opened')) {
+        closeAllBanners()
+    }
+}
+
+let banner_button = document.getElementById('expand_message_banner_button')
+let banner_holder = document.getElementById('banner_holder')
+
+function openCloseMessageBanner(e) {
+
+    let is_opened = banner_button.classList.contains('opened')
+    if (is_opened) {
+        stats_banner.classList.remove('opened')
+        message_banner.classList.remove('opened', 'good', 'bad')
+        banner_button.classList.remove('opened')
+        banner_holder.classList.remove('opened')
+        
+        
+    } else { // Opening from button always opens stats
+        stats_banner.classList.add('opened')
+        banner_button.classList.add('opened')
+        banner_holder.classList.add('opened')
+    }
 }
 
 function update_message_banner() {
@@ -1141,7 +1172,7 @@ function fill_puzzle_with_guess(guess_words) {
             let letter_order = letter_box.getAttribute('order')
             let guess_letter = guess_word[parseInt(letter_order)] // iterate through letterInput only. find corresponding user_input
 
-            letter_box.innerText = guess_letter.toUpperCase()
+            letter_box.firstElementChild.innerText = guess_letter.toUpperCase()
             determine_local_changed_letters(letter_box) // styling for letter Above/Below
         }
         i++
@@ -1259,13 +1290,13 @@ function days_between(StartDate, EndDate) {
   }
 
 function limit(element, key) {
-    element.innerText = key.toUpperCase()
+    element.firstElementChild.innerText = key.toUpperCase()
     determine_local_changed_letters(element)
     setTimeout(function(){focus_next_letter(element)},80)
 }
 
 function delete_letter(element) {
-    element.innerText = ''
+    element.firstElementChild.innerText = ''
     determine_local_changed_letters(element)
 }
 
@@ -1593,7 +1624,7 @@ function determine_changed_letters(depth) {
 function add_changed_letter_styling(element, letter, val, classesToAdd) {
     var word_letters = element.querySelectorAll('.letterBox')
     word_letters.forEach((word_letter) => {
-        if ((word_letter.innerText == letter || (word_letter.innerText == '' && letter == '_')) && val > 0) {
+        if ((word_letter.firstElementChild.innerText == letter || (word_letter.firstElementChild.innerText == '' && letter == '_')) && val > 0) {
             for (const classToAdd of classesToAdd) {
                 word_letter.classList.add(classToAdd)
             }
@@ -1645,7 +1676,7 @@ function get_depth(d) {
 
   guess_letters.forEach((letter_box) => {
 
-    let letter_text = letter_box.innerText.toUpperCase()
+    let letter_text = letter_box.firstElementChild.innerText.toUpperCase()
     guess_received += letter_text ? letter_text : '_'
     
   })
@@ -1715,7 +1746,7 @@ function word_attempted(wordrow) {
   var attempted = false
 
   guess_letters.forEach((letter_box) => {
-    let letter = letter_box.innerText
+    let letter = letter_box.firstElementChild.innerText
     if (!(letter == null || letter == '')) {
         attempted = true
         return false
@@ -1882,11 +1913,19 @@ function create_medal(medal, extra_classes = null) {
     return bonus_medal.src ? bonus_medal : null 
 }
 
+let create_button = document.createElement('div')
+create_button.innerText = 'Create a Profile'
+create_button.classList.add('accentButton')
+create_button.addEventListener('click', function() {
+    closeFullscreenModal('puzzle_reward')
+    openFullscreenModal('create_profile_modal')
+})
+
 function showPointsPopup(data) {
     // Takes points summary from postgres, fills points popup to display to player
 
     // what to do if not logged in
-
+    let reward_modal = document.getElementById('puzzle_reward')
     var base_points = data.puzzle_points - data.total_bonus
 
     const congrat_title = document.getElementById("reward_title") // TODO: auto change title
@@ -1904,6 +1943,7 @@ function showPointsPopup(data) {
     const guess_bonus = document.getElementById("guess_bonus") // div
     guess_bonus.textContent = ''
     
+    
     if (data.early_bonus > 0) {
         
 
@@ -1911,6 +1951,8 @@ function showPointsPopup(data) {
         early_bonus.appendChild(bonus_medal) // insert medal into div
         document.getElementById('early_points').innerText = `+${data.early_points} Points`
 
+    } else {
+        document.getElementById('early_points').innerText = ' --'
     }
     if (data.fast_bonus > 0) {
         
@@ -1919,6 +1961,8 @@ function showPointsPopup(data) {
         fast_bonus.appendChild(bonus_medal) // insert medal into div
         document.getElementById('fast_points').innerText = `+${data.fast_points} Points`
 
+    } else {
+        document.getElementById('fast_points').innerText = ' --'
     }
     if (data.guess_bonus > 0) {
         
@@ -1927,21 +1971,33 @@ function showPointsPopup(data) {
         guess_bonus.appendChild(bonus_medal) // insert medal into div
         document.getElementById('guess_points').innerText = `+${data.guess_points} Points`
 
+    } else {
+        document.getElementById('guess_points').innerText = ' --'
     }
 
     const total_points = base_points + data.early_points + data.guess_points + data.fast_points
 
+
+
     let total_reward_message;
     if (!user.id) {
-        total_reward_message = `If you create an account, you can track your points and rank on the leaderboard.`
+        total_reward_message = `Want to keep track of your progress?`
+        
+        if (!(document.getElementById("reward_total_points").nextElementSibling == create_button)) {
+            reward_modal.insertBefore(create_button, document.getElementById("reward_total_points").nextElementSibling)
+        }
+        
     } else {
         total_reward_message = `= ${total_points} Points!`
+        if (reward_modal.contains(create_button)) {
+            reward_modal.removeChild(create_button)
+        }
     }
 
     document.getElementById("reward_total_points").innerText = total_reward_message
     
     // Display the popup
-    document.getElementById('puzzle_reward').classList.add('opened')
+    reward_modal.classList.add('opened')
     document.getElementById('overlay').classList.remove('closed')
 
     // show leaderboard loader
@@ -2119,6 +2175,7 @@ async function process_guess_styling(real_guess) {
     if (real_guess && !validity.some(x => x === false)) {
         document.getElementById('rowHolder').classList.add('finished') // removed on switch
         document.getElementById('answerBtn').classList.add('finished')
+        document.getElementById('refresh_guess').classList.add('finished')
 
         // correct guess shouldn't ever be received from API, but adding check just in case
         if (real_guess) { // push complete puzzle to API
@@ -2141,8 +2198,10 @@ async function process_guess_styling(real_guess) {
             // setTimeout(function(){goodBannerMessage(`Nailed it!`)},1000) // Time for close banner to finish closing
             
         } else if (message) { // Breaking core rules
+            
             badBannerMessage(message)
         } else {
+            
             closeBannerMessage()
         }
     }
@@ -2215,7 +2274,7 @@ function resetRowInput(e) {
     // remove letter hints
     for (let i = 0; i < letter_inputs.length; i++) {
         let letterBox = letter_inputs[i]
-        letterBox.innerText = ''
+        letterBox.firstElementChild.innerText = ''
         determine_local_changed_letters(letterBox)
     }
     // remove correct/wrong styling
@@ -2255,6 +2314,7 @@ function create_puzzle() {
       var letter = rowWord[j]
       if (letter === "_") {
         let input = document.createElement("div")
+        input.appendChild(document.createElement('div'))
         input.classList.add("letterInput", 'letterBox', 'flex-item')
         style_letterBox(input)
         input.tabIndex = i*1 + j
@@ -2276,7 +2336,10 @@ function create_puzzle() {
         var letter_holder = document.createElement("div")
         style_letterBox(letter_holder)
         letter_holder.classList.add("letterBox", 'flex-item')
-        letter_holder.innerText = letter
+
+        let innerTextNode = document.createElement('div')
+        letter_holder.appendChild(innerTextNode)
+        innerTextNode.innerText = letter
         row.appendChild(letter_holder)
       }
       
@@ -2463,6 +2526,7 @@ var keyboard = document.getElementById('keyboard-cont')
         const containall_height = containall_total_height - containallBottomPadding
         const keyboard_height = keyboard.getBoundingClientRect().height
         const windowHeight = window.innerHeight
+        r.style.setProperty('--window-height', `${windowHeight}px`)
 
 
         let containallNewPaddingHeight;
@@ -2492,7 +2556,7 @@ function openFullscreenModal(e) {
         modal_id = target.getAttribute('for')
     }
 
-    if (modal_id == 'deleteModal') {
+    if (['deleteModal'].includes(modal_id)) {
         document.getElementById('overlay').classList.add('higher')
     }
 
@@ -2540,7 +2604,7 @@ function openFullscreenModal(e) {
         keyboard.style.zIndex = 5
     }
 
-    if (['deleteModal'].includes(modal_id)) {
+    if (['deleteModal', 'privacy_modal'].includes(modal_id)) {
         // if closing reset modal, remove login overlay
         document.getElementById('overlay').classList.remove('higher')
     } else {
@@ -2601,7 +2665,7 @@ let t_1_guesses = 0
 function evalTutorial1() {
     t_1_guesses++
     let correct = false
-    const answer = document.getElementById('tutorial-1-answer').innerText
+    const answer = document.getElementById('tutorial-1-answer').firstElementChild.innerText
     if (['T','P','H','C'].includes(answer)) {
         document.getElementById('guess_number_a1').classList.add('correct')
         document.getElementById('guess_number_a0').classList.add('correct')
@@ -2631,7 +2695,7 @@ let t_2_guesses = 0
 function evalTutorial2() {
     t_2_guesses++
     let correct = false
-    const answer = document.getElementById('tutorial-2-answer').innerText
+    const answer = document.getElementById('tutorial-2-answer').firstElementChild.innerText
     if (['G', 'K', 'R', 'L', 'V', 'D'].includes(answer)) {
         document.getElementById('guess_number_b1').classList.add('correct')
         document.getElementById('guess_number_b0').classList.add('correct')
@@ -2661,8 +2725,8 @@ function evalTutorial2() {
 let tutorial_guesses = 0
 function evalTutorial3() {
     tutorial_guesses++
-    const a1 = 'WOR' + document.getElementById('tut-3-1').innerText + document.getElementById('tut-3-2').innerText
-    const a2 = document.getElementById('tut-3-3').innerText + 'ROW' + document.getElementById('tut-3-4').innerText
+    const a1 = 'WOR' + document.getElementById('tut-3-1').firstElementChild.innerText + document.getElementById('tut-3-2').firstElementChild.innerText
+    const a2 = document.getElementById('tut-3-3').firstElementChild.innerText + 'ROW' + document.getElementById('tut-3-4').firstElementChild.innerText
     document.getElementById('guess_number_c0').classList.add('correct')
     let correct = false
     if (['WORLD', 'WORMS', 'WORSE', 'WORST', 'WORKS'].includes(a1)) {
@@ -2852,6 +2916,8 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
     })
 }
 
+
+
 window.onload = async function() {
     clear_puzzle()
     // Need solution for resetting all user variables
@@ -2860,6 +2926,7 @@ window.onload = async function() {
 
     fetchPuzzle()
     
+    document.getElementById('expand_message_banner_button').addEventListener('click', openCloseMessageBanner)
 
     document.getElementById('godmode_button').addEventListener('click', areYouGod)
 
@@ -2884,7 +2951,8 @@ window.onload = async function() {
 
     readjustContainallPadding()
 
-    message_banner = document.getElementById('message_banner')
+    message_banner = document.getElementById('message-banner')
+    stats_banner = document.getElementById('stats-banner')
 
     document.getElementById('pastPuzzlesNavButton').addEventListener('click', (e) => {
         toast(false, `Soon my friends. Soon.`)

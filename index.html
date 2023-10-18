@@ -38,11 +38,27 @@
               <div id="forgot_login_button" class="right_text link">Forgot Login?</div>
             </div>
             <hr>
-            <div id="login_button" class="input_button light-blue"><div class="buttontext">Login</div></div>
+            <div id="login_button" class="input_button accentButton"><div class="buttontext">Login</div></div>
             <hr><div><hr class="thick"></div><hr>
-            <div id="guest_button" class="input_button green"><div class="buttontext">Play as Guest</div></div>
+            <div id="guest_button" class="input_button neutralbutton"><div class="buttontext">Play as Guest</div></div>
             <!-- <div id="login_loader" class="dot-carousel"></div> -->
         </form>
+        <br>
+        <span>By continuing, you agree to the terms of our <span id="privacy_button" class="link open-fs-modal-button" for="privacy_modal">Privacy Policy</span></span>
+      </div>
+
+      <div id="privacy_modal" class="popup-modal">
+        <div class="header">
+          Privacy Policy
+          <button
+            type="button" class='button square minimal close-fs-modal-button' for="privacy_modal"><span  class="material-icons-round">
+              close
+              </span></button>
+        </div>
+        <div>
+          <p>Scrambler takes limited personal data from its players. Your IP address is used to relate your puzzle guesses, navigation interactions, and other behaviours within this app to a single individual. If you register as a player, your email is stored as a means to retrieve your username and password if forgotten. Your email is never given to any third parties unless required by the law. If Scrambler is sold in its entirety, we reserve the right to include your email as part of the purchase agreement so as to allow players to maintain their progress.</p>
+          <p>Your data is kept in a secure database. Your passwords are stored following standard safety measures so as to remain obscured to all parties. If at any time you wish to delete your profile, you can do so from the Profile tab in the menu. Doing so will remove all records of your username, email, and obscured password</p>
+        </div>
       </div>
 
       <div id="suggestAWordModal" class="popup-modal">
@@ -132,10 +148,9 @@
               </span></button>
         </div>
         <div>Deleting your profile can't be undone. Are you sure you'd like to do that?</div>
-        <div class="horizontal-flex-cont">
-          <button id="do_not_delete" class="large-button">NEVERMIND</button>
-          <button id="yes_delete" class="large-button">DELETE MY PROFILE</button>
-        </div>
+        <button id="yes_delete" class="large-button warningbutton">DELETE MY PROFILE</button>
+        <button id="do_not_delete" class="large-button accentButton">NEVERMIND</button>
+          
       </div>
 
       <div id="create_profile_modal" class="popup-modal">
@@ -157,9 +172,9 @@
             </div>
             <div>Usernames need to be <b>free of obscene language</b>. Using a vulgar username may result in your profile being deleted.</div>
             <hr>
-            <div id="submit_profile_button" class="input_button light-blue"><div class="buttontext">Create Profile</div></div>
+            <div id="submit_profile_button" class="input_button accentButton"><div class="buttontext">Create Profile</div></div>
             <hr><div><hr class="thick"></div><hr>
-            <div id="close_create_button" class="input_button green"><div class="buttontext">Return to Login</div></div>
+            <div id="close_create_button" class="input_button neutralbutton"><div class="buttontext">Return to Login</div></div>
 
         <div class="horizontal-flex-cont">
         </div>
@@ -176,10 +191,10 @@
             <div id="enter_reset_token_button" class="left_text link">Enter my Reset Token</div>
             
             <hr>
-            <div id="send_password_reset_button" class="input_button"><div class="buttontext">Send Password Reset</div></div>
-            <div id="send_username_button" class="input_button"><div class="buttontext">Send Username</div></div>
+            <div id="send_password_reset_button" class="input_button neutralbutton"><div class="buttontext">Send Password Reset</div></div>
+            <div id="send_username_button" class="input_button neutralbutton"><div class="buttontext">Send Username</div></div>
             <hr><div><hr class="thick"></div><hr>
-            <div id="close_forgot_button" class="input_button green"><div class="buttontext">Return to Login</div></div>
+            <div id="close_forgot_button" class="input_button neutralbutton"><div class="buttontext">Return to Login</div></div>
             
             
         </form>
@@ -196,9 +211,9 @@
             
             <div><i>Enter the password reset token sent to your email above, along with your email and new password</i></div>
             <hr>
-            <div id="reset_password_button" class="input_button light-blue"><div class="buttontext">Set New Password</div></div>
+            <div id="reset_password_button" class="input_button accentButton"><div class="buttontext">Set New Password</div></div>
             <hr><div><hr class="thick"></div><hr>
-            <div id="close_reset_password_button" class="input_button green"><div class="buttontext">Return to Login</div></div>
+            <div id="close_reset_password_button" class="input_button neutralbutton"><div class="buttontext">Return to Login</div></div>
         </form>
       </div>
   
@@ -250,6 +265,7 @@
           </div> <!-- Strategy Bonus -->
   
         </div> 
+        <br>
         <span id="reward_total_points"></span>
         <table>
           <caption>Finisher Leaderboard</caption>
@@ -418,8 +434,8 @@
         </div>
       </div>
       <div class="horizontal-flex-cont">
-        <button id="logout" class="large-button">LOGOUT</button>
-        <button id="delete_profile" class="large-button">DELETE PROFILE</button>
+        <button id="logout" class="large-button neutralbutton">LOGOUT</button>
+        <button id="delete_profile" class="large-button warningbutton">DELETE PROFILE</button>
       </div>
 
     </div>
@@ -504,21 +520,21 @@
         <div class="vertical-flex-cont ex">
         <div id="tutorial-1" class='rowHolder minimal ex'>
           <div id="guess_number_a0" class='wordRow horizontal-flex-cont ex'> 
-            <div class='letterBox ex' depth="a0">W</div> 
-            <div class='letterBox ex' depth="a0">A</div> 
-            <div class='letterBox ex' depth="a0">S</div>
-          <div class='letterBox ex' depth="a0">T</div> 
-          <div class='letterBox ex' depth="a0">E</div> </div>
+            <div class='letterBox ex' depth="a0"><div>W</div></div> 
+            <div class='letterBox ex' depth="a0"><div>A</div></div> 
+            <div class='letterBox ex' depth="a0"><div>S</div></div>
+          <div class='letterBox ex' depth="a0"><div>T</div></div> 
+          <div class='letterBox ex' depth="a0"><div>E</div></div> </div>
 
           <div id='guess_number_a1' class='wordRow horizontal-flex-cont ex'> 
-            <div id="tutorial-1-answer" class='letterBox letterInput ex ex-input' depth="a1"></div> 
-            <div class='letterBox ex ' depth="a1">A</div> 
-            <div class='letterBox ex ' depth="a1">S</div>
-          <div class='letterBox ex ' depth="a1">T</div> 
-          <div class='letterBox ex' depth="a1">E</div> </div>
+            <div id="tutorial-1-answer" class='letterBox letterInput ex ex-input' depth="a1"><div></div></div> 
+            <div class='letterBox ex ' depth="a1"><div>A</div></div> 
+            <div class='letterBox ex ' depth="a1"><div>S</div></div>
+          <div class='letterBox ex ' depth="a1"><div>T</div></div> 
+          <div class='letterBox ex' depth="a1"><div>E</div></div> </div>
           
         </div>
-        <button id="tutorial-1-answer-button" name="answerPuzzleButton" type="button" class='button answerButton'>Guess</button>
+        <button id="tutorial-1-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
       </div>
         <hr>
         <hr>
@@ -531,28 +547,28 @@
         <div class="vertical-flex-cont ex">
           <div id="tutorial-2" class='rowHolder minimal ex'>
             <div id="guess_number_b0" class='wordRow horizontal-flex-cont ex'> 
-              <div class='letterBox ex' depth="b0">W</div> 
-              <div class='letterBox ex below' depth="b0">A</div> 
-              <div class='letterBox ex below' depth="b0">S</div>
-            <div class='letterBox ex below' depth="b0">T</div> 
-            <div class='letterBox ex below' depth="b0">E</div> </div>
+              <div class='letterBox ex' depth="b0"><div>W</div></div> 
+              <div class='letterBox ex below' depth="b0"><div>A</div></div> 
+              <div class='letterBox ex below' depth="b0"><div>S</div></div>
+            <div class='letterBox ex below' depth="b0"><div>T</div></div> 
+            <div class='letterBox ex below' depth="b0"><div>E</div></div> </div>
   
             <div id='guess_number_b1' class='wordRow horizontal-flex-cont ex'> 
-              <div class='letterBox ex' depth="b1">T</div> 
-              <div class='letterBox ex above below' depth="b1">A</div> 
-              <div class='letterBox ex above below' depth="b1">S</div>
-            <div class='letterBox ex above below' depth="b1">T</div> 
-            <div class='letterBox ex above below' depth="b1">E</div> </div>
+              <div class='letterBox ex' depth="b1"><div>T</div></div> 
+              <div class='letterBox ex above below' depth="b1"><div>A</div></div> 
+              <div class='letterBox ex above below' depth="b1"><div>S</div></div>
+            <div class='letterBox ex above below' depth="b1"><div>T</div></div> 
+            <div class='letterBox ex above below' depth="b1"><div>E</div></div> </div>
 
             <div id='guess_number_b2' class='wordRow horizontal-flex-cont ex'> 
-              <div  class='letterBox ex above' depth="b2">S</div> 
-              <div class='letterBox ex above above' depth="b2">T</div> 
-              <div class='letterBox ex above above' depth="b2">A</div>
-            <div id="tutorial-2-answer" class='letterBox ex letterInput ex-input' depth="b2"></div> 
-            <div class='letterBox ex above above' depth="b2">E</div> </div>
+              <div  class='letterBox ex above' depth="b2"><div>S</div></div> 
+              <div class='letterBox ex above above' depth="b2"><div>T</div></div> 
+              <div class='letterBox ex above above' depth="b2"><div>A</div></div>
+            <div id="tutorial-2-answer" class='letterBox ex letterInput ex-input' depth="b2"><div></div></div> 
+            <div class='letterBox ex above above' depth="b2"><div>E</div></div> </div>
             
           </div>
-          <button id="tutorial-2-answer-button" name="answerPuzzleButton" type="button" class='button answerButton'>Guess</button>
+          <button id="tutorial-2-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
         </div>
         <hr>
         <span>
@@ -566,62 +582,65 @@
         <div class="vertical-flex-cont ex">
           <div id="tutorial-3" class='rowHolder minimal ex'>
             <div id="guess_number_c0" class='wordRow horizontal-flex-cont ex'> 
-              <div class='letterBox ex below' depth="c0">W</div> 
-              <div class='letterBox ex below' depth="c0">O</div> 
-              <div class='letterBox ex below' depth="c0">R</div>
-            <div class='letterBox ex ' depth="c0">D</div> 
-            <div class='letterBox ex' depth="c0">S</div> </div>
+              <div class='letterBox ex below' depth="c0"><div>W</div></div> 
+              <div class='letterBox ex below' depth="c0"><div>O</div></div> 
+              <div class='letterBox ex below' depth="c0"><div>R</div></div>
+            <div class='letterBox ex ' depth="c0"><div>D</div></div> 
+            <div class='letterBox ex' depth="c0"><div>S</div></div> </div>
   
             <div id='guess_number_c1' class='wordRow horizontal-flex-cont ex'> 
-              <div class='letterBox ex above below' depth="c1">W</div> 
-              <div class='letterBox ex above below' depth="c1">O</div> 
-              <div class='letterBox ex above below' depth="c1">R</div>
-            <div id="tut-3-1" class='letterBox letterInput ex-input ex' depth="c1" order="1"></div> 
-            <div id="tut-3-2" class='letterBox letterInput ex-input ex' depth="c1" order="2"></div> </div>
+              <div class='letterBox ex above below' depth="c1"><div>W</div></div> 
+              <div class='letterBox ex above below' depth="c1"><div>O</div></div> 
+              <div class='letterBox ex above below' depth="c1"><div>R</div></div>
+            <div id="tut-3-1" class='letterBox letterInput ex-input ex' depth="c1" order="1"><div></div></div> 
+            <div id="tut-3-2" class='letterBox letterInput ex-input ex' depth="c1" order="2"><div></div></div> 
+          </div>
 
             <div id='guess_number_c2' class='wordRow horizontal-flex-cont ex'> 
-              <div id="tut-3-3"  class='letterBox letterInput ex-input ex' depth="c2" order="3"></div> 
-              <div class='letterBox ex above ' depth="c2">R</div> 
-              <div class='letterBox ex above' depth="c2">O</div>
-            <div class='letterBox ex above' depth="c2">W</div> 
-            <div id="tut-3-4" class='letterBox letterInput ex-input ex' depth="c2" order="4"></div> </div>
+              <div id="tut-3-3"  class='letterBox letterInput ex-input ex' depth="c2" order="3"><div></div></div> 
+              <div class='letterBox ex above ' depth="c2"><div>R</div></div> 
+              <div class='letterBox ex above' depth="c2"><div>O</div></div>
+            <div class='letterBox ex above' depth="c2"><div>W</div></div> 
+            <div id="tut-3-4" class='letterBox letterInput ex-input ex' depth="c2" order="4"><div></div></div> 
+          </div>
             
           </div>
-          <button id="tutorial-3-answer-button" name="answerPuzzleButton" type="button" class='button answerButton'>Guess</button>
+          <button id="tutorial-3-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
         </div>
         <span>
-          <p>That's all the rules.</p>
+          <p>Lastly, all words in a puzzle must be unique. So you can't use the same word twice. Or thrice.</p>
+          <p>That's all :)</p>
           <p>Have fun and thanks for playing!</p>
         </span>
         <hr>
         <h5>Button Legend</h5>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square has-img"><img src="keyboard.svg"/></div></div> - Keyboard Toggle</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square has-img"><img src="menu.svg"/></div></div> - Navigation Menu</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square has-img"><img src="leaderboard.svg"/></div></div> - Leaderboard</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock"><div class="square has-img"><img src="question.svg"/></div></div> - Tutorial (You are here.)</div>
-        <div class="vertical-flex-cont ex"><button id="start_playing" class="large-button">Start Playing</button></div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="keyboard.svg"/></div></div> - Keyboard Toggle</div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="menu.svg"/></div></div> - Navigation Menu</div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="leaderboard.svg"/></div></div> - Leaderboard</div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="question.svg"/></div></div> - Tutorial (You are here.)</div>
+        <div class="vertical-flex-cont ex"><button id="start_playing" class="large-button accentButton">Start Playing</button></div>
       </div> <!-- modal body div close -->
     </div> <!-- modal close -->
 
     <div class='header horizontal-flex-cont'>
-      <button id="keyboardbutton" type="button" class='square flex-item'>
+      <button id="keyboardbutton" type="button" class='square flex-item neutralbutton'>
         <div class="has-img"><img src="keyboard.svg"/></div>
           </button>
-          <button id="menuButton" type="button" class="square flex-item open-fs-modal-button">
+          <button id="menuButton" type="button" class="square flex-item open-fs-modal-button neutralbutton">
             <div class="has-img"><img for="sidenav" src="menu.svg"/></div>
           </button>
       <div id="scrambler_title">
         <button class="notify-button invisible square"></button>
         <span>SCRAMBLER</span>
-        <button id="version_update_button" for="versionUpdateModal" class="notify-button square open-fs-modal-button" 
+        <button id="version_update_button" for="versionUpdateModal" class="notify-button square open-fs-modal-button neutralbutton" 
         type="button"></button>
       </div>
       
-      <button id="leaderboardButton" type="button" class='square flex-item open-fs-modal-button'>
+      <button id="leaderboardButton" type="button" class='square flex-item open-fs-modal-button neutralbutton'>
         <div class="has-img"><img for="fullLeaderboard" src="leaderboard.svg"/></div>
       </button>
       <button id="modalbutton" for="howToModal" name="openmodalbutton" type="button" 
-      class='square flex-item open-fs-modal-button'>
+      class='square flex-item open-fs-modal-button neutralbutton'>
         <div class="has-img"><img for="howToModal" src="question.svg"/></div>
       </button>
 
@@ -635,51 +654,44 @@
     
 
     <div id="gameBox" class='gameBox vertical-flex-cont'>
+
+      <div class="switch-field">
+        <!-- checked can only apply to one radio per set of names -->
+        <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked="checked" autocomplete="off" /> 
+        <label for="easy_radio" class="game-button">Easy</label>
+        <input type="radio" id="hard_radio" class="switch_diff_radio" name="switch-one" value="hard" />
+        <label for="hard_radio" class="game-button">Hard</label>
+      </div>
       
-      <div id="message_banner"><b>Since you've already completed this puzzle before, any future attempts won't earn you any rewards.</b></div>
+      
+
+        <div class="vertical-flex-cont">
+            <div id='banner_holder'>
+              <div id='stats-banner' class="vertical-flex-cont banner">
+                <div class="horizontal-flex-cont ">
+                  <div id="guesses">Guesses: <span id="guesses_made">0</span></div>
+                  <div id="next_game_box">Next Game: <span id="next_game"></span></div>
+                </div>
+                <div class="horizontal-flex-cont">
+                  
+                    <div>Streak: <span class="streak">?</span></div>
+                    <div id="points_holder">Total Points: <span id="points">?</span></div>
+                  
+                </div>
+              </div>
+              <div id="message-banner" class="vertical-flex-cont banner closed"></div> <!-- TODO: Currently the banners are both relative, and so they stack. play with visibility? -->
+            </div>
+            <button id="expand_message_banner_button" class='flex-item expand-triangle'>
+              <div><img src="expand-button.svg"/></div>
+            </button>
+        </div>
 
       <div id="gameBox_wrapper">
 
-        <div class="vertical-flex-cont">
-          <div class="vertical-flex-cont game-stats">
-            <div class="horizontal-flex-cont ">
-              <div id="guesses">Guesses: <span id="guesses_made">0</span></div>
-              <div id="next_game_box">Next Game: <span id="next_game"></span></div>
-            </div>
-            <div class="horizontal-flex-cont">
-              
-                <div>Streak: <span class="streak">?</span></div>
-                <div id="points_holder">Points: <span id="points">?</span></div>
-              
-            </div>
-          </div>
-          <div class="horizontal-flex-cont">
-            <div class="left-game-buttons">
-              <!-- Invisible buttons to push in game-button equal amount to game squares -->
-              <button class="button square minimal reset flex-item invisible"><div><img class="svg" for="0" src="reset.svg"></div></button>
-              
-              <!-- easy/hard toggle -->
-              <div class="switch-field">
-                <!-- checked can only apply to one radio per set of names -->
-                <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked="checked" autocomplete="off" /> 
-                <label for="easy_radio" class="game-button">Easy</label>
-                <input type="radio" id="hard_radio" class="switch_diff_radio" name="switch-one" value="hard" />
-                <label for="hard_radio" class="game-button">Hard</label>
-              </div>
-            </div>
-            <div class="right-game-buttons">
-              <button id="refresh_guess" class="game-button">Refresh Guess</button>
-
-              <!-- Invisible buttons to push in game-button equal amount to game squares -->
-              <button class="button square minimal reset flex-item invisible"><div><img class="svg" for="0" src="reset.svg"></div></button>
-            </div>
-          </div>
-          
-        </div>
         <div id="rowHolder" class='rowHolder'></div>
         <div id="puzzle_loader" class="loader"></div>
-        <button id="answerBtn" name="answerPuzzleButton" type="button" class='button answerButton'>Guess</button>
-        <div id="button_response" class='guessResponse'></div>
+        <button id="answerBtn" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
+        <button id="refresh_guess" class="neutralbutton game-button">Reload Previous Guess</button>
         
       </div> <!-- Close gamebox wrapper (needed for margin, so rewardless banner can press against sides)-->
     </div>

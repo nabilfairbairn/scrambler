@@ -1,4 +1,5 @@
-@import url(//fonts.googleapis.com/css?family=Nunito);
+@import url(//fonts.googleapis.com/css?family=Baloo+Chettan+2:500,600,700,800);
+@import url(//fonts.googleapis.com/css?family=Rubik:400,500,600,700);
 
 
 :root {
@@ -50,17 +51,44 @@
     --same-letter-color-hwb: rgb(26, 97, 230);
     --same-letter-color: 26, 97, 230;
     --bright-blue: rgb(29, 207, 219);
-    --light-bright-blue: rgba(29, 207, 219, 0.6)
+    --light-bright-blue: rgba(29, 207, 219, 0.6);
+
+    /* New Colour Scheme */
+    --background-blue: #F0F8FB;
+    --text-backdrop-grayblue: #D3DFE3;
+    --accent-blue: #53D4FB;
+    --accent-shadow: #279BBE;
+    --accent-text-colour: #124F60;
+    --dark-blue-text-colour: #223035;
+    --gray-tile: #DCDCDC;
+    --gray-tile-shadow: #999999;
+    --gray-text-colour: #828282;
+    --sandstone-tile: #FEEFD3;
+    --sandstone-shadow: #E1B666;
+    --neutral-sand-colour: #E6D8BC;
+    --neutral-shadow: #AE9361;
+    --neutral-text-colour: #413D36;
+    --neutral-dark-text-colour: #272521;
+    --LOGO-text-colour: #555046;
+    --wrong-text-colour: #E4750D;
+    --wrong-dark-text-colour: #442e1a;
+    --warning-button-shadow: #61350d;
+    --wrong-letter-accent: #D27217;
+    --sand-right-letter-highlight: #FCF7C6;
+    --gray-right-letter-highlight: #F6F6F3;
+    --right-letter-gradient-start: #237621;
+    --right-letter-gradient-end: #0FC90C;
+
 }
 
 
 html {
-  font-family: Nunito;
-  color: var(--almost-black);
+  font-family: 'Rubik';
+  color: var(--dark-blue-text-colour);
 }
 body {
   display: flex;
-  background-color: var(--almost-white);
+  background-color: var(--background-blue);
   margin: 0;
 }
 input { /* Override default which is smaller */
@@ -85,15 +113,15 @@ button {
 #version_update_button {
   display: flex;
   align-self: flex-start;
-  background-color: var(--wrong-color);
+  background-color: var(--wrong-text-colour);
 }
 
 .notify-button {
   
-    background: lightgray;
+    background: var(--text-backdrop-grayblue);
     transition: all 1s ease-in;
-  width: 1.2em !important;
-  height: 1.2em !important;
+  width: 0.8em !important;
+  height: 0.8em !important;
   padding: 0;
   margin: 0;
   padding-block: 0;
@@ -110,7 +138,8 @@ button {
 }
 
 .fullscreen-modal {
-    font-size: 0.8rem;
+  color: var(--dark-blue-text-colour);
+    font-size: 0.85rem;
     line-height: 1rem;
     position: fixed; 
     top: 0%; /* Default is closed */
@@ -120,7 +149,7 @@ button {
   overflow: scroll;
   z-index: 15;
   padding: 1rem; 
-  background-color: var(--dark-white);
+  background-color: var(--background-blue);
   
 
   visibility: collapse;
@@ -131,7 +160,7 @@ button {
   right: auto;
   width: 18rem;
   transform: translateX(calc(-18rem - 2rem)); /* Padding */
-  background: rgb(114, 231, 220);
+  background: var(--text-backdrop-grayblue);
   font-size: 0.6rem;
   font-weight: 600;
 }
@@ -194,8 +223,6 @@ button {
   padding-bottom: 100vh;
   margin-left: auto;
   margin-right: auto;
-  background-color: rgb(231, 243, 239);
-  
 }
 
 #username_holder {
@@ -203,7 +230,6 @@ button {
   display: flex;
   align-self: center;
   font-size: 0.8em;
-  top: -0.5rem;
   text-align: center;
 }
 
@@ -216,23 +242,21 @@ button {
   padding: 1rem;
   padding-top: 0;
 }
-.gameBox.slide_down {
-  margin-bottom: calc(3.5em); /* banner height less padding -1rem */
-}
 button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 
-  font-family: Nunito;
+  font-family: Rubik;
   border-width: 0.2em;
-  border-radius: 0.5rem;
+  border-radius: 0.5em;
   justify-content: center;
   outline: 0;
   cursor: pointer;
   display: block;
   text-align: center;
 
+  line-height: 1em;
   padding: 0.5em 1em;
   color: var(--almost-black) !important;
   background-color: var(--almost-white);
@@ -240,19 +264,25 @@ button {
 
 }
 
+#reward_total_points {
+  font-size: 1.1em;
+}
+
 .large-button {
-  width: 7rem;
-  height: 4.375rem;
-  border-width: 0.1em;
-  font-size: 1rem;
-  font-weight: 600;
+  width: 8rem;
+  padding: 0.4em 0.6em !important;
+  border:none;
+  border-bottom: 0.2em solid var(--accent-shadow);
+  color: var(--accent-text-colour) !important;
+  font-size: 1.3rem;
+  font-weight: 500;
   margin: 1rem;
 }
-#start_playing {
-  background-color: var(--light-bright-blue);
-}
+
 #delete_profile, #yes_delete {
-  background: var(--wrong-color)
+  background: var(--wrong-text-colour);
+  color: var(--wrong-dark-text-colour) !important;
+  border-bottom-color: var(--warning-button-shadow);
 }
 
 button span {
@@ -273,7 +303,7 @@ input[type="text"], input[type="password"] {
 input[type="submit"], .input_button {
    display: flex;
    justify-content: center;
-   line-height: normal;
+   line-height: normal !important;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -289,6 +319,10 @@ input[type="submit"], .input_button {
     align-self: stretch;
     text-align: center;
     align-items: center;
+
+    font-size: 1.4em !important;
+    padding: 0.4em 0.6em !important;
+    cursor: pointer;
 }
 #guest_button, #close_forgot_button, #close_reset_password_button, #close_create_button {
   margin-top: 0;
@@ -326,10 +360,12 @@ input[type="submit"], .input_button {
 }
 #open_login_button {
   font-size: 1em;
-  font-weight: 600;
-  padding: 0.2em 0.4em;
-  border: 0.1em solid var(--almost-black);
-  background-color: var(--light-bright-blue);
+  font-weight: 500;
+  padding: 0.2rem 0.4rem;
+  border: none;
+  border-bottom: 0.06rem solid var(--accent-shadow);
+  background-color: var(--accent-blue);
+  color: var(--accent-text-colour) !important;
 }
 .material-icons-round {
   display: flex;
@@ -342,8 +378,8 @@ input[type="submit"], .input_button {
 
 .switch-field {
   display: flex;
-  overflow: hidden;
-  justify-self: flex-start;
+  align-self: center;
+  margin: 1rem;
 }
 
 .switch-field input {
@@ -353,16 +389,40 @@ input[type="submit"], .input_button {
   width: 1px;
   border: 0;
   overflow: hidden;
+  
 }
-
+.game-button {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  font-weight: 500;
+    font-size: 1em;
+    padding: 0.5em 0.6em;
+  box-shadow: 0 0.1em 0 0 var(--gray-tile-shadow);
+  border: none;
+}
+.switch-field label {
+  
+  background-color: var(--gray-tile);
+  align-items: center;
+  
+  
+  
+  color: var(--gray-text-colour);
+  
+  align-self: center;
+  text-align: center;
+    
+}
 
 .switch-field label:hover {
   cursor: pointer;
 }
 
 .switch-field input:checked + label {
-  background-color: #a5dc86;
-  box-shadow: none;
+  background-color: var(--sandstone-tile);
+  color: var(--right-letter-gradient-start);
+  box-shadow: 0 0.1rem 0 0 var(--sandstone-shadow);
 }
 
 .switch-field label:first-of-type {
@@ -397,79 +457,11 @@ input[type="submit"], .input_button {
 }
 
 #refresh_guess {
-  display: flex;
   align-self: center;
-  border-radius: 2em; /* match switch-field label:last-of-type */
-  justify-self: flex-end;
+  width: max-content;
+  max-width: 10rem;
 }
-.game-button {
     
-    font-size: 0.8rem;
-    display: flex;
-    align-self: center;
-    text-align: center;
-    padding: 0.5em 1em;
-    background-color: lightgrey;
-    
-  border: 0.05em solid var(--almost-black);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease-in-out;
-  
-}
-
-.right-game-buttons {
-    display: flex;
-    justify-content: right;
-    margin: var(--letterBoxMargin);
-}
-.left-game-buttons {
-    display: flex;
-    justify-content: left;
-    margin: var(--letterBoxMargin);
-}
-
-#message_banner {
-    display: flex;
-    align-items: center;
-    font-size: 0.8em;
-  position: relative;
-  width: 110%;
-  height: 3.5em;
-  background-color: darkorange;
-  text-align: center;
-  
-  box-sizing: border-box;
-  padding: 0.5em;
-  top: calc(-3.5em - 1rem) ; /* height - gameBox padding */
-  margin-bottom: -3.5em; /* Leaving padding to push down gamebox-wrapper */
-  
-  transition: top 1s cubic-bezier(0.17, 0.04, 0.03, 0.94);
-  margin-left: -1rem;
-  margin-right: -1rem;
-}
-#message_banner.slide_down {
-  top: 0; /* Gamebox padding*/
-}
-
-#gameBox_wrapper {
-  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  width: 100%;
-  height: 100%;
-  top: 0; /* Needed for transition to have a starting point*/
-  position: relative;
-  
-  transition: all 1s cubic-bezier(0.17, 0.04, 0.03, 0.94); 
-}
-#gameBox_wrapper.slide_down {
-    /* banner originally sits below gamebox padding. banner has been raised the padding 
-    so gamebox wrapper needs to also raise by that much, since 'top' is where banner would have originally sat */
-    top: calc(3.5em); /* - 1rem */  
-  margin-bottom: calc(3.5em); /* - 1rem */  
-}
 
 
 .bonus_icon {
@@ -772,17 +764,21 @@ span.small {
 
 .fullscreen-modal .header {
     /* Negate padding on .fullscreen-modal */
+
+    color: var(--neutral-dark-text-colour);
     margin-top: 0; 
     margin-left: -0.5rem;
     margin-right: -0.5rem;
     margin-bottom: 2rem;
-    box-shadow: -1rem -1rem 0 0 rgb(36, 177, 170), /*Top left, topright, bottomleft, bottomright */
-    1rem -1rem 0 0 rgb(36, 177, 170),
-    -1rem 1rem 0 0 rgb(36, 177, 170),
-    1rem 1rem 0 0 rgb(36, 177, 170),
-    0 0 0 1.2rem black; 
-    background-color: rgb(36, 177, 170);
+    box-shadow: -1rem -1rem 0 0 var(--neutral-shadow), /*Top left, topright, bottomleft, bottomright */
+    1rem -1rem 0 0 var(--neutral-shadow),
+    -1rem 1rem 0 0 var(--neutral-shadow),
+    1rem 1rem 0 0 var(--neutral-shadow),
+    0 0 0 1.2rem var(--neutral-dark-text-colour); 
+    background-color: var(--neutral-shadow);
+    
 }
+
 
 .close-fs-modal-button {
     display: flex;
@@ -851,9 +847,9 @@ span.small {
 .stat {
   display: flex;
   position: relative;
-  height: 6em;
-  width: 6em;
-  border-radius: 1.5em;
+  height: 4em;
+  width: 4em;
+  border-radius: 1em;
   background: rgba(0, 0, 0, 0.2);
   justify-content: center;
   align-items: center;
@@ -869,7 +865,7 @@ span.small {
   bottom: 3em;
   width: 200%;
   text-align: center;
-  font-size: 2em;
+  font-size: 1.4em;
   line-height: 1em;
 }
 
@@ -926,6 +922,13 @@ span.small {
 .square {
     aspect-ratio: 1/1;
 }
+.neutralbutton {
+  background-color: var(--neutral-sand-colour);
+  color: var(--neutral-text-colour) !important;
+  
+  box-shadow: 0 0.1rem 0 0 var(--neutral-shadow);
+  border: none;
+}
 .flex-item {
     display: flex;
     justify-content: center;
@@ -936,30 +939,28 @@ span.small {
 .flex-item div:has(img) {
     display: flex;
     justify-content: center;
-    height:  80%;
-    width: 80%;
+    height: 100%;
+    width: 100%;
 }
 .has-img {
   display: flex;
   justify-content: center;
+  align-items: center;
   height: 80%;
-  width: 80%
+  width: 80%;
 }
   
 div img {
     max-width: 80%;
     min-width: 80%;
+    max-height: 80%;
+    min-height: 80%;
 }
 
 .mock {
   width: 14%;
-  margin: 0.5em
-  
-}
-.mock div {
-  border: 0.1em solid var(--almost-black);
-  border-radius: 1em;
-  padding: 0.4em;
+  margin: 0.5em;
+  border-radius: 0.2em;
 }
 .horizontal-flex-cont.desc {
   font-size: 1.6em;
@@ -989,80 +990,131 @@ div img {
 .highlight {
   background-color: gold !important;
 }
-
-.game-stats {
-    border-right: 0.2em solid var(--almost-black);
-    border-left: 0.2em solid var(--almost-black);
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-    margin-bottom: 0.5em;
+.expand-triangle {
+  position: absolute;
+  top: 0.6rem;
+  right: -0.45rem;
+  margin: 0.15rem;
+  height: 0.8rem;
+  width: 1.3rem;
+  border: none;
+  /*margin-top: calc(0.6rem + var(--letterBoxMargin));*/
+  background: none;
+  transform-origin: top center;
+  transform: rotate(180deg);
+  transition: 1.2s ease-in-out all;
+}
+.expand-triangle.opened {
+  transform: rotate(0);
 }
 
-.game-stats span {
-  font-weight: bold;
+
+.banner {
+  
+  position: absolute;
+    width: 19rem;
+    height: 2.5rem;
+    border-right: 0.2rem solid var(--gray-text-colour);
+    border-left: 0.2rem solid var(--gray-text-colour);
+    background-color: var(--text-backdrop-grayblue);
+    color: var(--dark-blue-text-colour);
+    font-weight: 400;
+    padding: 0.3rem 0.5rem;
+    /* margin-bottom: calc(-2.5rem + 1rem + 0.2rem);  -2.5 + 1 + 0.2 
+    margin-top: 0rem; */
+    top: 0.2rem;
+    
+    transition: all 1.2s ease-in-out;
+    transform-origin: top;
+    transform-box: border-box;
+
+    transform: translateY(calc(-100%)); /* 100% = height + 0.3 padding */
+
+    /* space bottom: this margin + letterboxmargin 
+      space top: this margin + 1rem
+    */
 }
+.banner.opened {
+  transform: translateY(0);
+  /* margin-bottom: calc(1rem + 0.3rem); */
+}
+#banner_holder {
+  overflow: hidden;
+  display: flex;
+  align-self: center;
+  position: relative;
+  height: 0.2rem;
+  width: calc(19rem + 1.4rem); /* so banner's right border isn't cut off */
+  margin-top: var(--letterBoxMargin); /* *2 to offset the fact that the margin  */
+  margin-bottom: calc(1rem - var(--letterBoxMargin));
+  transition: all 1.2s ease-in-out;
+}
+#banner_holder.opened {
+  /* margin-bottom: calc(-2 * var(--letterBoxMargin) + (2.5rem + 0.3rem - 0.2rem));*/
+  height: calc(2.5rem + 0.6rem + 0.2rem);
+}
+
+#message-banner {
+  text-align: center;
+  font-size: 0.8em;
+}
+
+#gameBox_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+  top: 0; /* Needed for transition to have a starting point*/
+  position: relative;
+  
+  transition: all 1s cubic-bezier(0.17, 0.04, 0.03, 0.94); 
+}
+#gameBox_wrapper.slide_down {
+    /* banner originally sits below gamebox padding. banner has been raised the padding 
+    so gamebox wrapper needs to also raise by that much, since 'top' is where banner would have originally sat */
+    top: calc(3.5em); /* - 1rem */  
+  margin-bottom: calc(3.5em); /* - 1rem */  
+}
+
 #next_game {
-  font-weight: bold;
+  font-feature-settings: "tnum";
+  -moz-font-feature-settings: "tnum";
+  -webkit-font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
 }
-#guesses_made {
-  margin-left: 0.5vw;
-  font-weight: bold;
+.banner span {
+  font-weight: 500;
 }
-.wordRow.correct .letterBox{
+.wordRow.correct .letterBox div{
     /*box-shadow: var(--rightglow)*/
-    color: var(--correct-color);
-    border-color: var(--correct-color-lighter);
+    
+    color: transparent;
+
+    background: var(--Green-Glow-Grad, linear-gradient(180deg, #134A12 0%, #1F781D 30%, #18A516 75%)); 
+    background-clip: text;
+-webkit-background-clip: text;
+-moz-background-clip: text;
+-webkit-text-fill-color: transparent;
 }
-.wordRow.correct .letterInput{
-  border-color: var(--correct-color-darker) !important;
-}
-.wordRow.wrong .letterBox {
-    color: var(--wrong-color);
-    border-color: var(--wrong-color-lighter)
-}
-.wordRow.wrong .letterInput {
-  border-color: var(--wrong-color-darker)
+.wordRow.wrong .letterBox div {
+    color: var(--wrong-text-colour);
 }
 .rowHolder.finished .wordRow .letterBox {
-  box-shadow: 0px 0px 24.192px var(--finishedColor), 
-    0px 0px 13.824px var(--finishedColor), 
-    0px 0px 8.064px var(--finishedColor), 
-    0px 0px 4.032px var(--finishedColor), 
-    0px 0px 1.152px var(--finishedColor), 
-    0px 0px 0.576px var(--finishedColor);
-  border-color: goldenrod !important;
+  box-shadow: 0px 0px 0.1em 0 var(--right-letter-gradient-end);
   pointer-events: None;
 }
-.rowHolder.finished + button {
-  background-color: hsl(43, 55%, 49%);
+.rowHolder.finished + button, .reset, #refresh_guess.finished{
   pointer-events: None;
 }
+
 .letterInput:focus {
-    background-color: #FBFBFB;
-    /*
-    box-shadow: 0px 0px 24.192px var(--box-focus), 
-    0px 0px 13.824px var(--box-focus), 
-    0px 0px 8.064px var(--box-focus), 
-    0px 0px 4.032px var(--box-focus), 
-    0px 0px 1.152px var(--box-focus), 
-    0px 0px 0.576px var(--box-focus);*/
-    transform: scale(1.1);
-    border-color: #040404;
-    box-shadow: 0 0 8px 4px darkgray;
+    
+    box-shadow: 0 0 0.02em 0.02em rgba(0, 0, 0, 0.1),
+    0 0 0.2em 0.015em rgba(255, 181, 43, 1);
 }
-.letterInput.ex:focus {
-  background-color: #FBFBFB;
-    /*
-    box-shadow: 0px 0px 24.192px var(--box-focus), 
-    0px 0px 13.824px var(--box-focus), 
-    0px 0px 8.064px var(--box-focus), 
-    0px 0px 4.032px var(--box-focus), 
-    0px 0px 1.152px var(--box-focus), 
-    0px 0px 0.576px var(--box-focus);*/
-    transform: scale(1.1);
-    border-color: #040404;
-    box-shadow: 0 0 0.1em 0.05em darkgray;
-}
+
 
 /*
 .missing {
@@ -1102,14 +1154,24 @@ div img {
   border: 2px solid transparent;
   max-height: 5rem;
   justify-content: center;
+  margin-bottom: calc(var(--letterBoxMargin)*1.5);
 }
 
 .letterBox {
+  font-family: 'Baloo Chettan 2';
+  font-weight: 600;
+  font-size: 1em;
+  line-height: 1em;
+  
   position: relative;
-  background-color: var(--almost-white);
-  /* background-color: rgb(42, 46, 49); For runic theme */ 
-  border: 0.08em solid var(--lighter-border);
+  background-color: var(--gray-tile);
   margin: var(--letterBoxMargin);
+  border-bottom: 0.06em solid var(--gray-tile-shadow);
+  color: var(--gray-text-colour);
+  
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 
   box-sizing: border-box;
   outline: none !important;
@@ -1121,50 +1183,14 @@ div img {
   aspect-ratio: 1/1;
   max-width: 5rem;
 
-  color: lightgrey;
-
-  text-shadow: 
-    var(--stroke-width) 0 0 var(--stroke-color),
-        calc(var(--stroke-width) * -1) 0 0 var(--stroke-color),
-        0 var(--stroke-width) 0 var(--stroke-color),
-        0 calc(var(--stroke-width) * -1) 0 var(--stroke-color);
-        text-shadow: calc(var(--stroke-width) * 1) calc(var(--stroke-width) * 0) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * 0.9239) calc(var(--stroke-width) * 0.3827) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * 0.7071) calc(var(--stroke-width) * 0.7071) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * 0.3827) calc(var(--stroke-width) * 0.9239) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * 0) calc(var(--stroke-width) * 1) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * -0.3827) calc(var(--stroke-width) * 0.9239) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * -0.7071) calc(var(--stroke-width) * 0.7071) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * -0.9239) calc(var(--stroke-width) * 0.3827) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * -1) calc(var(--stroke-width) * 0) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * -0.9239) calc(var(--stroke-width) * -0.3827) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * -0.7071) calc(var(--stroke-width) * -0.7071) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * -0.3827) calc(var(--stroke-width) * -0.9239) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * 0) calc(var(--stroke-width) * -1) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * 0.3827) calc(var(--stroke-width) * -0.9239) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * 0.7071) calc(var(--stroke-width) * -0.7071) 0
-        var(--stroke-color),
-    calc(var(--stroke-width) * 0.9239) calc(var(--stroke-width) * -0.3827) 0
-        var(--stroke-color);
+}
+.letterBox div {
+  font-size: 1.35em;
 }
 
 
 .letterBox.bad {
-  --diffColor: var(--wrong-color);
+  --diffColor: var(--wrong-colour);
 }
 
 .rowHolder.ex{
@@ -1175,7 +1201,7 @@ div img {
     
 }
 .letterBox.ex {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin: calc(var(--emLetterBoxMargin) * 0.8);
 }
 .letterInput.ex {
@@ -1215,58 +1241,57 @@ div img {
 .letterBox:before {
   content: "";
   position: absolute;
-
-  /* Size of box-shadow needs to be dynamic */
-  --letter-guide-height: calc(var(--rowHolder-font-size) * 2);
-
-  box-shadow: inset rgba(var(--same-letter-color), 0.3) 0px calc(var(--letter-guide-height) * 0.04), 
-  inset rgba(var(--same-letter-color), 0.2) 0px calc(var(--letter-guide-height) * 0.07),
-  inset  rgba(var(--same-letter-color), 0.1) 0px calc(var(--letter-guide-height) * 0.1);
+  z-index: -1;
+  width: 50%;
+    height: 9%;
+    background: var(--accent-blue);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   
   /* sides, top, bottom, radius, etc need to be calculated based on border size */
-  top: 0px;
-  bottom: 0px;
+  bottom: 100%;
   left: -0px;
   right: -0px;
+  margin-left: auto;
+  margin-right: auto;
 
-  transform: scaleX(0);
+  transform: translateY(100%);
   transition: ease-in 0.3s;
 }
 .letterBox:after {
-  transform: scaleX(0);
+  transform: translateY(-100%);
   transition: ease-in 0.3s;
-
+  z-index: -1;
   content: "";
     position: absolute;
     
-    /* Size of box-shadow needs to be dynamic */
-    --letter-guide-height: calc(var(--rowHolder-font-size) * 2);
-
-    box-shadow: inset rgba(var(--same-letter-color), 0.4) 0px calc(var(--letter-guide-height) * -0.04), 
-    inset rgba(var(--same-letter-color), 0.3) 0px calc(var(--letter-guide-height) * -0.07),
-     inset rgba(var(--same-letter-color), 0.2) 0px calc(var(--letter-guide-height) * -0.1);
-    
-    /* sides, top, bottom etc need to be calculated based on border size */
-    
-    top: 0px;
-    bottom: 0;
+    width: 50%;
+    height: 9%;
+    background: var(--accent-blue);
+    clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+  
+    /* sides, top, bottom, radius, etc need to be calculated based on border size */
+    top: calc(100% + 0.1rem);
     left: -0px;
     right: -0px;
-    /*
-    border-radius: 32px;*/
+    margin-left: auto;
+    margin-right: auto;
+
 }
 .letterBox.below:after {
-  transform: scaleX(1)
+  transform: translateY(0)
 }
 .letterBox.above:before {
-  transform: scaleX(1)
+  transform: translateY(0)
 }
 
 .letterInput{
   position: relative;
   -webkit-tap-highlight-color: transparent;
-  border: 0.09em solid var(--almost-black);
-  border-radius: 0.5em;
+  box-shadow: 0 0 0.04em 0 var(--sandstone-shadow);
+  border-bottom: 0.06em solid var(--sandstone-shadow);
+  background-color: var(--sandstone-tile);
+
+
   cursor: pointer;
   text-align: center;
   caret-color: transparent;
@@ -1297,7 +1322,7 @@ div img {
   }
 
 #howToModal {
-  padding-bottom: 11rem; /* Same as keyboard height */
+  padding-bottom: 12rem; /* Same as keyboard height */
 }
 
 
@@ -1306,6 +1331,7 @@ div img {
     display: flex;
     flex: 1 1 0;
     column-gap: 0.05em;
+    font-family: 'Baloo Chattan 2';
     
   }
   
@@ -1313,7 +1339,7 @@ div img {
     flex: 2 2 auto;
     width: 2.3rem;
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 500;
     border: 0.08em solid var(--almost-black);
     display: flex;
     align-items: center;
@@ -1372,7 +1398,7 @@ div img {
   position: absolute;
   padding: 1.8rem;
   z-index: 10;
-  background-color: var(--almost-white);
+  background-color: var(--background-blue);
 
   top: 7rem;
   border-radius: 2rem;
@@ -1390,7 +1416,10 @@ div img {
   z-index: 20;
 }
 
-
+.popup-modal .close-fs-modal-button {
+  top: -0.5rem;
+  right: -0.5rem;
+}
 
 .popup-modal .header {
     font-size: 1.4em;
@@ -1398,6 +1427,8 @@ div img {
     margin-top: 0;
     margin-left: 0;
     margin-right: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .popup-modal.opened {
@@ -1429,17 +1460,23 @@ div img {
   z-index: 16
 }
 
-.button.answerButton {
-  font-size: 1.2em;
-  color: black;  
-  font-weight: bold;
-  padding: 0.25em 0.5em;
-  box-shadow: rgb(27, 143, 137) 0px 3px 2px 0px;
+.accentButton {
+  font-family: 'Baloo Chettan 2';
+  font-size: 1.6em;
+  color: var(--accent-text-colour) !important;  
+  font-weight: 600;
+  line-height: 1em;
+  padding: 0.23em 0.7em;
+  border-radius: 0.3em;
+  box-shadow: var(--accent-shadow) 0px 0.16em 0px 0px;
   text-transform: uppercase;
-  background-color: var(--bright-blue);
-  margin: 0.8em;
-  border-width: 0.08em;
-  
+  background-color: var(--accent-blue);
+  margin: 0.5em;
+  border: none;
+  transition: 0.1s ease-in-out all;
+}
+.input_button.accentButton {
+  margin: inherit;
 }
 
 .vertical-flex-cont.ex {
@@ -1451,12 +1488,14 @@ div img {
   width: 4.5em;
 
 }
-
+#answerBtn {
+  margin-bottom: 1.5rem;
+}
 .button.answerButton:active {
-  background-color: #7a0404;
+  box-shadow: none;
+  transform: translateY(0.16em);
 }
 #answerBtn.finished {
-  background-color: grey;
   pointer-events: none;
 }
 .textinput {
@@ -1465,7 +1504,7 @@ div img {
   text-align: center;
   border-width: 0px;
   padding: 0.25em 0.7em;
-  background-color: #D9D9D9;
+  background-color: #DCDCDC;
 
   display: flex;
   align-self: stretch;
@@ -1530,14 +1569,14 @@ textarea {
 }
 
 
-@media (min-aspect-ratio: 6/9) { /* Wider screens */
+@media (min-aspect-ratio: 8/9) { /* Wider screens */
   :root {
-      font-size: 2.2vw !important;
-      --game-left: 22.5%;
-      --game-right: 22.5%;
+      font-size: 1.6vw !important;
+      --game-left: 30%; /* 100 - width / 2 */
+      --game-right: 30%;
   }
   #containall {
-  width: 55%;
+  width: 40%;
   }
   #keyboard-cont {
       display: none;

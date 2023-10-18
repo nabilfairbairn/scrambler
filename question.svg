@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="5.0259237mm"
-   height="7.3693271mm"
-   viewBox="0 0 5.0259238 7.369327"
+   width="9mm"
+   height="9mm"
+   viewBox="0 0 9.0000001 8.9999999"
    version="1.1"
    id="svg1"
    sodipodi:docname="question.svg"
@@ -12,7 +12,9 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#">
   <sodipodi:namedview
      id="namedview1"
      pagecolor="#ffffff"
@@ -25,8 +27,8 @@
      inkscape:document-units="mm"
      showgrid="true"
      inkscape:zoom="17.355781"
-     inkscape:cx="2.3911341"
-     inkscape:cy="18.639322"
+     inkscape:cx="20.137382"
+     inkscape:cy="18.581705"
      inkscape:window-width="1920"
      inkscape:window-height="1057"
      inkscape:window-x="-8"
@@ -59,17 +61,23 @@
      id="layer1"
      transform="translate(-48.827412,-62.603785)">
     <path
-       d="m 45.845993,70.355597 c -0.261102,-0.0084 0.112814,0 -0.429468,-0.01151 0.0071,-0.862336 0.376107,-1.600318 0.662207,-1.886418 0.353103,-0.353103 0.823907,-0.529654 1.412412,-0.529654 0.647356,0 1.147586,0.176551 1.500689,0.529654 0.382528,0.382529 0.573792,0.868046 0.573792,1.456551 0,0.500229 -0.176552,0.926896 -0.529655,1.279999 l -0.838619,0.838619 c -0.264828,0.264827 -0.397242,0.662069 -0.397242,1.191724 h -0.794482 c 0,-0.647356 0.102989,-1.132873 0.308966,-1.456551 0.147126,-0.235402 0.426666,-0.55908 0.83862,-0.971034 0.235402,-0.235402 0.353103,-0.514942 0.353103,-0.838619 0,-0.411954 -0.102988,-0.720919 -0.308965,-0.926896 -0.176552,-0.176552 -0.426667,-0.264828 -0.750345,-0.264828 -0.264827,0 -0.485517,0.08828 -0.662068,0.264828 -0.294253,0.294253 -0.441379,0.735632 -0.441379,1.324137 h -0.497566 c 0,0 0.242622,-2e-6 0,-2e-6 z"
+       d="m 51.548991,65.934315 c -0.282265,-0.0078 0.121958,0 -0.464278,-0.01065 0.0077,-0.797681 0.406592,-1.480332 0.715881,-1.744982 0.381723,-0.326629 0.890687,-0.489942 1.526892,-0.489942 0.699827,0 1.240602,0.163313 1.622325,0.489942 0.413533,0.353849 0.6203,0.802964 0.6203,1.347345 0,0.462724 -0.190862,0.857401 -0.572586,1.184029 l -0.906591,0.775743 c -0.286293,0.244971 -0.42944,0.61243 -0.42944,1.102373 h -0.858877 c 0,-0.598819 0.111336,-1.047934 0.334008,-1.347344 0.159051,-0.217753 0.461249,-0.517163 0.906593,-0.89823 0.254482,-0.217752 0.381723,-0.476334 0.381723,-0.775743 0,-0.381067 -0.111335,-0.666867 -0.334007,-0.857401 -0.190862,-0.163314 -0.46125,-0.244972 -0.811163,-0.244972 -0.286292,0 -0.52487,0.08166 -0.715731,0.244972 -0.318103,0.272192 -0.477154,0.680478 -0.477154,1.224859 h -0.537895 c 0,0 0.262287,-2e-6 0,-2e-6 z"
        id="text38"
-       style="font-size:11.2993px;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
-       transform="scale(1.0810531,0.92502396)"
+       style="font-size:11.2993px;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#413d36;fill-opacity:1;stroke:#413d36;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        aria-label="?"
        sodipodi:nodetypes="ccsssssscccsssssccc" />
     <circle
-       style="fill:#000000;stroke:#000000;stroke-width:0.484154;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#413d36;fill-opacity:1;stroke:#413d36;stroke-width:0.484154;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        id="path38"
-       cx="51.286476"
-       cy="69.235229"
+       cx="53.273514"
+       cy="70.088928"
        r="0.4958061" />
   </g>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="" />
+    </rdf:RDF>
+  </metadata>
 </svg>
