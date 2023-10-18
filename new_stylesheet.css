@@ -925,7 +925,7 @@ span.small {
 .neutralbutton {
   background-color: var(--neutral-sand-colour);
   color: var(--neutral-text-colour) !important;
-  
+  border-radius: 0.3em;
   box-shadow: 0 0.1rem 0 0 var(--neutral-shadow);
   border: none;
 }

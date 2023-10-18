@@ -2558,7 +2558,6 @@ function openFullscreenModal(e) {
         modal_id = target.getAttribute('for')
     }
     
-    toast(false, `${target} | ${modal_id}`, 8)
 
     if (['deleteModal'].includes(modal_id)) {
         document.getElementById('overlay').classList.add('higher')
@@ -2576,6 +2575,7 @@ function openFullscreenModal(e) {
     let modal = document.getElementById(modal_id)
 
     modal.classList.add('opened')
+    toast(false, `${modal.classList}`, 8)
     
     if (target?.classList.contains('nav-item') || target?.id == 'godmode_button') {
         document.getElementById('sidenav').classList.remove('opened')
