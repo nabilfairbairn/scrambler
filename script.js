@@ -1229,14 +1229,12 @@ document.getElementById('privacy_button').addEventListener('click', async functi
     setTimeout(function() {
 
         let box = document.getElementById('privacy_modal')
-        let visibility = window.getComputedStyle(box)['visibility']
-        let top = box.getBoundingClientRect().y
-        let left = box.getBoundingClientRect().x
-        let height = box.getBoundingClientRect().height
-        let width = box.getBoundingClientRect().width
         let display = window.getComputedStyle(box)['display']
-        let classes = box.classList
-        toast(false, `v:${visibility} | t:${top} | l:${left} | h:${height} | w${width} | d${display} | c${classes}`)
+
+        if (display == 'none') {
+            toast(true, `Looks like your browser isn't all that smart. It blocked our Privacy Policy thinking it was a cookie banner.`)
+            document.getElementById('overlay').classList.add('closed')
+        }
     }, 2000)
     
 })
