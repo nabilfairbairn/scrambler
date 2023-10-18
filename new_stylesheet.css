@@ -405,7 +405,7 @@ input[type="submit"], .input_button {
   
   background-color: var(--gray-tile);
   align-items: center;
-  
+  box-shadow: 0 0.1em 0 0 var(--gray-tile-shadow);
   
   
   color: var(--gray-text-colour);
@@ -437,17 +437,14 @@ input[type="submit"], .input_button {
   display: flex;
   width: 100%;
   margin-bottom: 1em;
+  
 }
 .leaderboard_toggle label {
   display: flex;
   flex: 1 1 0;
   justify-content: center;
   border-radius: 0 !important;
-  border: 0.1em solid var(--almost-black);
-  border-left: 0;
-}
-.leaderboard_toggle label:first-of-type {
-  border-left: 0.1em solid var(--almost-black);
+  padding: 0.2em 0;
 }
 
 .between {
@@ -1449,7 +1446,7 @@ div img {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: -10%;
 }
 .overlay.closed {
   display: none;

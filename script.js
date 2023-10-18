@@ -2575,7 +2575,6 @@ function openFullscreenModal(e) {
     let modal = document.getElementById(modal_id)
 
     modal.classList.add('opened')
-    toast(false, `${modal.classList}`, 8)
     
     if (target?.classList.contains('nav-item') || target?.id == 'godmode_button') {
         document.getElementById('sidenav').classList.remove('opened')
