@@ -142,6 +142,7 @@ button {
     font-size: 0.85rem;
     line-height: 1rem;
     position: fixed; 
+    display: block;
     top: 0; /* Default is closed */
   left: var(--game-left);
   right: var(--game-right);
@@ -1453,6 +1454,7 @@ div img {
     top: 7rem;
     transform: translateY(0%) !important;
     visibility: visible;
+    display: flex;
 }
 
 .overlay{
