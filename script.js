@@ -2930,6 +2930,7 @@ window.onload = async function() {
     fetchPuzzle()
     
     document.getElementById('expand_message_banner_button').addEventListener('click', openCloseMessageBanner)
+    document.getElementById('privacy_button').addEventListener('click', function() {openCloseMessageBanner('privacy_modal')})
 
     document.getElementById('godmode_button').addEventListener('click', areYouGod)
 
