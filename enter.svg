@@ -60,12 +60,12 @@
      id="layer1"
      transform="translate(-60.398728,-73.135096)">
     <path
-       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#272521;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="m 81.898665,75.135096 -10e-7,6.999999 H 66.898665"
        id="path39"
        sodipodi:nodetypes="ccc" />
     <path
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.72714;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#272521;fill-opacity:1;stroke:#272521;stroke-width:2.72714;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="m 66.75648,86.355592 v -8.273218 l -4.994232,4.136609 z"
        id="path40" />
   </g>
