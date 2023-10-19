@@ -82,6 +82,9 @@ function clear_variables() {
 
 }
 
+let banner_message_queue = []
+let nav_source = 'none'
+
 let user = {
     'id': null,
     'username': null,
@@ -731,6 +734,8 @@ carousel_loader.classList.add('dot-carousel')
 async function login(event) {
     event.preventDefault()
 
+    
+
     var params = {
         uname: document.getElementById('uname').value,
         pword: document.getElementById('pword').value,
@@ -747,6 +752,9 @@ async function login(event) {
 
     not_logging_in = false
     await fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
+
+    nav_source = 'login'
+    logNavEvent('login', nav_source)
     
 }
 
@@ -757,6 +765,10 @@ async function playGuest(event) {
         loadPuzzleAndGuesses()
     }
     openFullscreenModal('howToModal')
+
+    nav_source = 'guest'
+    logNavEvent('guest', nav_source)
+
 }
 
 async function createProfile(event) {
@@ -783,6 +795,9 @@ async function createProfile(event) {
         }
         
     }
+
+    nav_source = 'create'
+    logNavEvent('create', nav_source)
 }
 
 // if user's last login was on a previous version, highlight updates
@@ -1056,17 +1071,31 @@ async function badBannerMessage(message) {
 
 async function closeAllBanners() {
     return new Promise(resolve => {
-        message_banner.classList.remove('opened', 'good', 'bad');
-        stats_banner.classList.remove('opened');
-        banner_button.classList.remove('opened');
-        banner_holder.classList.remove('opened');
-        readjustContainallPadding()
-        setTimeout(function() {
-            
-            resolve(); // Resolve the promise once the setTimeout is done
-        }, 1200);
+        if (banner_button.classList.contains('opened')) { // dont wait if banner already closed
+            message_banner.classList.remove('opened', 'good', 'bad');
+            stats_banner.classList.remove('opened');
+            banner_button.classList.remove('opened');
+            banner_holder.classList.remove('opened');
+            readjustContainallPadding()
+            setTimeout(function() {
+                
+                resolve(); // Resolve the promise once the setTimeout is done
+            }, 1200);
+        } else {
+            resolve()
+        }
+        
     });
     
+}
+
+function show_next_banner_message() {
+    let [is_good, message] = banner_message_queue.pop()
+    if (is_good) {
+        goodBannerMessage(message)
+    } else {
+        badBannerMessage(message)
+    }
 }
 
 async function closeBannerMessage() {
@@ -1082,11 +1111,22 @@ function openCloseMessageBanner(e) {
 
     let is_opened = banner_button.classList.contains('opened')
     if (is_opened) {
+        
+        logNavEvent('open_message_banner', nav_source)
+
         stats_banner.classList.remove('opened')
         message_banner.classList.remove('opened', 'good', 'bad')
         banner_button.classList.remove('opened')
         banner_holder.classList.remove('opened')
         
+        if (message_banner.classList.contains('opened') && banner_message_queue.length > 0) {
+            // remove current message. load next if exists
+            setTimeout(function() {
+                
+                show_next_banner_message()
+            }, 1200)
+            
+        }
         
     } else { // Opening from button always opens stats
         stats_banner.classList.add('opened')
@@ -1105,12 +1145,19 @@ function update_message_banner() {
     }
 }
 
+function addBannerMessage(is_good, message) {
+    banner_message_queue.push([is_good, message])
+    if (!message_banner.classList.contains('opened')) {
+        show_next_banner_message()
+    } 
+}
+
 function update_attempt_banner() {
     var puzzle_attempt = user_states[getDiff()].puzzle_attempt
     // let rowholder_classes = !document.getElementById('rowHolder').classList // when checking classlist values, use contains
     
     if (puzzle_attempt > 1 && !document.getElementById('rowHolder').classList.contains('finished')) { // When finishing a puzzle not logged in, then logging in, resends attempt
-        goodBannerMessage(`Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`)
+        addBannerMessage(true, `Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`)
     }
     
 }
@@ -1193,6 +1240,7 @@ document.getElementById('guest_button').addEventListener('click', playGuest)
 document.getElementById('create_profile_button').addEventListener('click', function() {
     closeFullscreenModal('login_modal')
     openFullscreenModal('create_profile_modal')
+    logNavEvent('open_create', nav_source)
 })
 
 document.getElementById('close_create_button').addEventListener('click', function() {
@@ -1235,6 +1283,7 @@ document.getElementById('privacy_button').addEventListener('click', async functi
             openFullscreenModal('login_modal')
         }
     }, 2000)
+    logNavEvent('privacy', nav_source)
     
 })
 document.getElementById('close_privacy_button').addEventListener('click', function() {
@@ -1602,7 +1651,7 @@ function determine_changed_letters(depth) {
         for (let [letter, val] of same_letters) {
             add_changed_letter_styling(this_element, letter, val, ['letterRemoved'])
             if (total_letters > 1) {
-                add_changed_letter_styling(this_element, letter, val, ['bad'])
+                add_changed_letter_styling(this_element, letter, val, ['afterbad'])
             }
         }
     }
@@ -1632,7 +1681,7 @@ function determine_changed_letters(depth) {
         for (let [letter, val] of added_letters) {
             add_changed_letter_styling(this_element, letter, val, ['letterAdded'])
             if (total_letters > 1) {
-                add_changed_letter_styling(this_element, letter, val, ['bad'])
+                add_changed_letter_styling(this_element, letter, val, ['beforebad'])
             }
         }
 
@@ -1665,7 +1714,8 @@ function remove_changed_styling(wordrow, changetype) {
         }
         word_letter.classList.remove('sameLetter')
         
-        word_letter.classList.remove('bad')
+        word_letter.classList.remove('beforebad')
+        word_letter.classList.remove('afterbad')
         word_letter.classList.remove('letterAdded')
         word_letter.classList.remove('letterRemoved')
     })
@@ -2221,8 +2271,7 @@ async function process_guess_styling(real_guess) {
             // setTimeout(function(){goodBannerMessage(`Nailed it!`)},1000) // Time for close banner to finish closing
             
         } else if (message) { // Breaking core rules
-            
-            badBannerMessage(message)
+            addBannerMessage(false, message)
         } else {
             
             closeBannerMessage()
@@ -2398,7 +2447,18 @@ function refreshLastGuess(e) {
     fill_puzzle_with_guess(user_states[getDiff()].last_guess)
     add_validity_styling()
     
+    logNavEvent('reload_last_guess', nav_source)
 } 
+
+function logNavEvent(nav_name, nav_source) {
+    const params = {
+        nav_event: nav_name,
+        user_id: user.id,
+        user_ip: user.ip,
+        nav_source: nav_source
+    }
+    fetchPostWrapper('/nav', params, null)
+}
 
 function logVersionSeen(e) {
 
@@ -2608,6 +2668,8 @@ async function openFullscreenModal(e) {
     }
 
     document.getElementById('overlay').classList.remove('closed')
+
+    logNavEvent(`open_${modal_id}`, nav_source)
   }
 
   function closeFullscreenModal(e) { // TODO: close rewards modal takes very long?
@@ -2629,6 +2691,15 @@ async function openFullscreenModal(e) {
             keyboard.style.display = 'flex'
         }
         keyboard.style.zIndex = 5
+
+        if (typeof(e) == 'string') {
+            
+        logNavEvent('close_tut_bottom', nav_source)
+        } else {
+            
+        logNavEvent('close_tut_top', nav_source)
+        }
+
     }
 
     if (['deleteModal'].includes(modal_id)) {
@@ -2641,11 +2712,14 @@ async function openFullscreenModal(e) {
   }
 
 function logout(e) {
+    
+    logNavEvent('logout', nav_source)
     // Eventually, will delete user_id cookie
     location.reload()
 }
 
 function sureDelete(e) {
+    
     openFullscreenModal('deleteModal')
 }
 
@@ -2840,10 +2914,44 @@ function areYouGod() {
     if (user.id == 3) {
         openFullscreenModal('godmode_nav')
         fetchPostWrapper('/words/get_all', null, loadDictWords)
+        fetchPostWrapper('/nav/all', null, loadAnalytics)
     }
 }
 
+function loadAnalytics(data) {
+    // n logins, guest, create
+    // for each of the above, total events per event, total unique user events
+    const { agg_results, grouped_results } = data
+    agg_results.forEach((data_row) => {
+        const newrow = document.createElement('div')
+        let source = data_row['nav_event']
+        let count = data_row['count']
 
+        newrow.innerText = `${source.toUpperCase()}: ${count}`
+        document.getElementById('analytics_data_holder').appendChild(newrow)
+    })
+
+    const br = document.createElement('br')
+    document.getElementById('analytics_data_holder').appendChild(br)
+
+    grouped_results.forEach((data_row) => {
+        const newrow = document.createElement('div')
+        const eventname = document.createElement('span')
+        const value = document.createElement('span')
+        let source = data_row['nav_source']
+        let event = data_row['nav_event']
+        let count = data_row['count']
+
+        newrow.classList.add('horizontal-flex-cont')
+
+        eventname.innerText = `${source.toUpperCase()}: ${event}`
+        value.innerText = count
+
+        newrow.appendChild(eventname)
+        newrow.appendChild(value)
+        document.getElementById('analytics_data_holder').appendChild(newrow)
+    })
+}
 
 document.getElementById('suggestion_button').addEventListener('click', suggestWord)
 
@@ -2960,7 +3068,9 @@ window.onload = async function() {
 
     document.getElementById('godmode_button').addEventListener('click', areYouGod)
 
-    document.getElementById('start_playing').addEventListener('click', function() {closeFullscreenModal('howToModal')})
+    document.getElementById('start_playing').addEventListener('click', function() {
+        closeFullscreenModal('howToModal')
+    })
 
     document.getElementById("tutorial-1-answer-button").addEventListener('click', evalTutorial1)
     document.getElementById('tutorial-2-answer-button').addEventListener('click', evalTutorial2)

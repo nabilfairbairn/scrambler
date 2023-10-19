@@ -8,6 +8,29 @@
   <meta property="og:type" content="website"/>
   <meta charset="utf-8"/>
   <link rel="stylesheet" href="new_stylesheet.css">
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon-precomposed" sizes="57x57" href="apple-touch-icon-57x57.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-icon-72x72.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="apple-touch-icon-144x144.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="60x60" href="apple-touch-icon-60x60.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="120x120" href="apple-touch-icon-120x120.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="76x76" href="apple-touch-icon-76x76.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="152x152" href="apple-touch-icon-152x152.png" />
+  <link rel="icon" type="image/png" href="favicon-196x196.png" sizes="196x196" />
+  <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
+  <link rel="icon" type="image/png" href="favicon-128.png" sizes="128x128" />
+  <meta name="application-name" content="&nbsp;"/>
+  <meta name="msapplication-TileColor" content="#FFFFFF" />
+  <meta name="msapplication-TileImage" content="mstile-144x144.png" />
+  <meta name="msapplication-square70x70logo" content="mstile-70x70.png" />
+  <meta name="msapplication-square150x150logo" content="mstile-150x150.png" />
+  <meta name="msapplication-wide310x150logo" content="mstile-310x150.png" />
+  <meta name="msapplication-square310x310logo" content="mstile-310x310.png" />
+
   <!-- Google Icons -->
   
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
@@ -102,7 +125,7 @@
             <li><p><s>Suggest a word. You'll highlight the spot in a puzzle and what word you think it's missing. It'll get sent to me to review and add to the puzzle while it's still up</s></p></li>
             <li><p>Updating the points system. Instead of getting bonuses as you finish, you'll get them at the end of the day. That way you're ranked against everyone who finished - not just those who finished before you.</p>
             <p>Also, bronze medals.</p></li>
-            <li><p>Creating a visual theme for the puzzles. It'll give a unique feel rather than the slightly boring modern look.</p></li>
+            <li><p><s>Creating a visual theme for the puzzles. It'll give a unique feel rather than the slightly boring modern look.</s></p></li>
           </ul>
           <p>After most of the above, I'll be adding some discrete ads. I have an awesome idea in mind for adding an entirely new system to play with, but it'll need to be a full blown game. With a budget.</p>
         </div>
@@ -228,6 +251,7 @@
         </div> <!-- <!> Congratulations <!>, etc. with emojis -->
   
         <span id="reward_base_points"></span> <!-- 45 points! -->
+        <span>In the next few weeks, rewards will be changing. Bonus rewards will be calculated at the end of the day based on your ranking against all other puzzle solvers.</span>
         <div id="reward_bonuses" class="horizontal-flex-cont">
           <div class="vertical_flex-cont bonus_col"> <!-- Early Bonus -->
             <span class="bonus_w_description horizontal-flex-cont">
@@ -317,6 +341,7 @@
       <p><u>V1.2.0 - Oct 19 2023</u></p>
 
       <ul>
+        <li><p>Added: A Logo!</p></li>
         <li><p>Added: Privacy Policy</p></li>
         <li><p>Changed: Guests can play hard puzzle</p></li>
         <li><p>Changed: All the UI!</p></li>
@@ -488,9 +513,23 @@
           <div class="vertical-flex-cont sidenav">
               <div id="dictionaryNavButton" class="open-fs-modal-button nav-item godnav" for="dictionary">Full Dictionary</div>
               <div id="validateSuggestionsNavButton" class="disabled">See Suggested Words</div>
-              <div id="seePageStatsNavButton" class="disabled">See Page Stats</div>
+              <div id="seePageStatsNavButton" class="open-fs-modal-button nav-item godnav" for="analytics">See Analytics</div>
               <div id="reportedUsernamesNavButton" class="disabled">Ban Hammer</div>
           </div>
+      </div>
+    </div>
+
+    <div id="analytics" class="fullscreen-modal">
+      <div class="fullscreen-modal-content">
+        <div class="header">
+          <span>Analytics</span>
+          <button
+            type="button" class='button square minimal close-fs-modal-button' for="analytics"><span class="material-icons-round">
+              close
+              </span></button>
+        </div>
+        <div id='analytics_data_holder' class='vertical-flex-cont'>
+        </div>
       </div>
     </div>
 
@@ -690,7 +729,7 @@
                   
                 </div>
               </div>
-              <div id="message-banner" class="vertical-flex-cont banner closed"></div> <!-- TODO: Currently the banners are both relative, and so they stack. play with visibility? -->
+              <div id="message-banner" class="vertical-flex-cont banner"></div> <!-- TODO: Currently the banners are both relative, and so they stack. play with visibility? -->
             </div>
             <button id="expand_message_banner_button" class='flex-item expand-triangle'>
               <div><img src="expand-button.svg"/></div>
