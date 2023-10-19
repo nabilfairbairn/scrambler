@@ -789,13 +789,12 @@ async function createProfile(event) {
 function highlightVersionButton(httpResponse) {
     if (httpResponse.length >= 1) {
         const last_version_seen = httpResponse[0]['version']
-        logVersionSeen()
-
+        
         user.last_version = last_version_seen
         const version_button = document.getElementById('version_update_button')
 
         if (last_version_seen == version) {
-            version_button.style.backgroundColor = 'var(--text-backdrop-grayblue)'
+            version_button.classList.add('seen')
         }
     }
     
@@ -2411,7 +2410,7 @@ function logVersionSeen(e) {
         }
         fetchPostWrapper('/version/push', params, null)
     }
-    
+    document.getElementById('version_update_button').classList.add('seen')
     
 
 }
@@ -2588,6 +2587,9 @@ async function openFullscreenModal(e) {
     if (modal_id == 'profile_modal' && !user.id) {
         toast(true, 'You need to be logged in to access your profile.')
         return
+    }
+    if (modal_id == 'versionUpdateModal') {
+        logVersionSeen()
     }
     
     if (modal_id == 'howToModal') {

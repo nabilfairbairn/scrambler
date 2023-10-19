@@ -1,5 +1,6 @@
 @import url(//fonts.googleapis.com/css?family=Baloo+Chettan+2:500,600,700,800);
 @import url(//fonts.googleapis.com/css?family=Rubik:400,500,600,700);
+@import url(//fonts.googleapis.com/css?family=K2D:400,500,600,700,800,900);
 
 
 :root {
@@ -112,21 +113,63 @@ button {
 
 #version_update_button {
   display: flex;
+  position: absolute;
+
+  justify-content: center;
+  align-items: center;
   align-self: flex-start;
-  background-color: var(--wrong-text-colour);
+  color: var(--LOGO-text-colour);
+  text-shadow: 0 0 0.05em var(--wrong-text-colour);
+  transform: rotate(-45deg);
+  
+  transform-origin: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  height: 3rem;
+  width: 3rem;
+  line-height: 0.7rem;
+  font-size: 0.85em;
+  font-weight: 800;
+
+  cursor: pointer;
+
+}
+#version_update_button.seen {
+  text-shadow: none;
+}
+#backgroundagain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-blue);
+  transform-origin: center;
+  height: 4.6rem;
+  width: 4.6rem;
+  border-radius: 0.1rem;
 }
 
-.notify-button {
+#scrambler_title {
+  font-family: 'K2D';
   
-    background: var(--text-backdrop-grayblue);
-    transition: all 1s ease-in;
-  width: 0.8em !important;
-  height: 0.8em !important;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  font-size: 4rem;
+  transition: all 1s ease-in;
   padding: 0;
   margin: 0;
   padding-block: 0;
   padding-inline: 0;
-  border: 0.1em solid black;
+  height: 5rem;
+  width: 5rem;
+  transform-origin: center;
+  transform: rotate(45deg);
+  background: linear-gradient(to bottom right, var(--right-letter-gradient-start), var(--right-letter-gradient-end));
+  border-radius: 0.25rem;
 }
 
 #version_update_text {
@@ -762,7 +805,10 @@ span.small {
   font-size: 1.5rem;
   font-weight: 600;
 }
-
+.header.title {
+  justify-content: space-around;
+  margin-bottom: 2.5rem;
+}
 .header button {
     width: 2.5rem;
     height: 2.5rem;
