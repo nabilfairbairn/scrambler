@@ -665,8 +665,9 @@ thead th:nth-child(6) {
   width: 7.5%;
 }
 th, td {
+  height: 1.6em;
   padding: 0.3em;
-  border: 2px dashed var(--neutral-dark-text-colour)
+  border: 2px dashed var(--neutral-dark-text-colour);
 }
 thead th {
   text-align: left;
