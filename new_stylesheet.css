@@ -1197,6 +1197,65 @@ div img {
   87% {
     box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
+  }
+  88% {
+    box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
+  }
+  89% {
+    box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
+  }
+  90% {
+    box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
+  }
+  91% {
+    box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
+  }
+  92% {
+    box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
+  }
+  93% {
+    box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
+  }
+  94% {
+    box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
+  }
+  95% {
+    box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
+  }
+  96% {
+    box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
+  }
+  97% {
+    box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
+  }
+  98% {
+    box-shadow: 0px 0px 0.27em 0 hsl(119, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.27em 0 hsl(119, 61%, 29%);
+  }
+  99% {
+    box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
+  }
+}
+/*
+@keyframes colorchange {
+  0% {
+    box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
+  }
+  87% {
+    box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
     -webkit-transform: scale(100%);
     transform: scale(100%);
   }
@@ -1272,7 +1331,7 @@ div img {
     transform: scale(100%);
     -webkit-transform: scale(100%);
   }
-}
+} */
 .wordRow.wrong .letterBox div {
     color: var(--wrong-text-colour);
 }
