@@ -1189,6 +1189,7 @@ div img {
   animation:  6s ease-in-out infinite colorchange;
 
 }
+/*
 @keyframes colorchange {
   0% {
     box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
@@ -1246,12 +1247,14 @@ div img {
     box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
   }
-}
-/*
+}*/
+
 @keyframes colorchange {
   0% {
     box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
+    -webkit-transform: scale(100%);
+    transform: scale(100%);
   }
   87% {
     box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
@@ -1331,7 +1334,7 @@ div img {
     transform: scale(100%);
     -webkit-transform: scale(100%);
   }
-} */
+} 
 .wordRow.wrong .letterBox div {
     color: var(--wrong-text-colour);
 }
