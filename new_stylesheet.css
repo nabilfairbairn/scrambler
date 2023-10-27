@@ -1336,14 +1336,14 @@ div img {
 
   98% {
     box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.27em 0 hsl(119, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
     transform: translateY(-1%);
     -webkit-transform: translateY(-1%);
   }
 
   100% {
     box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
+    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
     transform: translateY(0%);
     -webkit-transform: translateY(0%);
   }
