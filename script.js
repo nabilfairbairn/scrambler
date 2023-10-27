@@ -1,7 +1,7 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -12,17 +12,69 @@ const version = 'V1.2.0'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
 
+let lowest_loadin_timeout = 0
+let show_time_interval; // For updating time left until next puzzle. Not to be cleared
+
 history.scrollRestoration = "manual";
 window.onbeforeunload = function(){
       window.scrollTop(0);
 };
 
-function clear_puzzle() {
-    // clear old puzzle
+async function sleep(ms, load_quickly) {
+    if (load_quickly) {
+        ms = ms * 0.6
+    }
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+const answerButton = document.getElementById("answerBtn")
+
+async function clear_puzzle(dontclear=[]) {
+    // If puzzle never started loading, no need to unload, just clear
+
+    if (puzzle_loadin_started) {
+        // Unload puzzle, then clear contents
+
+        let highest_timeout = setTimeout(() => {}, 0)
+        while (lowest_loadin_timeout < highest_timeout) {
+            if (lowest_loadin_timeout != show_time_interval && !dontclear.includes(lowest_loadin_timeout)) {
+                clearTimeout(lowest_loadin_timeout)
+            
+            }
+            lowest_loadin_timeout++
+        }
+
+        // clear old puzzle
+        
+        let wordrows = rowHolder.querySelectorAll('.wordRow')
+        for (let i = 0; i < wordrows.length; i++)  {
+            let wordrow = wordrows[i]
+            let letterboxes = wordrow.querySelectorAll('.letterBox')
+
+            for (let j = 0; j < letterboxes.length; j++) {
+                let letterBox = letterboxes[j]
+                letterBox.classList.add('waiting', 'removing')
+                await sleep(50)
+            }
+            let reset_buttons = wordrow.querySelectorAll('.reset')
+            for (let j = 0; j < reset_buttons.length; j++) {
+                let resetbutton = reset_buttons[j]
+                resetbutton.classList.add('waiting')
+                await sleep(25)
+            }
+        }
+        await sleep(25)
+        document.getElementById('refresh_guess').classList.add('waiting')
+
+        await sleep(1000)
+    }
+
+    
+
+    // empty contents
     document.getElementById('rowHolder').textContent = ''    
     document.getElementById('rowHolder').classList.remove('finished')
-    document.getElementById('answerBtn').classList.remove('finished')
-
+    answerButton.classList.remove('finished')
     
 }
 
@@ -46,7 +98,10 @@ function clear_variables() {
             'answer_button_state': [],
             'whole_puzzle_state': [],
             'message': '', // sent by server
-            'validity': [] // sent by server
+            'validity': [], // sent by server
+            'started': false,
+            'finished': false,
+            'new_attempt': false
         },
         'hard': {
             'guesses_made': 0,
@@ -57,7 +112,10 @@ function clear_variables() {
             'answer_button_state': [],
             'whole_puzzle_state': [],
             'message': '',
-            'validity': []
+            'validity': [],
+            'started': false,
+            'finished': false,
+            'new_attempt': false
         }
     }
     puzzle = {
@@ -135,7 +193,10 @@ let user_states = {
         'answer_button_state': [],
         'whole_puzzle_state': [],
         'message': '', // sent by server
-        'validity': [] // sent by server
+        'validity': [], // sent by server
+        'started': false,
+        'finished': false,
+        'new_attempt': false
     },
     'hard': {
         'guesses_made': 0,
@@ -146,7 +207,10 @@ let user_states = {
         'answer_button_state': [],
         'whole_puzzle_state': [],
         'message': '',
-        'validity': []
+        'validity': [],
+        'started': false,
+        'finished': false,
+        'new_attempt': false
     }
 }
 
@@ -160,9 +224,14 @@ let puzzle = {
 }
 function getDiff() {
     var diff_scale = ['easy', 'hard']
+    if (!puzzle.difficulty) {
+        return 'easy'
+    }
     return diff_scale[puzzle.difficulty - 1] // 1 indexed difficulty
 }
-
+let puzzle_loaded = false
+let answer_button_moved = false
+let puzzle_loadin_started = false
 
 
 var message_banner; // Used for banner messages
@@ -288,46 +357,95 @@ function weightedCelebration(input) { //doesnt use input
 
 
 
+
 async function switchDifficulty(e) {
     const source_toggle = e.target
     const new_diff = source_toggle.value
 
+    const current_puzzle_started = user_states[getDiff()]['started']
+    const new_puzzle_started = user_states[new_diff]['started']
+
     if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
             return
         }
+    puzzle_loaded = false
+    let dontclear = [];
+
+    closeBannerMessage()
     
+    // disable start button until puzzle is loaded
+    answerButton.classList.add('changing')
+
+    function spin_button() {
+        if (new_diff == 'hard') {
+            answerButton.classList.add('spin_left')
+            dontclear.push(setTimeout(() => {answerButton.classList.remove('spin_left')}, 2000))
+        } else {
+            answerButton.classList.add('spin_right')
+            dontclear.push(setTimeout(() => {answerButton.classList.remove('spin_right')}, 2000))
+        }
+    }
+
+    if (!current_puzzle_started && !new_puzzle_started) {
+        spin_button()
+    }
+    
+    let tpromise = new Promise((resolve) => {
+        dontclear.push(setTimeout(() => { // when clearing puzzle, need to prevent clearing this timeout
+            if (puzzle_loaded) {
+                answerButton.classList.remove('changing')
+            }
+            resolve()
+        }, 1600))
+    })
+    
+
     // On save input, need to isolate last guess (with styling) and preceding input
     // on reload, only put styling on last guess
 
     // save current Input, including word styling
-    saveCurrentInput()
+    if (current_puzzle_started && puzzle_loaded) {
+        saveCurrentInput()
+    }
+    let current_words = puzzle.words.length
 
     // replace visible puzzle
     puzzle = todays_puzzles[new_diff]
 
-    clear_puzzle()
+
+    await clear_puzzle(dontclear)
+    
+    // if both not started, start spin
+
+    // else, wait for load then move
+
 
     // display current puzzle
-    create_puzzle()
+    await create_puzzle()
 
-    // if first time displaying hard, startPuzzle
+    let new_words = puzzle.words.length
 
-    // refresh user state, load in new guess
-    refreshUserInputs() // loads in last input and existing styling
-
-    if (new_diff == 'hard' && !opened_hard_puzzle) {
-        await startPuzzle()
-        opened_hard_puzzle = true
-
+    if (new_puzzle_started) {
+        if (current_words == new_words) { // spin button if button wont end up moving
+            spin_button()
+        }
+        await loadInPuzzle(true)
+        refreshUserInputs()
+    } else {
+        await move_start_button()
+        puzzle_loadin_started = false
     }
-    
+    puzzle_loaded = true
+    if (answer_button_moved) {
+        answerButton.classList.remove('changing')
+    }
+    await tpromise
 }
 
 
 async function saveCurrentInput() {
     var complete_words = [] // empty strings for incomplete words
 
-    var valid_depths = [] // not used in this function
     
     // mirrors code from process_guess_styling
     // iterate through puzzle words, extracting words from inputs
@@ -404,7 +522,7 @@ function parseArrayWithSpaces(array) {
     return result;
   }
 
-function declare_puzzle(httpResponse) {
+async function declare_puzzle(httpResponse) {
     // receives json containing both easy and hard puzzles
     // assigns both daily puzzle variables
     // creates puzzle for easy
@@ -431,11 +549,11 @@ function declare_puzzle(httpResponse) {
     
     // hide loader
     document.getElementById('puzzle_loader').style.display = 'none'
-    create_puzzle()
-
+    await create_puzzle()
+    puzzle_loaded = true
 }
 
-function fetchPuzzle() {
+async function fetchPuzzle() {
     // Get both daily puzzles
 
     const url = `${api_url_base}/puzzles`
@@ -980,7 +1098,7 @@ function processAllGuesses(all_guess_data) {
 function add_validity_styling() {
     const validity_list = user_states[getDiff()]['validity']
 
-    if (validity_list === undefined) { // if no guess, first word is always correct
+    if (validity_list === undefined || !validity_list.length) { // if no guess, first word is always correct
         style_guessword(document.getElementById(`${wordrow_id_prefix}0`), true)
     } else {
         for (let i = 0; i < validity_list.length; i++) {
@@ -1000,7 +1118,7 @@ function add_validity_styling() {
 
 async function loadPuzzleAndGuesses() {
     // start current puzzle, update attempt
-    await startPuzzle()
+    
 
     // load guesses for both puzzles
     loadAllGuesses()
@@ -1033,11 +1151,19 @@ function replace_user_state(all_guess_data) {
 
     Object.entries(all_guess_data).forEach(([diff, guess_data]) => {
         if (Object.keys(guess_data).length > 0) { // if no guess, pass
-            user_states[diff]['guesses_made'] = guess_data['guess_number']
-            user_states[diff]['last_guess'] = guess_data['words']
-            user_states[diff]['last_input'] = guess_data['words']
-            user_states[diff]['message'] = guess_data['message']
-            user_states[diff]['validity'] = guess_data['validity']
+            user_states[diff]['started'] = !!guess_data['started_at']
+            user_states[diff].puzzle_attempt = guess_data['last_incomplete_attempt'] ? guess_data['last_incomplete_attempt'] : guess_data['last_started_attempt'] + 1
+            user_states[diff]['new_attempt'] = !guess_data['last_incomplete_attempt']
+
+            if (guess_data['guess_number']) { // lazy check whether guess data exists
+                user_states[diff]['guesses_made'] = guess_data['guess_number']
+                user_states[diff]['last_guess'] = guess_data['words']
+                user_states[diff]['last_input'] = guess_data['words']
+                user_states[diff]['message'] = guess_data['message']
+                user_states[diff]['validity'] = guess_data['validity']
+            }
+            
+            
         }
     })
 
@@ -1181,27 +1307,40 @@ function refreshUserInputs() {
 }
 
 function reload_word_styling() {
-    // styling saved in user_states
-    let word_styling = user_states[getDiff()].word_styling
+    // if puzzle finished this session, refinish puzzle. skip rest.
+    if (user_states[getDiff()]['finished']) {
+        document.getElementById('rowHolder').classList.add('finished') // removed on switch
+        setLetterBoxesFinished()
+        document.getElementById('answerBtn').classList.add('finished')
+        document.getElementById('refresh_guess').classList.add('finished')
+
+    } else {
+        // styling saved in user_states
+        let word_styling = user_states[getDiff()].word_styling
+
+        
+        // classList is a space separated string
+        // word_styling is an array of classes
+        for (let i = 0; i < Object.keys(word_styling).length; i++) { 
+            let wordrow = get_nth_word(i)
+            wordrow.classList = word_styling[i].join(' ')
+        }
+
+        if (user_states[getDiff()].answer_button_state.length > 0) {
+            document.getElementById('answerBtn').classList = user_states[getDiff()].answer_button_state.join(' ')
+            
+        }
+        if (user_states[getDiff()].whole_puzzle_state.length > 0) {
+            document.getElementById('rowHolder').classList = user_states[getDiff()].whole_puzzle_state.join(' ')
+        }
+    }
 
     
-    // classList is a space separated string
-    // word_styling is an array of classes
-    for (let i = 0; i < Object.keys(word_styling).length; i++) { 
-        let wordrow = get_nth_word(i)
-        wordrow.classList = word_styling[i].join(' ')
-    }
-
-    if (user_states[getDiff()].answer_button_state.length > 0) {
-        document.getElementById('answerBtn').classList = user_states[getDiff()].answer_button_state.join(' ')
-        
-    }
-    if (user_states[getDiff()].whole_puzzle_state.length > 0) {
-        document.getElementById('rowHolder').classList = user_states[getDiff()].whole_puzzle_state.join(' ')
-    }
 }
 
 function fill_puzzle_with_guess(guess_words) {
+
+
     // Some elemnts of guess_word list are empty strings - no guess made for that word.
     let i = 0;
 
@@ -1219,6 +1358,11 @@ function fill_puzzle_with_guess(guess_words) {
         }
         i++
     })
+
+    if (user_states[getDiff()]['started'] && !puzzle_loadin_started) {
+        // load guess quickly
+        loadInPuzzle(true)
+    }
 }
 
 function setUser(responseData) {
@@ -2165,7 +2309,7 @@ function loadInRewardLeaderboard(data) {
     document.getElementById("reward_leaderboard_loader").style.display = 'none';
 }
 
-const process_puzzle_complete = (data) => {
+const process_puzzle_complete = async (data) => {
     refreshLeaderboard() // Just for giggles, do it even if puzzle wasn't first attempt
 
     if (user.id) { // only update if logged in
@@ -2182,7 +2326,7 @@ const process_puzzle_complete = (data) => {
         
         displayLogin() //reresh total user points
     }
-
+    await sleep(3000)
     showPointsPopup(data) //popup with points earned summary
 }
 
@@ -2247,8 +2391,11 @@ async function process_guess_styling(real_guess) {
     // CANT use truey value of validity because array of bools with any false will return false
     if (real_guess && !validity.some(x => x === false)) {
         document.getElementById('rowHolder').classList.add('finished') // removed on switch
+        setLetterBoxesFinished()
         document.getElementById('answerBtn').classList.add('finished')
         document.getElementById('refresh_guess').classList.add('finished')
+
+        user_states[getDiff()]['finished'] = true
 
         // correct guess shouldn't ever be received from API, but adding check just in case
         if (real_guess) { // push complete puzzle to API
@@ -2284,50 +2431,27 @@ async function process_guess_styling(real_guess) {
     
     return real_guess
 
-      let follows_rule = true
-      // If !one-letter-diff-shown and w < words.length-1 and w and w+1 are complete, check one-letter-diff. If violated, one-letter-diff-shown and show rule
-      if (!mistake_banner_raised && w > 0) { // > 0
-        const [prev_word, prev_received, prev_answers] = get_depth(w-1) // prev_word, prev_received, prev_answers = get_depth(w-1)
-        if (word_complete(guess_received, answer_words) && word_complete(prev_received, prev_answers)) { // check if word complete w/o answers?
-            const n_letters_changed = calc_letters_changed(guess_received, prev_received) // prec_received
-            if (n_letters_changed != 1) {
-                follows_rule = false
-                mistake_banner_raised = true
-                rule_break_notice = `Careful! You changed more than one letter between ${prev_received} and ${guess_received}.`
-
-                // If words contain same letters, change warning
-                if (n_letters_changed == 0) {
-                    rule_break_notice = `Whoops! You didn't change any letters between ${prev_received} and ${guess_received}.`
-                }
-
-            }
-        }
-      }
-
-       
-        let validity_status = await is_word_valid(guess_word, guess_received, answer_words, valid_depths) //-2 is invalid, -1 is incomplete, 0 is unattempted, 1 is valid
-        console.log(guess_received, validity_status)
-        // Track answers received for pushing full guess to API
-        if (validity_status == -2 || validity_status == 1) {
-            complete_words.push(guess_received) // string
-        } else {
-            complete_words.push('')
-        }
-
-        if (!follows_rule) {
-            valid_depths.push(false)
-          } else {
-            valid_depths.push(validity_status == 1 ? true : false)
-          }
-        
-
-        
-      
-      
-    
     
 }
 
+async function setLetterBoxesFinished() {
+    for (let i = 0; i < puzzle.words.length; i++) {
+        let [row, _, __] = get_depth(i)
+        
+        let letters = row.querySelectorAll('.letterBox')
+        animateLetters(letters)
+        
+        await sleep(100)
+        // wait between rows
+    }
+}
+async function animateLetters(letters) {
+    for (let j = 0; j < letters.length; j++) {
+        let letter = letters[j]
+        letter.classList.add('finished')
+        await sleep(100)
+    }
+}
 function style_letterBox(element) {
     
     //element.style.width = letterBoxHeight
@@ -2356,7 +2480,131 @@ function resetRowInput(e) {
     
 }
 
-function create_puzzle() {
+async function move_start_button() {
+    answerButton.style.top = '2.5em'
+    answerButton.classList.add('waiting')
+    await sleep(1400)
+    answer_button_moved = true
+
+    if (!user_states[getDiff()]['started']) {
+        answerButton.innerText = 'Start'
+    } else {
+        answerButton.innerText = 'Guess'
+    }
+
+}
+
+
+async function loadInPuzzle(load_quickly=false) {
+    // load quickly is bool
+
+    // If button position stays the same, spin
+    // add spin class, wait until spin finished, remove spin class
+    puzzle_loadin_started = true
+
+    lowest_loadin_timeout = setTimeout(() => {}, 0)
+
+    console.log('loadin')
+
+
+    answerButton.classList.remove('waiting')
+
+        // find where answerButton should sit
+        let rowHolder = document.getElementById('rowHolder').getBoundingClientRect()
+        let board_bottom = rowHolder.height
+        answerButton.style.top = `${board_bottom}px`
+        answerButton.classList.add('changing')
+
+
+        await sleep(1600, load_quickly) // wait for button to move to bottom + extra time
+
+        let answerButtonRect = answerButton.getBoundingClientRect()
+        let answerButtonBottom = answerButtonRect.height + board_bottom
+
+        let refresh_button = document.getElementById('refresh_guess')
+        refresh_button.style.top = `calc(${answerButtonBottom}px + 1.5rem + 0.5rem)` //answerBtn margin total 2rem
+        
+
+        let reset_buttons = []
+
+        for (let i = puzzle.words.length - 1; i >= 0; i--) { // starting with last row
+            
+            let [wordrow, _, __] = get_depth(i)
+            let letterboxes = wordrow.querySelectorAll('.letterBox')
+            
+            let resetButtons = wordrow.querySelectorAll('.reset')
+            reset_buttons.push(...resetButtons)
+            
+            loadWordRow(letterboxes, load_quickly) // uses inner await but this function doesnt wait for it
+
+            if (load_quickly) {
+                load_reset_buttons(reset_buttons, load_quickly)
+                reset_buttons = []
+            }
+
+            await sleep(450, load_quickly) // wait  between rows
+            
+        }
+        answerButton.innerText = 'Guess'
+        await sleep(900, load_quickly)
+        // load reset buttons last
+        
+        if (!load_quickly) {
+            load_reset_buttons(reset_buttons, load_quickly)
+        }
+
+        await sleep(300, load_quickly)
+        
+        refresh_button.classList.remove('waiting')
+        
+        await sleep(1400, load_quickly)
+        
+        answerButton.classList.remove('changing')
+
+        if (!user_states[getDiff()]['started'] || user_states[getDiff()]['new_attempt']) {
+            startPuzzle()
+            user_states[getDiff()]['started'] = true
+        }
+        
+}
+
+async function load_reset_buttons(buttons, load_quickly) {
+    for (let i = 0; i < buttons.length; i++) {
+        let button = buttons[i]
+        button.classList.remove('waiting')
+        await sleep(150, load_quickly) // will be double between each button because invisible button on left
+    }
+}
+
+function loadLetterBox(letterBox) {
+    letterBox.classList.add('loading'); // loading prevents pseudo-element indicators from overlapping box
+        letterBox.classList.remove('waiting');
+        setTimeout(function () {
+            letterBox.classList.remove('loading');
+        }, 2100);
+}
+
+async function loadWordRow(letterboxes, load_quickly) {
+  for (let j = 0; j < 3; j++) {
+    // load middle letter first, then adjacent 2, then last 2
+
+    if (j == 0) {
+        let letterBox = letterboxes[2]
+        loadLetterBox(letterBox)
+
+
+    } else {
+        let lbxs = [letterboxes[2-j], letterboxes[2+j]]
+        lbxs.forEach((letterBox) => {
+            loadLetterBox(letterBox)
+        })
+    }
+    await sleep(450, load_quickly) // between letters of box
+
+  }
+}
+
+async function create_puzzle() {
   set_global_style_variables(puzzle['words'])
 
   var rowHolder = document.getElementById("rowHolder")
@@ -2387,7 +2635,7 @@ function create_puzzle() {
       if (letter === "_") {
         let input = document.createElement("div")
         input.appendChild(document.createElement('div'))
-        input.classList.add("letterInput", 'letterBox', 'flex-item')
+        input.classList.add("letterInput", 'letterBox', 'flex-item', 'waiting')
         style_letterBox(input)
         input.tabIndex = i*1 + j
         input.onblur = function() {
@@ -2407,7 +2655,7 @@ function create_puzzle() {
       } else {
         var letter_holder = document.createElement("div")
         style_letterBox(letter_holder)
-        letter_holder.classList.add("letterBox", 'flex-item')
+        letter_holder.classList.add("letterBox", 'flex-item', 'waiting')
 
         let innerTextNode = document.createElement('div')
         letter_holder.appendChild(innerTextNode)
@@ -2418,6 +2666,7 @@ function create_puzzle() {
     }
     // Add reset button to end of each row
     let reset_button = createResetButton(i)
+    reset_button.classList.add('waiting')
     row.appendChild(reset_button)
   }
   determine_all_changed_letters()
@@ -2610,7 +2859,6 @@ var keyboard = document.getElementById('keyboard-cont')
         const keyboard_height = keyboard.getBoundingClientRect().height
         const windowHeight = window.innerHeight
         r.style.setProperty('--window-height', `${windowHeight}px`)
-
 
         let containallNewPaddingHeight;
 
@@ -3054,12 +3302,12 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
 
 
 window.onload = async function() {
-    clear_puzzle()
+    await clear_puzzle()
     // Need solution for resetting all user variables
 
     clear_variables()
 
-    fetchPuzzle()
+    await fetchPuzzle()
 
     document.getElementById('send_message').addEventListener('click', sendContactMessage)
     
@@ -3155,7 +3403,7 @@ window.onload = async function() {
     next_game.innerHTML = timeLeft
     }
         
-  setInterval(ShowTime ,1000);
+  show_time_interval = setInterval(ShowTime ,1000);
 
 
   document.querySelectorAll('.open-fs-modal-button').forEach(element => {
@@ -3202,9 +3450,23 @@ window.onload = async function() {
     }
   })
 
-  
-  document.getElementById("answerBtn").onclick = function() {
-    process_guess()
+
+
+  // Add guess button and refresh button heights to gamebox, since they are positioned absolute, + 1rem, the regular gamebox padding, 2rem for answerButton padding
+  const buttonheights = document.getElementById('refresh_guess').getBoundingClientRect().height + document.getElementById('answerBtn').getBoundingClientRect().height
+  document.getElementById('gameBox').style.paddingBottom = `calc(1rem + 2rem + ${buttonheights}px)` 
+
+  answerButton.onclick = async function() {
+    if (!user_states[getDiff()]['started']) {
+        
+        
+        await loadInPuzzle() // normal timing
+        // send start puzzle to api
+
+    } else {
+        process_guess()
+    }
+
   }
 
   // send load info and IP to db

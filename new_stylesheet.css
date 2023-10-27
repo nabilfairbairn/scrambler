@@ -280,12 +280,13 @@ button {
 
 #gameBox {
     /* border: 0.2em solid var(--almost-black);
-  border-radius: 1em; */
-  overflow: hidden;
+  border-radius: 1em; 
+  overflow: hidden;*/
   transition: margin 1s cubic-bezier(0.17, 0.04, 0.03, 0.94);
   align-self: stretch;
   padding: 1rem;
   padding-top: 0;
+  padding-bottom: 1000px; /* Height of both guess and refresh last guess buttons, which are positioned absolute*/
 }
 button {
   -webkit-appearance: none;
@@ -504,9 +505,12 @@ input[type="submit"], .input_button {
 }
 
 #refresh_guess {
+  position: absolute;
+  box-sizing: border-box;
   align-self: center;
   width: max-content;
   max-width: 10rem;
+  transition: 0.8s all ease-in-out, opacity 1.6s;
 }
     
 
@@ -1041,6 +1045,7 @@ div img {
 .reset {
   display: flex;
   height: 2rem;
+  transition: all 0.6s ease-in-out, opacity 2s;
 
 }
 .highlight {
@@ -1152,24 +1157,98 @@ div img {
 .banner span {
   font-weight: 500;
 }
-.wordRow.correct .letterBox div{
-    /*box-shadow: var(--rightglow)*/
-    
-    color: transparent;
+.letterBox div {
+  color: inherit;
+  transition: all 0.8s ease-in-out; 
 
-    background: var(--Green-Glow-Grad, linear-gradient(180deg, #134A12 0%, #1F781D 30%, #18A516 75%)); 
+  background: linear-gradient(180deg, hsl(119, 61%, 18%) 0%, hsl(119, 61%, 29%) 30%, hsl(119, 76%, 37%) 75%); 
     background-clip: text;
 -webkit-background-clip: text;
 -moz-background-clip: text;
--webkit-text-fill-color: transparent;
+}
+.wordRow.correct .letterBox div{
+    /*box-shadow: var(--rightglow)*/
+    
+    color: rgba(365, 365, 365, 0);
+
+    background: linear-gradient(180deg, hsl(119, 61%, 18%) 0%, hsl(119, 61%, 29%) 30%, hsl(119, 76%, 37%) 75%); 
+    background-clip: text;
+-webkit-background-clip: text;
+-moz-background-clip: text;
+
+
+}
+
+.rowHolder.finished .wordRow .letterBox {
+  box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
+  pointer-events: None;
+}
+.rowHolder .wordRow .letterBox.finished {
+  
+  animation:  6s ease-in-out reverse infinite colorchange;
+
+}
+@keyframes colorchange {
+  0% {
+    box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
+  }
+  87% {
+    box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
+    transform: scale(100%);
+  }
+  88% {
+    box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
+    transform: scale(104%);
+  }
+  89% {
+    box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
+    transform: scale(106%);
+  }
+  90% {
+    box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
+    transform: scale(108%);
+  }
+  91% {
+    box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
+    transform: scale(110%);
+  }
+  92% {
+    box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
+    transform: scale(112%);
+  }
+  93% {
+    box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
+    transform: scale(115%);
+  }
+  94% {
+    box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
+    transform: scale(112%);
+  }
+  95% {
+    box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
+    transform: scale(110%);
+  }
+  96% {
+    box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
+    transform: scale(108%);
+  }
+  97% {
+    box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
+    transform: scale(106%);
+  }
+  98% {
+    box-shadow: 0px 0px 0.27em 0 hsl(119, 61%, 29%);
+    transform: scale(104%);
+  }
+  99% {
+    box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
+    transform: scale(100%);
+  }
 }
 .wordRow.wrong .letterBox div {
     color: var(--wrong-text-colour);
 }
-.rowHolder.finished .wordRow .letterBox {
-  box-shadow: 0px 0px 0.1em 0 var(--right-letter-gradient-end);
-  pointer-events: None;
-}
+
 .rowHolder.finished + button,.rowHolder.finished .reset, #refresh_guess.finished{
   pointer-events: None;
 }
@@ -1227,8 +1306,8 @@ div img {
   font-weight: 600;
   font-size: 1em;
   line-height: 1em;
-  
   position: relative;
+  
   background-color: var(--gray-tile);
   margin: var(--letterBoxMargin);
   border-bottom: 0.06em solid var(--gray-tile-shadow);
@@ -1247,12 +1326,34 @@ div img {
   align-items: center;
   aspect-ratio: 1/1;
   max-width: 5rem;
+  
+  transition: 0.45s transform ease-out, opacity 1.8s, box-shadow 0.4s ease-in;
 
 }
 .letterBox div {
   font-size: 1.35em;
 }
+.letterBox.waiting, #refresh_guess.waiting{
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(calc(var(--letterBoxMargin) * 3.5));
+}
+.reset.waiting {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(calc(var(--letterBoxMargin) * 1.5));
+}
+.letterBox.loading:before, .letterBox.loading:after,  .letterBox.waiting:before, .letterBox.waiting:after{
+  opacity: 0;
+}
+.letterBox.removing:before, .letterBox.removing:after {
+  display: none;
+}
 
+#answerBtn.waiting {
+  position: absolute;
+  top: 2.5em;
+}
 
 
 .rowHolder.ex{
@@ -1284,16 +1385,16 @@ div img {
   height: 200%;
   width: 0.5em;
   top: 0;
-  left: 0;
+  right: 0;
   background: linear-gradient(to right, rgba(229, 172, 142, 0), rgba(255,255,255,0.5) 50%, rgba(229, 172, 142, 0));
-  transform: rotate(30deg);
+  transform: rotate(45deg);
   transform-origin: top right;
-  animation: sheen 6s ease-out 1s infinite;
+  animation: sheen 6s ease-out infinite;
 }
 @keyframes sheen {
   
-    0% {transform: translateX(-100%) rotate(30deg) }
-    35%, 100%{transform: translateX(3800%) rotate(30deg)}
+    0% {transform: translateY(-50%) rotate(45deg) }
+    35%, 100%{transform: translateY(100%) rotate(45deg)}
 
   }
 
@@ -1317,11 +1418,13 @@ div img {
   margin-right: auto;
 
   transform: translateY(100%);
-  transition: ease-in 0.3s;
+  /* transition: all ease-in 0.3s; */
+  transition: all ease-in-out 1s !important;
 }
 .letterBox:after {
   transform: translateY(-100%);
-  transition: ease-in 0.3s;
+  /* transition: all ease-in 0.3s; */
+  transition: all ease-in-out 1s !important;
   z-index: -1;
   content: "";
     position: absolute;
@@ -1362,7 +1465,6 @@ div img {
   text-align: center;
   caret-color: transparent;
   text-transform: uppercase;
-  transition: all 0.2s ease-in;
 }
 
 
@@ -1541,6 +1643,8 @@ div img {
   background-color: var(--accent-blue);
   margin: 0.5em;
   border: none;
+
+  transform-origin: center;
   transition: 0.1s ease-in-out all;
 }
 .input_button.accentButton {
@@ -1557,7 +1661,38 @@ div img {
 
 }
 #answerBtn {
+  position: absolute;
+  top: 0;
   margin-bottom: 1.5rem;
+  width: 4.2em;
+  transition: 1.4s all ease-in-out, color 1.6s;
+}
+#answerBtn.spin_left {
+  animation: rotate_left 2s ease-in-out forwards;
+}
+#answerBtn.spin_right {
+  animation: rotate_right 2s ease-in-out forwards;
+}
+@keyframes rotate_left {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes rotate_right {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#answerBtn.changing {
+  color: var(--accent-blue) !important;
+  pointer-events: none;
 }
 .button.answerButton:active {
   box-shadow: none;
