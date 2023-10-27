@@ -8,7 +8,7 @@ const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.2.0'
+const version = 'V1.2.1'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
 
@@ -54,19 +54,19 @@ async function clear_puzzle(dontclear=[]) {
             for (let j = 0; j < letterboxes.length; j++) {
                 let letterBox = letterboxes[j]
                 letterBox.classList.add('waiting', 'removing')
-                await sleep(50)
+                await sleep(30)
             }
             let reset_buttons = wordrow.querySelectorAll('.reset')
             for (let j = 0; j < reset_buttons.length; j++) {
                 let resetbutton = reset_buttons[j]
                 resetbutton.classList.add('waiting')
-                await sleep(25)
+                await sleep(20)
             }
         }
-        await sleep(25)
+        await sleep(20)
         document.getElementById('refresh_guess').classList.add('waiting')
 
-        await sleep(1000)
+        await sleep(500)
     }
 
     
@@ -2516,7 +2516,7 @@ async function loadInPuzzle(load_quickly=false) {
         answerButton.classList.add('changing')
 
 
-        await sleep(1600, load_quickly) // wait for button to move to bottom + extra time
+        await sleep(750, load_quickly) // wait for button to move to bottom + extra time
 
         let answerButtonRect = answerButton.getBoundingClientRect()
         let answerButtonBottom = answerButtonRect.height + board_bottom
@@ -2542,11 +2542,11 @@ async function loadInPuzzle(load_quickly=false) {
                 reset_buttons = []
             }
 
-            await sleep(450, load_quickly) // wait  between rows
+            await sleep(300, load_quickly) // wait  between rows
             
         }
         answerButton.innerText = 'Guess'
-        await sleep(900, load_quickly)
+        await sleep(300, load_quickly)
         // load reset buttons last
         
         if (!load_quickly) {
@@ -2557,7 +2557,7 @@ async function loadInPuzzle(load_quickly=false) {
         
         refresh_button.classList.remove('waiting')
         
-        await sleep(1400, load_quickly)
+        await sleep(500, load_quickly)
         
         answerButton.classList.remove('changing')
 
@@ -2599,7 +2599,7 @@ async function loadWordRow(letterboxes, load_quickly) {
             loadLetterBox(letterBox)
         })
     }
-    await sleep(450, load_quickly) // between letters of box
+    await sleep(300, load_quickly) // between letters of box
 
   }
 }
