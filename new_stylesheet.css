@@ -1253,86 +1253,97 @@ div img {
   0% {
     box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
-    -webkit-transform: scale(100%);
-    transform: scale(100%);
   }
+
   87% {
     box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
-    -webkit-transform: scale(100%);
-    transform: scale(100%);
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
   }
+
   88% {
     box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
-    transform: scale(104%);
-    -webkit-transform: scale(104%);
+    transform: translateY(-1%);
+    -webkit-transform: translateY(-1%);
   }
+
   89% {
     box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
-    transform: scale(106%);
-    -webkit-transform: scale(106%);
+    transform: translateY(-2%);
+    -webkit-transform: translateY(-2%);
   }
+
   90% {
     box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
-    transform: scale(108%);
-    -webkit-transform: scale(108%);
+    transform: translateY(-3%);
+    -webkit-transform: translateY(-3%);
   }
+
   91% {
     box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
-    transform: scale(110%);
-    -webkit-transform: scale(110%);
+    transform: translateY(-4%);
+    -webkit-transform: translateY(-4%);
   }
+
   92% {
     box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
-    transform: scale(112%);
-    -webkit-transform: scale(112%);
+    transform: translateY(-6%);
+    -webkit-transform: translateY(-6%);
   }
+
   93% {
     box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
-    transform: scale(115%);
-    -webkit-transform: scale(115%);
+    transform: translateY(-8%);
+    -webkit-transform: translateY(-8%);
   }
+
   94% {
     box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
-    transform: scale(112%);
-    -webkit-transform: scale(112%);
+    transform: translateY(-6%);
+    -webkit-transform: translateY(-6%);
   }
+
   95% {
     box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
-    transform: scale(110%);
-    -webkit-transform: scale(110%);
+    transform: translateY(-4%);
+    -webkit-transform: translateY(-4%);
   }
+
   96% {
     box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
-    transform: scale(108%);
-    -webkit-transform: scale(108%);
+    transform: translateY(-3%);
+    -webkit-transform: translateY(-3%);
   }
+
   97% {
     box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
-    transform: scale(106%);
-    -webkit-transform: scale(106%);
+    transform: translateY(-2%);
+    -webkit-transform: translateY(-2%);
   }
+
   98% {
     box-shadow: 0px 0px 0.27em 0 hsl(119, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.27em 0 hsl(119, 61%, 29%);
-    transform: scale(104%);
-    -webkit-transform: scale(104%);
+    transform: translateY(-1%);
+    -webkit-transform: translateY(-1%);
   }
+
   99% {
     box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
-    transform: scale(100%);
-    -webkit-transform: scale(100%);
+    transform: translateY(0%);
+    -webkit-transform: translateY(0%);
   }
 } 
 .wordRow.wrong .letterBox div {
