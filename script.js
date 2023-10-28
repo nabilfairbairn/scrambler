@@ -2766,7 +2766,10 @@ function logNavEvent(nav_name, nav_source) {
         user_ip: user.ip,
         nav_source: nav_source
     }
-    fetchPostWrapper('/nav', params, null)
+    if (user_id != 3) {
+        fetchPostWrapper('/nav', params, null)
+    }
+    
 }
 
 function logVersionSeen(e) {
