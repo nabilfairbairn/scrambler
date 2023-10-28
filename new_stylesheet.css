@@ -1389,20 +1389,17 @@ div img {
   }
 }
 .letterBox.removing {
-  animation: 0.3s ease-in forwards slideOut !important;
+  animation: 0.45s ease-in forwards slideOut !important;
 }
 @keyframes slideOut {
   0% {
     opacity: 1;
     transform: translateY(0);
+    
   }
   20% {
-    opacity: 0.8;
-    transform: translateY(calc(0.25 * var(--letterBoxMargin)));
-  }
-  40% {
-    opacity: 0.6;
-    transform: translateY(calc(-0.25 * var(--letterBoxMargin)));
+    opacity: 1;
+    transform: translateY(calc(-0.75 * var(--letterBoxMargin)));
   }
   100% {
     opacity: 0;
