@@ -510,7 +510,7 @@ input[type="submit"], .input_button {
   align-self: center;
   width: max-content;
   max-width: 10rem;
-  transition: 0.5s all ease-in-out, opacity 1.6s;
+  transition: 0.45s all ease-in-out, opacity 1.6s;
 }
     
 
@@ -1045,7 +1045,7 @@ div img {
 .reset {
   display: flex;
   height: 2rem;
-  transition: all 0.4s ease-in-out, opacity 2s;
+  transition: all 0.45s ease-in-out, opacity 1.6s;
 
 }
 .highlight {
@@ -1178,76 +1178,15 @@ div img {
 
 
 }
-
-.rowHolder.finished .wordRow .letterBox {
-  box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
-  pointer-events: None;
-}
 .rowHolder.finished .wordRow .letterBox.finished {
   box-sizing: border-box;
-  -webkit-animation:  6s ease-in-out infinite colorchange;
-  animation:  6s ease-in-out infinite colorchange;
+  pointer-events: None;
+  -webkit-animation:  6s ease-in-out 1s infinite colorchange;
+  animation:  6s ease-in-out 1s infinite colorchange;
+  transition: box-shadow ease-in 0.5s;
+  box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
 
 }
-/*
-@keyframes colorchange {
-  0% {
-    box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.2em 0 hsl(119, 61%, 29%);
-  }
-  87% {
-    box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
-  }
-  88% {
-    box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
-  }
-  89% {
-    box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
-  }
-  90% {
-    box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
-  }
-  91% {
-    box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
-  }
-  92% {
-    box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
-  }
-  93% {
-    box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
-  }
-  94% {
-    box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
-  }
-  95% {
-    box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
-  }
-  96% {
-    box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
-  }
-  97% {
-    box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
-  }
-  98% {
-    box-shadow: 0px 0px 0.27em 0 hsl(119, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.27em 0 hsl(119, 61%, 29%);
-  }
-  99% {
-    box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
-    -webkit-box-shadow: 0px 0px 0.23em 0 hsl(119, 61%, 29%);
-  }
-}*/
 
 @keyframes colorchange {
   0% {
@@ -1257,91 +1196,90 @@ div img {
     transform: scale(100%);
   }
 
-  87% {
+  1% {
     box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(149, 61%, 29%);
     -webkit-transform: scale(100%);
     transform: scale(100%);
   }
 
-  88% {
+  2% {
     box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(179, 61%, 29%);
     transform: scale(101%);
     -webkit-transform: scale(101%);
   }
 
-  89% {
+  3% {
     box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(209, 61%, 29%);
     transform: scale(102%);
     -webkit-transform: scale(102%);
   }
 
-  90% {
+  4% {
     box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(239, 61%, 29%);
     transform: scale(103%);
     -webkit-transform: scale(103%);
   }
 
-  91% {
+  5% {
     box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(269, 61%, 29%);
     transform: scale(104%);
     -webkit-transform: scale(104%);
   }
 
-  92% {
+  6% {
     box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(299, 61%, 29%);
     transform: scale(106%);
     -webkit-transform: scale(106%);
   }
 
-  93% {
+  7% {
     box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(329, 61%, 29%);
     transform: scale(108%);
     -webkit-transform: scale(108%);
   }
 
-  94% {
+  8% {
     box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(359, 61%, 29%);
     transform: scale(106%);
     -webkit-transform: scale(106%);
   }
 
-  95% {
+  9% {
     box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(29, 61%, 29%);
     transform: scale(104%);
     -webkit-transform: scale(104%);
   }
 
-  96% {
+  10% {
     box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(59, 61%, 29%);
     transform: scale(103%);
     -webkit-transform: scale(103%);
   }
 
-  97% {
+  11% {
     box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(89, 61%, 29%);
     transform: scale(102%);
     -webkit-transform: scale(102%);
   }
 
-  98% {
+  12% {
     box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
     transform: scale(101%);
     -webkit-transform: scale(101%);
   }
-
-  100% {
+  13%, 100%{
     box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
     -webkit-box-shadow: 0px 0px 0.3em 0 hsl(119, 61%, 29%);
     transform: scale(100%);
@@ -1429,9 +1367,47 @@ div img {
   align-items: center;
   aspect-ratio: 1/1;
   max-width: 5rem;
-  
-  transition: 0.3s transform ease-out, opacity 1.2s, box-shadow 0.4s ease-in;
-
+  transition: box-shadow 0.4s ease-in;
+  animation: 0.45s ease-out forwards bounceIn;
+}
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(var(--letterBoxMargin) * 3.5));
+  }
+  60% {
+    opacity: 0.6;
+    transform: translateY(calc(-0.5 * var(--letterBoxMargin)));
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(calc(var(--letterBoxMargin) * 0.25));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.letterBox.removing {
+  animation: 0.3s ease-in forwards slideOut !important;
+}
+@keyframes slideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  20% {
+    opacity: 0.8;
+    transform: translateY(calc(0.25 * var(--letterBoxMargin)));
+  }
+  40% {
+    opacity: 0.6;
+    transform: translateY(calc(-0.25 * var(--letterBoxMargin)));
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(calc(var(--letterBoxMargin) * 3.5));
+  }
 }
 .letterBox div {
   font-size: 1.35em;
@@ -1439,7 +1415,8 @@ div img {
 .letterBox.waiting, #refresh_guess.waiting{
   opacity: 0;
   pointer-events: none;
-  transform: translateY(calc(var(--letterBoxMargin) * 3.5));
+  /*transform: translateY(calc(var(--letterBoxMargin) * 3.5));*/
+  animation: none;
 }
 .reset.waiting {
   opacity: 0;
@@ -1492,7 +1469,8 @@ div img {
   background: linear-gradient(to right, rgba(229, 172, 142, 0), rgba(255,255,255,0.5) 50%, rgba(229, 172, 142, 0));
   transform: rotate(45deg);
   transform-origin: top right;
-  animation: sheen 6s ease-out infinite;
+  transform: translateY(-50%);
+  animation: sheen 6s ease-out 1s infinite;
 }
 @keyframes sheen {
   
@@ -1520,6 +1498,8 @@ div img {
   margin-left: auto;
   margin-right: auto;
 
+  opacity: 0; /* Keep hidden until showing */
+
   transform: translateY(100%);
   /* transition: all ease-in 0.3s; */
   transition: all ease-in-out 1s !important;
@@ -1536,6 +1516,8 @@ div img {
     height: 9%;
     background: var(--accent-blue);
     clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+
+    opacity: 0; /* Keep hidden until showing */
   
     /* sides, top, bottom, radius, etc need to be calculated based on border size */
     top: calc(100% + 0.1rem);
@@ -1546,9 +1528,11 @@ div img {
 
 }
 .letterBox.letterRemoved:after {
+  opacity: 1;
   transform: translateY(0)
 }
 .letterBox.letterAdded:before {
+  opacity: 1;
   transform: translateY(0)
 }
 
@@ -1768,7 +1752,7 @@ div img {
   top: 0;
   margin-bottom: 1.5rem;
   width: 4.2em;
-  transition: 0.7s all ease-in-out, color 0.8s;
+  transition: 0.6s all ease-in-out, color 0.6s;
 }
 #answerBtn.spin_left {
   animation: rotate_left 2s ease-in-out forwards;
