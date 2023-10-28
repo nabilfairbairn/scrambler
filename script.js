@@ -3535,9 +3535,10 @@ window.onload = async function() {
   .then(data => {
       user.ip = data.ip
       fetchPostWrapper('/visit', {ip: data.ip}, null)
+  })
+  .catch(err => {
+    create_random_ip()
   });
-  if (!user.ip) {
-      create_random_ip()
-  }
+  
   
 }
