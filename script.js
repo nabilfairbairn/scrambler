@@ -1361,7 +1361,7 @@ async function reload_word_styling() {
 
 function fill_puzzle_with_guess(guess_words) {
 
-    if (!guess_word || guess_words == null) {
+    if (!guess_words || guess_words == null) {
         return
     }
     // Some elemnts of guess_word list are empty strings - no guess made for that word.
