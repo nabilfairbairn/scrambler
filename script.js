@@ -1361,7 +1361,7 @@ async function reload_word_styling() {
 
 function fill_puzzle_with_guess(guess_words) {
 
-    if (!guess_words || guess_words == null) {
+    if (!guess_word || guess_words == null) {
         return
     }
     // Some elemnts of guess_word list are empty strings - no guess made for that word.
@@ -2766,7 +2766,7 @@ function logNavEvent(nav_name, nav_source) {
         user_ip: user.ip,
         nav_source: nav_source
     }
-    if (user_id != 3) {
+    if (!user.id || user.id != 3) {
         fetchPostWrapper('/nav', params, null)
     }
     
