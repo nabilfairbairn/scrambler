@@ -665,11 +665,21 @@ function loadDailyLeaderboard(lb, diff) {
 
     lb_tbody.textContent = ''
 
+    let first_day = false
+
     for (let i = 0; i < lb.length && i < 25; i++) {
+        
+
         let lb_entry = lb[i]
         let rank = i + 1
         let username = lb_entry['username']
         let points = lb_entry['total_points']
+
+        if (points == 0) {
+            first_day = true
+            break
+        }
+
         let fast_bonus = create_medal(lb_entry['fast_bonus'], 'small')
         let guess_bonus = create_medal(lb_entry['guess_bonus'], 'small')
 
@@ -678,6 +688,10 @@ function loadDailyLeaderboard(lb, diff) {
     }
     if (lb.length == 0) {
         let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', ''])
+        lb_tbody.appendChild(row)
+    }
+    if (first_day) {
+        let row = createTableRow(['', `Come back tomorrow for the new ranking on today's puzzle!`, '', '', ''])
         lb_tbody.appendChild(row)
     }
 }
