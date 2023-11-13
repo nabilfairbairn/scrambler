@@ -609,8 +609,6 @@ async function fetchPuzzle() {
 
 async function refreshLeaderboard() {
     const leaderboard_params = {
-        easy_id: todays_puzzles.easy.id,
-        hard_id: todays_puzzles.hard.id,
         week_start: getMostRecentWeekday(6) //6 for saturday
     }
 
