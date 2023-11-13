@@ -39,6 +39,7 @@
   
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
       rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />  
 
   <script type="module" src="script.js"></script>
   <script type="module" src="puzzles.js"></script>
@@ -64,9 +65,9 @@
               <div id="create_profile_button" class="left_text link">Create A Profile</div>
               <div id="forgot_login_button" class="right_text link">Forgot Login?</div>
             </div>
-            <hr>
+            <br>
             <div id="login_button" class="input_button accentButton"><div class="buttontext">Login</div></div>
-            <hr><div><hr class="thick"></div><hr>
+            <br><div><hr class="thick"></div><br>
             <div id="guest_button" class="input_button neutralbutton"><div class="buttontext">Play as Guest</div></div>
             <!-- <div id="login_loader" class="dot-carousel"></div> -->
         </form>
@@ -121,14 +122,14 @@
           <p>I don't have a strong order decided for building these - but this is what you can expect by February 2024, maybe sooner:</p>
           <ul>
             <li><p>Social groups. You'll be able to add friends and have a dedicated leaderboard tab for the people in your social group.</p></li>
-            <li><p>Sharable log of your puzzle guesses. You know the green and yellow emojis Wordle uses? Yeah like that.</p></li>
+            <li><p><s>Sharable log of your puzzle guesses. You know the green and yellow emojis Wordle uses? Yeah like that.</s></p></li>
             <li><p>Past Puzzles. You won't get any <i>bonuses</i> from playing them, but you will get the base points.</p></li>
             <li><p>A real domain name. This will also come with a paid server, so there's no waiting for a puzzle to load</p></li>
             <li><p>A new game-mode for finding all possible answers of a puzzle. This will feature a sweet branching tree that will mark your progress</p></li>
             <li><p>Weekly Challenge. A much longer puzzle. This will also be where I test out different possible rule-sets</p></li>
             <li><p><s>Suggest a word. You'll highlight the spot in a puzzle and what word you think it's missing. It'll get sent to me to review and add to the puzzle while it's still up</s></p></li>
-            <li><p>Updating the points system. Instead of getting bonuses as you finish, you'll get them at the end of the day. That way you're ranked against everyone who finished - not just those who finished before you.</p>
-            <p>Also, bronze medals.</p></li>
+            <li><p><s>Updating the points system. Instead of getting bonuses as you finish, you'll get them at the end of the day. That way you're ranked against everyone who finished - not just those who finished before you.</p>
+            <p>Also, bronze medals.</p></s></li>
             <li><p><s>Creating a visual theme for the puzzles. It'll give a unique feel rather than the slightly boring modern look.</s></p></li>
           </ul>
           <p>After most of the above, I'll be adding some discrete ads. I have an awesome idea in mind for adding an entirely new system to play with, but it'll need to be a full blown game. With a budget.</p>
@@ -254,55 +255,21 @@
                 </span></button>
         </div> <!-- <!> Congratulations <!>, etc. with emojis -->
   
-        <span id="reward_base_points"></span> <!-- 45 points! -->
-        <span>In the next few weeks, rewards will be changing. Bonus rewards will be calculated at the end of the day based on your ranking against all other puzzle solvers.</span>
-        <div id="reward_bonuses" class="horizontal-flex-cont">
-          <div class="vertical_flex-cont bonus_col"> <!-- Early Bonus -->
-            <span class="bonus_w_description horizontal-flex-cont">
-              <div class="help-tip invisible"></div>
-              <div class="has-img"><img class="bonus_icon bonus square" src="flag_one.svg"/></div>
-              <div class="help-tip">
-                <p class="tooltipText">Earned by being one of the first to complete the puzzle. First earns +200%. Next four earn +50%.</p>
-              </div>
-            </span>
-              <div id="early_bonus"></div>
-              <div id="early_points"> --</div>
-          </div> 
-          <div id="centre_bonus" class="vertical_flex-cont bonus_col">
-            <span class="bonus_w_description horizontal-flex-cont">
-              <div class="help-tip invisible"></div>
-              <div class="has-img"><img class="bonus_icon bonus square" src="fast_bonus.svg"/></div>
-              <div class="help-tip">
-                <p class="tooltipText">Earned by being one of the fastest to complete the puzzle. Fastest earns +75%. Next 3 earn +25%.</p>
-              </div>
-            </span>
-            <div id="fast_bonus"></div>
-            <div id="fast_points"> --</div>
-          </div> <!-- Fast Bonus -->
-            
-          <div class="vertical_flex-cont bonus_col">
-            <span class="bonus_w_description horizontal-flex-cont">
-              <div class="help-tip invisible"></div>
-              <div class="has-img"><img class="bonus_icon bonus square" src="strategy.svg"/></div>
-              <div class="help-tip">
-                <p class="tooltipText">Earned by completing the puzzle with fewer guesses than others. Fewest guesses earns +75%. Next 2 earn +25%.</p>
-              </div>
-            </span>
-            <div id="guess_bonus"></div>
-            <div id="guess_points"> --</div>
-          </div> <!-- Strategy Bonus -->
-  
-        </div> 
+        <div class="vertical-flex-cont banner-text">
+          <span id="finish_time" class="larger_text"></span>
+          <span id="finish_guesses" class="larger_text"></span>
+        </div>
         <br>
-        <span id="reward_total_points"></span>
+        <span id="finish_share_results" class="material-symbols-outlined share">share</span><span>~Copy to Clipboard~</span>
+        <br>
+        <br>
+        <span class="larger_text">Final points will be calculated at the end of day when the daily puzzle finishes.</span>
+        <span id="final_reward_message" class="larger_text">Check back then to see how you did!</span>
         <table>
           <caption>Finisher Leaderboard</caption>
-          <thead>
+          <thead id="daily_lb">
             <tr>
-              <th scope="col">Rank</th>
               <th scope="col">Username</th>
-              <th scope="col">Points</th>
-              <th scope="col"><img class="bonus_icon small" src="flag_one.svg"/></th>
               <th scope="col"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
               <th scope="col"><img class="bonus_icon small" src="strategy.svg"/></th>
             </tr>
@@ -333,7 +300,108 @@
 
     </div>
 
+
     <div id="overlay" class="overlay"></div> <!-- Starts opened -->
+
+
+
+    <div id="last_puzzle_ranking" class="fullscreen-modal">
+      <div class="header">
+        <button type="button", class='square button minimal invisible close-fs-modal-button'>&times;</button> <!-- TODO: Rename to close-modal-button -->
+        <span id="reward_title">Last Puzzle's Ranking</span>
+        <button
+            type="button", class='button square minimal close-fs-modal-button' for="last_puzzle_ranking"><span class="material-icons-round" >
+              close
+              </span></button>
+      </div> 
+
+      <div class="vertical-flex-cont ex">
+      
+        <span>Below is a description of the points you earned for your last puzzle, as well as your ranking:</span>
+        
+        <!-- difficulty toggle -->
+        <div class="switch-field">
+          <!-- checked can only apply to one radio per set of names -->
+          <input type="radio" id="easy_radio_yesterday" class="switch_diff_yesterday" name="switch-yesterday" value="easy" checked="checked" autocomplete="off" /> 
+          <label for="easy_radio_yesterday" class="game-button">Easy</label>
+          <input type="radio" id="hard_radio_yesterday" class="switch_diff_yesterday" name="switch-yesterday" value="hard" />
+          <label for="hard_radio_yesterday" class="game-button">Hard</label>
+        </div>
+
+        <span id="reward_base_points"></span> <!-- 45 points! -->
+
+        <div id="reward_bonuses" class="horizontal-flex-cont">
+          <div id="left_bonus" class="vertical_flex-cont bonus_col">
+            <span class="bonus_w_description horizontal-flex-cont">
+              <div class="help-tip invisible"></div>
+              <div class="has-img"><img class="bonus_icon bonus square" src="fast_bonus.svg"/></div>
+              <div class="help-tip">
+                <p class="tooltipText">Fastest duration earns gold (2x points).<br>Top 20% earn silver (1.5x points).<br>Top 50% earn bronze (1.25x points)</p>
+              </div>
+            </span>
+            <div id="fast_bonus"></div>
+            <div id="fast_points"> --</div>
+          </div> <!-- Fast Bonus -->
+            
+          <div class="vertical_flex-cont bonus_col">
+            <span class="bonus_w_description horizontal-flex-cont">
+              <div class="help-tip invisible"></div>
+              <div class="has-img"><img class="bonus_icon bonus square" src="strategy.svg"/></div>
+              <div class="help-tip">
+                <p class="tooltipText">Fewest guesses earns gold (2x points).<br>Top 20% earn silver (1.5x points).<br>Top 50% earn bronze (1.25x points)</p>
+              </div>
+            </span>
+            <div id="guess_bonus"></div>
+            <div id="guess_points"> --</div>
+          </div> <!-- Strategy Bonus -->
+
+        </div> 
+        
+        <span id="reward_total_points"></span>
+        <br>
+        <span id="share_results" class="material-symbols-outlined share">share</span><span>~Copy to Clipboard~</span>
+        <br>
+        
+        <!-- Create mini-puzzle if completed -->
+        <div id="last_puzzle_solution" class="rowHolder ex">
+
+        </div>
+
+        <table>
+          <caption>Finisher Leaderboard</caption>
+          <thead id="yesterday_lb_thead">
+            <tr>
+              <th scope="col">№</th>
+              <th scope="col">Username</th>
+              <th scope="col">Points</th>
+              <th scope="col"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
+              <th scope="col"><img class="bonus_icon small" src="strategy.svg"/></th>
+            </tr>
+          </thead>
+          <tbody id="last_puzz_leaderboard_tbody">
+            <!-- EXAMPLE ROWS FOR TESTING CSS
+            <tr>
+              <th scope="row">1st</th>
+              <td>BEEEEEEEEESSAHAHAHA</td>
+              <td>420</td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+              <td></td>
+              <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
+            </tr>
+            <tr>
+              <th scope="row">2nd</th>
+              <td>CuteJade</td>
+              <td>69</td>
+              <td></td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
+            </tr>
+          -->
+          </tbody>
+        </table>
+
+      </div>
+    </div>
     
     <div id="versionUpdateModal" class="fullscreen-modal">
       <div class="header">Version Updates
@@ -342,6 +410,15 @@
             close
             </span></button>
       </div>
+      <p><u>V1.2.2 - Nov 12 2023</u></p>
+
+      <ul>
+        <li><p>Added: Sharing buttons. It'll copy your puzzle results into your clipboard</p></li>
+        <li><p>Changed: The entire points system! You now get points at the end of the day, and you're ranking against everyone who finished the puzzle that day.</p></li>
+      </ul>
+
+      <br>
+
       <p><u>V1.2.1 - Oct 26 2023</u></p>
 
       <ul>
@@ -721,7 +798,7 @@
     
 
     <div id="gameBox" class='gameBox vertical-flex-cont'>
-
+      <span id="share_results_home" class="material-symbols-outlined share invisible">share</span>
       <div class="switch-field">
         <!-- checked can only apply to one radio per set of names -->
         <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked="checked" autocomplete="off" /> 
@@ -782,7 +859,7 @@
         <div class="horizontal-flex-cont">
           <div class="switch-field leaderboard_toggle">
             <input type="radio" id="dailyLBRadio" class="switch_lb_radio" name="switch-two" value="today" checked/>
-            <label for="dailyLBRadio">Today</label>
+            <label for="dailyLBRadio">Yesterday</label>
             <input type="radio" id="weekLBRadio" class="switch_lb_radio" name="switch-two" value="week" />
             <label for="weekLBRadio">This Week</label>
             <input type="radio" id="allLBRadio" class="switch_lb_radio" name="switch-two" value="all" />
@@ -818,22 +895,22 @@
         <table id="full_leaderboard_table" class="longer">
           <thead id="today_thead">
             <tr>
-              <th scope="col">Rank</th>
+              <th scope="col">№</th>
               <th scope="col">Username</th>
               <th scope="col">Points</th>
-              <th scope="col" id="lb_first_icon"><img class="bonus_icon small" src="flag_one.svg"/></th>
               <th scope="col" id="lb_second_icon"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
               <th scope="col" id="lb_third_icon"><img class="bonus_icon small" src="strategy.svg"/></th> <!-- <img  class="bonus_icon small" src="strategy.svg"/> -->
             </tr>
           </thead>
           <thead id="long_thead" class="removed">
             <tr>
-              <th scope="col">Rank</th>
+              <th scope="col">№</th>
               <th scope="col">Username</th>
               <th scope="col">Points</th>
               <th scope="col" id="lb_first_icon"><img class="bonus_icon small" src="gold-medal.svg"/></th>
               <th scope="col" id="lb_second_icon"><img class="bonus_icon small" src="silver-medal.svg"/></th>
-              <th scope="col" id="lb_third_icon">Puzzles</th> <!-- <img  class="bonus_icon small" src="strategy.svg"/> -->
+              <th scope="col" id="lb_third_icon"><img class="bonus_icon small" src="bronze-medal.svg"/></th>
+              <th scope="col" id="lb_fourth_icon"><img class="bonus_icon small" src="puzzle_piece.svg"/></th> <!-- <img  class="bonus_icon small" src="strategy.svg"/> -->
             </tr>
           </thead>
           <tbody id="easy_leaderboard_tbody" class="full-leaderboard-tbody">

@@ -8,7 +8,7 @@ const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
-const version = 'V1.2.1'
+const version = 'V1.2.2'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
 
@@ -118,7 +118,10 @@ function clear_variables() {
             'validity': [], // sent by server
             'started': false,
             'finished': false,
-            'new_attempt': false
+            'new_attempt': false,
+            'share_duration': '', // for social share
+            'share_daily_date': '',
+            'share_validity': ''
         },
         'hard': {
             'guesses_made': 0,
@@ -132,7 +135,10 @@ function clear_variables() {
             'validity': [],
             'started': false,
             'finished': false,
-            'new_attempt': false
+            'new_attempt': false,
+            'share_duration': '', // for social share
+            'share_daily_date': '',
+            'share_validity': ''
         }
     }
     puzzle = {
@@ -213,7 +219,10 @@ let user_states = {
         'validity': [], // sent by server
         'started': false,
         'finished': false,
-        'new_attempt': false
+        'new_attempt': false,
+        'share_duration': '', // for social share
+        'share_daily_date': '',
+        'share_validity': ''
     },
     'hard': {
         'guesses_made': 0,
@@ -227,7 +236,10 @@ let user_states = {
         'validity': [],
         'started': false,
         'finished': false,
-        'new_attempt': false
+        'new_attempt': false,
+        'share_duration': '', // for social share
+        'share_daily_date': '',
+        'share_validity': ''
     }
 }
 
@@ -386,6 +398,9 @@ async function switchDifficulty(e) {
     if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
             return
         }
+    
+    // hide share button
+    document.getElementById('share_results_home').classList.add('invisible')
     
     let dontclear = [];
 
@@ -657,15 +672,14 @@ function loadDailyLeaderboard(lb, diff) {
         let rank = i + 1
         let username = lb_entry['username']
         let points = lb_entry['total_points']
-        let early_bonus = create_medal(lb_entry['early_bonus'], 'small')
         let fast_bonus = create_medal(lb_entry['fast_bonus'], 'small')
         let guess_bonus = create_medal(lb_entry['guess_bonus'], 'small')
 
-        let row = createTableRow([rank, username, points, early_bonus, fast_bonus, guess_bonus])
+        let row = createTableRow([rank, username, points, fast_bonus, guess_bonus])
         lb_tbody.appendChild(row)
     }
     if (lb.length == 0) {
-        let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', '', ''])
+        let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', ''])
         lb_tbody.appendChild(row)
     }
 }
@@ -683,17 +697,271 @@ function loadLongerLeaderboard(lb, timespan) {
         let points = lb_entry['sum']
         let gold = lb_entry['gold']
         let silver = lb_entry['silver']
+        let bronze = lb_entry['bronze']
         let n_puzzles = lb_entry['n_puzzles']
 
-        let row = createTableRow([rank, username, points, gold, silver, n_puzzles])
+        let row = createTableRow([rank, username, points, gold, silver, bronze, n_puzzles])
         lb_tbody.appendChild(row)
     }
     if (lb.length == 0) {
-        let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', '', ''])
+        let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', '', '', ''])
         lb_tbody.appendChild(row)
     }
 }
 
+function create_social_share_text(validity_list, daily_date, duration, diff) {
+    let _green = '🟩'
+    let _orange = '🟧'
+    let _gray = '⬜'
+
+    let difficulty = diff == 'easy' ? 'Easy' : 'Hard'
+    let date = daily_date.slice(0, 10)
+
+    let social_text = `${date} ${difficulty} Scrambler:\n`
+
+    for (let i = 0; i < validity_list.length; i++) {
+        let guess_result = ``
+        let guess_validity = validity_list[i]
+
+        for (let j = 0; j < guess_validity.length; j++) {
+            let word_validity = guess_validity[j]
+
+            switch (word_validity) { // parse through validity list for puzzle guesses and create boxes
+                case true:
+                    guess_result += _green
+                    break;
+                case false:
+                    guess_result += _orange
+                    break;
+                default:
+                    guess_result += _gray
+                    break;
+            }
+        }
+
+        social_text += `${guess_result}\n`
+    }
+
+    let guess_text = ''
+    if (validity_list.length == 1) {
+        guess_text = 'Guess!'
+    } else {
+        guess_text = 'Guesses'
+    }
+
+    social_text += `${validity_list.length} ${guess_text}\n`
+
+    // turn hours into minutes. display minutes if >= 1, and seconds
+
+    let hours = duration['hours'] ? duration['hours'] : 0
+    let minutes = duration['minutes'] ? duration['minutes'] : 0
+    let seconds = duration['seconds']
+    minutes = minutes + hours*60
+
+    let time = '';
+    if (minutes) {
+        time = `${minutes} minutes, `
+    }
+    time += `${seconds} seconds`
+
+    social_text += `Time: ${time}\nhttps://scrambler.onrender.com`
+
+    return social_text
+}
+
+function copy_yesterday_puzzle_results() {
+    let checked = document.getElementById('easy_radio_yesterday').checked ? 'easy' : 'hard'
+
+    let validity_list = past_rewards[checked]['all_validity']
+    let daily_date = past_rewards[checked]['daily_date']
+    let duration = past_rewards[checked]['all_rewards'][user.id]['duration']
+
+    let text_to_copy = create_social_share_text(validity_list, daily_date, duration, checked)
+
+    navigator.clipboard.writeText(text_to_copy);
+
+    toast(false, 'Copied to clipboard!')
+}
+
+document.getElementById('share_results').addEventListener('click', copy_yesterday_puzzle_results)
+
+const past_rewards = {
+    easy: {},
+    hard: {}
+}
+let reward_showing;
+
+async function processAnyPastPuzzleRewards() {
+    const params = {
+        user_id: user.id,
+    }
+
+    // fetch reward details, save content
+    
+    const rewards = await fetchPostWrapper('/rewards/get', params, null) // {easy: ..., hard: ...}, null if none exists
+
+    if (rewards) {
+        Object.entries(rewards).forEach(([diff, reward_data]) => {
+
+            let difficulty = diff == 1 ? 'easy' : 'hard'
+            past_rewards[difficulty] = reward_data
+            reward_showing = reward_showing == 'easy' ? 'easy' : difficulty
+        })
+    
+        if (reward_showing) {
+            document.getElementById(`${reward_showing}_radio_yesterday`).checked = true
+            load_reward(reward_showing)
+        }
+    }
+
+    
+}
+
+document.getElementById('easy_radio_yesterday').addEventListener('click', switchRewardDifficulty)
+document.getElementById('hard_radio_yesterday').addEventListener('click', switchRewardDifficulty)
+
+
+function switchRewardDifficulty(e) {
+    let new_diff = e.target.value
+
+    if (new_diff != reward_showing) {
+
+        if (!Object.keys(past_rewards[new_diff]).length) {
+            toast(true, `You didn't complete the ${new_diff} puzzle.`)
+            document.getElementById(`${reward_showing}_radio_yesterday`).checked = true
+        } else {
+            reward_showing = new_diff
+            load_reward(new_diff)
+        }
+
+        
+    }
+}
+
+async function load_reward(diff) {
+
+    // open div (first, so player doesn't start puzzle)
+    openFullscreenModal('last_puzzle_ranking')
+
+    let past_puzzle = past_rewards[diff]['puzzle_words']
+    let solution = past_rewards[diff]['last_guess']
+
+    let user_stats = past_rewards[diff]['all_rewards'][user.id]
+
+    // load values
+    let fast_bonus = create_medal(user_stats['fast_bonus'])
+    let fast_points = user_stats['fast_points']
+
+    let guess_bonus = create_medal(user_stats['guess_bonus'])
+    let guess_points = user_stats['guess_points']
+
+    
+    let total_points = user_stats['total_points']
+    let bonus_points = user_stats['bonus_points']
+    let base_points = total_points - bonus_points
+    
+
+    document.getElementById('fast_bonus').innerHTML = ''
+    if (fast_bonus) {
+        document.getElementById('fast_bonus').appendChild(fast_bonus)
+    }
+
+    document.getElementById('guess_bonus').innerHTML = ''
+    if (guess_bonus) {
+
+        document.getElementById('guess_bonus').appendChild(guess_bonus)
+    }
+
+
+    document.getElementById('fast_points').innerText = fast_points ? `+ ${fast_points}` : ' --'
+    document.getElementById('guess_points').innerText = guess_points ? `+ ${guess_points}` : ' --'
+
+    document.getElementById('reward_base_points').innerText = `Base points: ${base_points}`
+    document.getElementById('reward_total_points').innerText = `= ${total_points} Points!`
+
+    // load puzzle
+    // read through past_puzzle and solution simultaneously. When puzzle has '_' make letterInput with letter replaced from solution
+    // All get disabled and set to final
+    let rowholder = document.getElementById('last_puzzle_solution')
+    rowholder.innerHTML = ''
+
+    rowholder.classList.add('rowholder', 'ex', 'finished')
+
+    for (let i = 0; i < past_puzzle.length; i++) {
+        let word = past_puzzle[i]
+        // wordRow
+        let wordrow = document.createElement('div')
+
+        wordrow.classList.add('wordRow', 'horizontal-flex-cont', 'correct', 'ex')
+        rowholder.appendChild(wordrow)
+
+        create_row_letters(word, wordrow, solution, i)
+
+        await sleep(100)
+        
+        // append to lastpuzzlesolution
+    }
+    
+    // set leaderboard
+    let lb = Object.values(past_rewards[diff]['all_rewards'])
+
+    lb.sort((a, b) => b.total_points - a.total_points);
+
+    const lb_tbody = document.getElementById("last_puzz_leaderboard_tbody")
+
+    lb_tbody.textContent = ''
+
+    for (let i = 0; i < lb.length && i < 15; i++) {
+        let lb_entry = lb[i]
+        let rank = i + 1
+        let username = lb_entry['username']
+        let points = lb_entry['total_points']
+        let time = parse_duration(lb_entry['duration'])
+        let guesses = lb_entry['total_guesses']
+
+        let row = createTableRow([rank, username, points, time, guesses])
+        lb_tbody.appendChild(row)
+    }
+}
+
+function parse_duration(duration) {
+    // minutes + hours*60
+    // seconds
+    // mm:ss
+    let hours = duration['hours'] ? duration['hours'] : 0
+    let minutes = duration['minutes'] ? duration['minutes'] : 0
+    let seconds = duration['seconds']
+    minutes = minutes + hours*60
+
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}` // 72:12 = 72 minutes 12 seconds
+ }
+
+async function create_row_letters(word, wordrow, solution, i) {
+    for (let j = 0; j < word.length; j++) {
+        let letter = word[j]
+        let letterbox = document.createElement('div')
+        letterbox.classList.add('letterBox', 'flex-item', 'finished', 'ex')
+        // letterBox
+
+        let letter_text = document.createElement('div')
+        if (letter == '_') {
+            letter = solution[i][j]
+            letterbox.classList.add('letterInput')
+            // add .letterInput
+        }
+
+        // set letter
+        letter_text.innerText = letter
+        letterbox.appendChild(letter_text)
+        
+
+        // append to wordrow
+        
+        wordrow.appendChild(letterbox)
+
+        await sleep(100)
+    }
+}
 
 function finishLogin(httpResponse) {
     // login_data contains cookie
@@ -711,7 +979,7 @@ function finishLogin(httpResponse) {
     // User logs in, but puzzle already exists?????
 
     if (puzzle.id) {
-        newparams['puzzle_id'] = todays_puzzles.easy.id // user can only play easy puzzle while not logged in.
+        newparams['puzzle_ids'] = [todays_puzzles.easy.id, todays_puzzles.hard.id] // user can only play easy and hard. need to backfill both
         fetchPostWrapper('/backfill', newparams, loadPuzzleAndGuesses) // if any guesses or completed_puzzles have been made by the ip, user id will be appended
     }
     
@@ -725,6 +993,10 @@ function finishLogin(httpResponse) {
 
     // TODO: visit request is first to be sent to server. Should return cookie if exists. 
     // Send callback here to parse cookie
+
+    // Look for past puzzle with unseen rewards. Show if exists
+    // Send seen on close
+    processAnyPastPuzzleRewards()
 }
 
 
@@ -1328,6 +1600,9 @@ function refreshUserInputs() {
 async function reload_word_styling() {
     // if puzzle finished this session, refinish puzzle. skip rest.
     if (user_states[getDiff()]['finished']) {
+        // hide or show share button if puzzle is finished
+        document.getElementById('share_results_home').classList.remove('invisible')
+
         document.getElementById('rowHolder').classList.add('finished') // removed on switch
         
         document.getElementById('answerBtn').classList.add('finished')
@@ -2187,6 +2462,28 @@ create_button.addEventListener('click', function() {
     openFullscreenModal('create_profile_modal')
 })
 
+document.getElementById('finish_share_results').addEventListener('click', copy_current_puzzle_results)
+document.getElementById('share_results_home').addEventListener('click', copy_current_puzzle_results)
+
+function copy_current_puzzle_results() {
+    // get diff
+    // pull stats from user_states
+    // create shareable text
+    let diff = getDiff()
+    let validity = user_states[diff]['share_validity']
+    let daily_date = user_states[diff]['share_daily_date']
+    let duration = user_states[diff]['share_duration']
+
+
+    let share_text = create_social_share_text(validity, daily_date, duration, diff)
+
+    navigator.clipboard.writeText(share_text);
+
+    toast(false, 'Copied to clipboard!')
+
+    // ***** Need to create shareable results even if not logged in. Make sure complete puzzle saves results. What does API do if no user_id only IP, etc.
+}
+
 function showPointsPopup(data) {
     // Takes points summary from postgres, fills points popup to display to player
 
@@ -2197,70 +2494,27 @@ function showPointsPopup(data) {
     const congrat_title = document.getElementById("reward_title") // TODO: auto change title
     congrat_title.innerText = weightedRandomizer(null, 'celebration')
 
-    const base_points_span = document.getElementById("reward_base_points")
-    base_points_span.innerText = `${base_points} Points`
+    // show time and guesses
+    let duration = parse_duration(data['social_stats']['duration'])
+    let guesses = data['social_stats']['validity'].length
 
-    const early_bonus = document.getElementById("early_bonus") // div
-    early_bonus.textContent = ''
+    document.getElementById('finish_time').innerText = `Time: ${duration}`
+    document.getElementById('finish_guesses').innerText = `Guesses: ${guesses}`
 
-    const fast_bonus = document.getElementById("fast_bonus") // div
-    fast_bonus.textContent = ''
-
-    const guess_bonus = document.getElementById("guess_bonus") // div
-    guess_bonus.textContent = ''
     
-    
-    if (data.early_bonus > 0) {
-        
-
-        const bonus_medal = create_medal(parseInt(data.early_bonus)) // 1 = gold, etc.. Parse to INT for switch case
-        early_bonus.appendChild(bonus_medal) // insert medal into div
-        document.getElementById('early_points').innerText = `+${data.early_points} Points`
-
-    } else {
-        document.getElementById('early_points').innerText = ' --'
-    }
-    if (data.fast_bonus > 0) {
-        
-
-        const bonus_medal = create_medal(data.fast_bonus) // 1 = gold, etc.
-        fast_bonus.appendChild(bonus_medal) // insert medal into div
-        document.getElementById('fast_points').innerText = `+${data.fast_points} Points`
-
-    } else {
-        document.getElementById('fast_points').innerText = ' --'
-    }
-    if (data.guess_bonus > 0) {
-        
-
-        const bonus_medal = create_medal(data.guess_bonus) // 1 = gold, etc.
-        guess_bonus.appendChild(bonus_medal) // insert medal into div
-        document.getElementById('guess_points').innerText = `+${data.guess_points} Points`
-
-    } else {
-        document.getElementById('guess_points').innerText = ' --'
-    }
-
-    const total_points = base_points + data.early_points + data.guess_points + data.fast_points
-
-
-
-    let total_reward_message;
+    let reward_message;
     if (!user.id) {
-        total_reward_message = `Want to keep track of your progress?`
+        reward_message = `\nWant to find out where you rank?`
         
-        if (!(document.getElementById("reward_total_points").nextElementSibling == create_button)) {
-            reward_modal.insertBefore(create_button, document.getElementById("reward_total_points").nextElementSibling)
+        if (!(document.getElementById("final_reward_message").nextElementSibling == create_button)) {
+            reward_modal.insertBefore(create_button, document.getElementById("final_reward_message").nextElementSibling)
         }
         
-    } else {
-        total_reward_message = `= ${total_points} Points!`
-        if (reward_modal.contains(create_button)) {
-            reward_modal.removeChild(create_button)
-        }
+    }  else {
+        reward_message = '\nCheck back then to see how you did!'
     }
 
-    document.getElementById("reward_total_points").innerText = total_reward_message
+    document.getElementById('final_reward_message').innerText = reward_message
     
     // Display the popup
     reward_modal.classList.add('opened')
@@ -2312,46 +2566,12 @@ function loadInRewardLeaderboard(data) {
 
     for (let i = 0; i < data.length; i++) {
         let row = data[i]
-        let rank = i + 1 // 0 indexed
         let username = row['username']
-        let points = row['total_points']
-        let first_rank = row['early_bonus']
-        let fast_rank = row['fast_bonus']
-        let guess_rank = row['guess_bonus']
 
-        let early_bonus = create_medal(row['early_bonus'], 'small')
-        let fast_bonus = create_medal(row['fast_bonus'], 'small')
-        let guess_bonus = create_medal(row['guess_bonus'], 'small')
-        /*
-        let tr = document.createElement('tr')
-        let th = document.createElement('th')
-        th.setAttribute('scope', 'row')
-        th.innerText = rank
-        tr.appendChild(th)
+        let duration = parse_duration(row['duration'])
+        let guesses = row['total_guesses']
 
-        let nameTD = document.createElement('td')
-        nameTD.innerText = username
-        tr.appendChild(nameTD)
-
-        let pointsTD = document.createElement('td')
-        pointsTD.innerText = points
-        tr.appendChild(pointsTD)
-        */
-
-        let bonuses = [first_rank, fast_rank, guess_rank]
-
-        let bonus_elements = []
-
-        // one by one, create medals and append to tr
-        for (let j = 0; j < bonuses.length; j++) {
-            if (bonuses[j]) {
-                let rank_svg = create_medal(bonuses[j])
-                rank_svg.classList.add('small')
-                bonus_elements.push(rank_svg)
-            }
-        }
-
-        let tr = createTableRow([rank, username, points, early_bonus, fast_bonus, guess_bonus])
+        let tr = createTableRow([username, duration, guesses])
 
         table_body.appendChild(tr)
     }
@@ -2366,17 +2586,20 @@ const process_puzzle_complete = async (data) => {
         if (user_states[getDiff()].puzzle_attempt > 1) { // puzzle hasn't earned any new points. nothing to display
             return
         }
-
-        user.points = data['total_points']
         user.streak = data['streak']
         user.max_streak = data['max_streak']
-
-        
-        
         displayLogin() //reresh total user points
     }
+    // set duration, time, validity for this puzzle
+    user_states[getDiff()]['share_duration'] = data['social_stats']['duration']
+    user_states[getDiff()]['share_daily_date'] = data['social_stats']['daily_date']
+    
+    user_states[getDiff()]['share_validity'] = data['social_stats']['validity']
     await sleep(3000)
     showPointsPopup(data) //popup with points earned summary
+    await sleep(200)
+    document.getElementById('share_results_home').classList.remove('invisible')
+
 }
 
 async function process_guess_styling(real_guess) {
@@ -2458,6 +2681,7 @@ async function process_guess_styling(real_guess) {
                 user_ip: user.ip
             }
             fetchPostWrapper('/completed_puzzles', params, process_puzzle_complete)
+            fetchPostWrapper('/rewards/new', {user_id: user.id, puzzle_id: puzzle.id, user_ip: user.ip}, null)
         }
     }
 
@@ -3010,7 +3234,20 @@ async function openFullscreenModal(e) {
             
         logNavEvent('close_tut_top', nav_source)
         }
+    }
+    if (modal_id == 'last_puzzle_ranking') {
+        // log puzzle rewards seen
+        // get puzzle ids
+        let ids = []
+        if (Object.values(past_rewards['easy']).length) {
+            ids.push(past_rewards['easy']['puzzle_id'])
+        }
+        if (Object.values(past_rewards['hard']).length) {
+            ids.push(past_rewards['hard']['puzzle_id'])
+        }
+        let params = {user_id: user.id, puzzle_ids: JSON.stringify(ids)}
 
+        fetchPostWrapper('/rewards/seen', params, null)
     }
 
     if (['deleteModal'].includes(modal_id)) {
@@ -3399,6 +3636,7 @@ window.onload = async function() {
     document.getElementById('reset_password_button').addEventListener('click', submitNewPassword)
 
     document.getElementById('login_modal').classList.add('opened')
+    // document.getElementById('overlay').classList.add('closed')
 
     readjustContainallPadding()
 
