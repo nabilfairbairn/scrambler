@@ -979,7 +979,7 @@ function finishLogin(httpResponse) {
     // User logs in, but puzzle already exists?????
 
     if (puzzle.id) {
-        newparams['puzzle_ids'] = [todays_puzzles.easy.id, todays_puzzles.hard.id] // user can only play easy and hard. need to backfill both
+        newparams['puzzle_ids'] = JSON.stringify([todays_puzzles.easy.id, todays_puzzles.hard.id]) // user can only play easy and hard. need to backfill both
         fetchPostWrapper('/backfill', newparams, loadPuzzleAndGuesses) // if any guesses or completed_puzzles have been made by the ip, user id will be appended
     }
     
