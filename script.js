@@ -1526,6 +1526,8 @@ function show_next_banner_message() {
     } else {
         badBannerMessage(message)
     }
+    } else { // if no message, open stats banner
+        openStatsBanner()
     }
     
 }
@@ -1561,10 +1563,14 @@ function openCloseMessageBanner(e) {
         }
         
     } else { // Opening from button always opens stats
-        stats_banner.classList.add('opened')
-        banner_button.classList.add('opened')
-        banner_holder.classList.add('opened')
+        openStatsBanner()
     }
+}
+
+function openStatsBanner() {
+    stats_banner.classList.add('opened');
+    banner_button.classList.add('opened');
+    banner_holder.classList.add('opened');
 }
 
 function update_message_banner() {
@@ -3100,10 +3106,10 @@ function loadUserStats() {
             reset = 'NEVER!'
             break;
         case 'week':
-            reset = 'Friday, 8PM EST'
+            reset = 'Friday, 7PM EST'
             break;
         default: // today
-            reset = '8PM EST'
+            reset = '7PM EST'
             break;
     }
 
