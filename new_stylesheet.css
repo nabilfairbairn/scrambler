@@ -1707,7 +1707,7 @@ div img {
   padding: 1rem;
   font-size: 1em;
   font-weight: 600;
-  top: 4rem;
+  top: 5.5rem;
   transition: all 1.4s ease-in-out;
   transform: translateY(-15rem); /* top is 7rem */
 }

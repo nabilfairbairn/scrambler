@@ -54,7 +54,6 @@
         <div class="header">
           Login or Play as a Guest
         </div>
-        <span>*Guests can only play the daily Easy puzzle.</span>
         <form id="login_form" class="vertical-flex-cont">
             <input type="text" id="uname" name="uname" maxlength="20" placeholder="Username" class="textinput"/>
             <div class="help-tip">
@@ -260,7 +259,7 @@
           <span id="finish_guesses" class="larger_text"></span>
         </div>
         <br>
-        <span id="finish_share_results" class="material-symbols-outlined share">share</span><span>~Copy to Clipboard~</span>
+        <span id="finish_share_results" class="material-symbols-outlined share">share</span><span>~Share My Results~</span>
         <br>
         <br>
         <span class="larger_text">Final points will be calculated at the end of day when the daily puzzle finishes.</span>
@@ -359,7 +358,7 @@
         
         <span id="reward_total_points"></span>
         <br>
-        <span id="share_results" class="material-symbols-outlined share">share</span><span>~Copy to Clipboard~</span>
+        <span id="share_results" class="material-symbols-outlined share">share</span><span>~Share My Results~</span>
         <br>
         
         <!-- Create mini-puzzle if completed -->
@@ -653,14 +652,21 @@
       </div> <!-- modal header close -->
       <div>
         <span>
-          <h5>Hey there!</h5>
-          <p>Welcome to Scrambler. This game is about swapping and scrambling letters to make new words and fill the puzzle.</p>
+          <h4>I think you're going to love this!</h4>
+          <p>Scrambler is quite simple. There are only 3 things you need to know:</p>
+          <p><ol>
+            <li>1 letter changes between each word</li>
+            <li>The letters can placed in any order</li>
+            <li>No repeating words</li>
+          </ol></p>
           
-          <p>Your goal is to use as few guesses as possible to solve the puzzle. You can make guesses one row at a time, or try to solve multiple rows with one guess.</p>
+          <p>It's your choice whether you guess one word at a time, or try to solve the puzzle in one guess <i>(for bonus points!)</i></p>
+          <p>If it's your first time, I <b>highly</b> recommend you solve these tutorial puzzles:</p>
           <hr>
-          <h5>Swapping</h5>
-          <p>Every word will use the same letters as the previous word, except for <b>1 letter</b> that will be swapped.</p>
-          <div class="instruction"><p>Select the empty square below. Now swap out the 'W' in WASTE with another letter to create a new word</p></div>
+          <h4>Swapping 1 letter</h4>
+          <p>Once again, to get from one word to the next, you need to swap out <b>1 letter</b> for another one.</p>
+          <p>If your guess is correct it turn <span style="color: var(--correct-color);">green</span>. If it's wrong it'll turn <span style="color: var(--wrong-color)">orange</span>. </p>
+          <div class="instruction"><p>Select the empty square below. Now create a new word that replaces the <i>'W'</i> in WASTE</p></div>
         </span>
         <div class="vertical-flex-cont ex">
         <div id="tutorial-1" class='rowHolder minimal ex'>
@@ -684,10 +690,10 @@
         <hr>
         <hr>
         <span>
-          <h5>Scrambling</h5>
-          <p>In addition to swapping, the order of the letters might be <i>scrambled.</i></p>
-          <p>Blue markings inside the boxes help you keep track of which letters you have swapped out. If you've changed more than one letter, they will turn orange.</p>
-          <div class="instruction"><p>Go ahead and find a suitable letter for the last word:</p></div>
+          <h4>Changing letter order</h4>
+          <p>Letters can be in any order, even the one you swap.</p>
+          <p>Blue markings outside the boxes show which letters <i>you</i> have swapped. If you've changed more than one letter, they will turn orange.</p>
+          <div class="instruction"><p>Find out which letters from TASTE have been repeated, then replace the missing one with a different letter:</p></div>
         </span>
         <div class="vertical-flex-cont ex">
           <div id="tutorial-2" class='rowHolder minimal ex'>
@@ -717,13 +723,12 @@
         </div>
         <hr>
         <span>
-          <h5>Good luck!</h5>
-          <p>When you make a guess, correct words will be coloured <span style="color: var(--correct-color);">green</span>, and incorrect words will be coloured <span style="color: var(--wrong-color)">orange</span>. </p>
-          <p>You should know, some puzzles have more than one way to solve them, so keep your mind open.</p>
-          <p>And if you're ever feeling overwhelmed, just remember: 4 of the letters you need are already in the previous word. And there's no harm in solving the puzzle one word at a time.</p>
+          <h4>Each word is unique</h4>
+          <p>However, some puzzles have more than one solution!</p>
+          <p>To recap: 4 of the letters you need are already in the previous word. You can solve the puzzle one word at a time - even bottom to top. And the order doesn't matter</p>
         </span>
         <hr>
-        <div class="instruction"><p>Try this next puzzle by yourself:</p></div>
+        <div class="instruction"><p>No repeating words, so the second word can't be WORDS. Good luck!</p></div>
         <div class="vertical-flex-cont ex">
           <div id="tutorial-3" class='rowHolder minimal ex'>
             <div id="guess_number_c0" class='wordRow horizontal-flex-cont ex'> 
@@ -753,9 +758,8 @@
           <button id="tutorial-3-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
         </div>
         <span>
-          <p>Lastly, all words in a puzzle must be unique. So you can't use the same word twice. Or thrice.</p>
           <p>That's all :)</p>
-          <p>Have fun and thanks for playing!</p>
+          <p>There's a daily easy and hard puzzle. And if you created a profile, you can see how you rank against every one who finished the day's puzzle.</p>
         </span>
         <hr>
         <h5>Button Legend</h5>

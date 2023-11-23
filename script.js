@@ -3367,7 +3367,12 @@ function evalTutorial2() {
         document.getElementById('guess_number_b0').classList.add('correct')
         document.getElementById('guess_number_b2').classList.add('wrong')
         if (answer) {
-            toast(true, `That word isn't valid. Try again!`)
+            if (answer == 'T') {
+                toast(true, `TASTE and STATE use all the same letters. You'll have to change one of them.`, 5)
+            } else {
+                toast(true, `That word isn't valid. Try again!`)
+            }
+            
         } else {
             toast(true, `You'll need to click on the empty box first to place a letter`)
         }
@@ -3401,7 +3406,7 @@ function evalTutorial3() {
                 } else {
                     document.getElementById('guess_number_c2').classList.add('wrong')
                     if (a2) {
-                        toast(false, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`)
+                        toast(false, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`,5)
                     }
                     
                 }
@@ -3413,7 +3418,7 @@ function evalTutorial3() {
                 } else {
                     document.getElementById('guess_number_c2').classList.add('wrong')
                     if (a2) {
-                        toast(false, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`)
+                        toast(false, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`,5)
                     }
                 }
                 break;
@@ -3422,9 +3427,13 @@ function evalTutorial3() {
     } else {
         document.getElementById('guess_number_c1').classList.add('wrong')
         if (a1) {
-            toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 8)
+            if (a1 == 'WORDS') {
+                toast(false, `Surprise! You win nothing!`)
+            } else {
+                toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 8)
+            }
         } else {
-            toast(true, `Did you think you were hot stuff and skipped through the beginning of the tutorial? You click the boxes first to put in your answer.`, 6)
+            toast(true, `Did you read anything? You click the boxes first to put in your answer.`, 6)
         }
         
     }
