@@ -3558,10 +3558,7 @@ function evalTutorial3() {
     } else {
         document.getElementById('guess_number_c1').classList.add('wrong')
         if (a1) {
-            if (a1 == 'WORDS') {
-                toast(false, `Surprise! You win nothing!`)
-            } else {
-                toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 8)
+               toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 8)
             }
         } else {
             toast(true, `Did you read anything? You click the boxes first to put in your answer.`, 6)
