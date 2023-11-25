@@ -1,7 +1,7 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -10,7 +10,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 
 const admin_ips = ['0.qv9u2ts9ew20231023']
 
-const version = 'V1.2.2'
+const version = 'V1.2.3'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
 
@@ -408,7 +408,7 @@ function mark_seen_achievements() {
 async function process_achievements(achievement_data) {
     let { new_unlock, unseen, unlocked, locked } = achievement_data
     // keys = seen, unseen, new, locked
-    if (new_unlock.length) {
+    if (new_unlock && new_unlock.length) {
         // toast new achievements with 2 second delay
         toast_all_achievements(new_unlock)
     }
@@ -422,19 +422,19 @@ async function process_achievements(achievement_data) {
 
     document.getElementById('achievement_holder').textContent = '' 
 
-    if (unseen.length) {
+    if (unseen && unseen.length) {
         n_total += unseen.length
         n_unlocked += unseen.length
         // Add unseen to top of achievement list
         await add_achievements_to_list(unseen, 'unseen')
     }
-    if (unlocked.length) {
+    if (unlocked && unlocked.length) {
         n_total += unlocked.length
         n_unlocked += unlocked.length
         // Add unseen to top of achievement list
         await add_achievements_to_list(unlocked, 'unlocked')
     }
-    if (locked.length) {
+    if (locked && locked.length) {
         n_total += locked.length
         // Add unseen to top of achievement list
         await add_achievements_to_list(locked, 'locked')
@@ -1094,7 +1094,6 @@ function finishLogin(httpResponse) {
     // login_data contains cookie
     // parse cookie data to feed client-facing user data
 
-
     setUser(httpResponse)
     const newparams = {
         user_id: user.id,
@@ -1102,15 +1101,11 @@ function finishLogin(httpResponse) {
     }
     fetchPostWrapper('/version/get', newparams, highlightVersionButton)
 
-    // When user returns to page, javascript refreshes but DOM persists.
     // User logs in, but puzzle already exists?????
-
     if (puzzle.id) {
-        newparams['puzzle_ids'] = JSON.stringify([todays_puzzles.easy.id, todays_puzzles.hard.id]) // user can only play easy and hard. need to backfill both
-        fetchPostWrapper('/backfill', newparams, loadPuzzleAndGuesses) // if any guesses or completed_puzzles have been made by the ip, user id will be appended
+        loadPuzzleAndGuesses() // if puzzle isn't loaded, loadPuzzle function will load guesses
     }
     
-
     displayLogin()
 
     document.getElementById("username").innerText = weightedRandomizer(user.username, 'greeting')
@@ -1422,7 +1417,7 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
         .then(data => {
             
             if (data !== null && 'achievements' in data) { // some requests will return achievements
-                let achievements_data = data['achievements']
+                let achievements_data = JSON.parse(data['achievements'])
 
                 process_achievements(achievements_data)
             }
@@ -3625,6 +3620,8 @@ function areYouGod() {
         openFullscreenModal('godmode_nav')
         fetchPostWrapper('/words/get_all', null, loadDictWords)
         fetchPostWrapper('/nav/all', null, loadAnalytics)
+    } else {
+        logNavEvent('godmove_nav_click', nav_source)
     }
 }
 
@@ -3763,6 +3760,12 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
 
 
 window.onload = async function() {
+    
+    await clear_puzzle()
+    // Need solution for resetting all user variables
+
+    clear_variables()
+
     let device_id = localStorage.getItem("device_id")
     console.log(device_id)
 
@@ -3772,12 +3775,6 @@ window.onload = async function() {
     }
 
     user.ip = device_id
-
-
-    await clear_puzzle()
-    // Need solution for resetting all user variables
-
-    clear_variables()
 
     await fetchPuzzle()
 
@@ -3942,8 +3939,7 @@ window.onload = async function() {
 
   }
 
-  if (admin_ips.includes(user.ip)) {
-    console.log('logging visit')
+  if (!admin_ips.includes(user.ip)) {
     fetchPostWrapper('/visit', {ip: user.ip}, null)
   }
   
