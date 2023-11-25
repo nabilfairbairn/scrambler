@@ -581,6 +581,7 @@
         </div>
           <div class="vertical-flex-cont sidenav">
               <div id="profileNavButton" class="open-fs-modal-button nav-item" for="profile_modal">Profile</div>
+              <div id="profileNavButton" class="open-fs-modal-button nav-item" for="achievements_modal">Achievements</div>
               <div id="pastPuzzlesNavButton" class="disabled">Past Puzzles</div>
               <div id="weeklyChallengeNavButton" class="disabled">Weekly Challenge</div>
               <div id="socialNavButton" class="disabled">Social Leaderboard</div>
@@ -780,7 +781,7 @@
       <button id="keyboardbutton" type="button" class='square flex-item neutralbutton'>
         <div class="has-img"><img src="keyboard.svg"/></div>
           </button>
-          <button id="menuButton" type="button" class="square flex-item open-fs-modal-button neutralbutton">
+          <button id="menuButton" type="button" for="sidenav" class="square flex-item open-fs-modal-button neutralbutton">
             <div class="has-img"><img for="sidenav" src="menu.svg"/></div>
           </button>
       <div id="scrambler_title">
@@ -789,7 +790,7 @@
         </div>
       </div>
       
-      <button id="leaderboardButton" type="button" class='square flex-item open-fs-modal-button neutralbutton'>
+      <button id="leaderboardButton" type="button" for="fullLeaderboard" class='square flex-item open-fs-modal-button neutralbutton'>
         <div class="has-img"><img for="fullLeaderboard" src="leaderboard.svg"/></div>
       </button>
       <button id="modalbutton" for="howToModal" name="openmodalbutton" type="button" 
@@ -847,6 +848,30 @@
         <button id="refresh_guess" class="neutralbutton game-button waiting">Reload Previous Guess</button>
         
       </div> <!-- Close gamebox wrapper (needed for margin, so rewardless banner can press against sides)-->
+    </div>
+
+    <!-- Achievements -->
+    <div id="achievements_modal" class="fullscreen-modal">
+        
+      <div class="header">
+        <button
+              type="button", class='button square minimal invisible close-fs-modal-button'><span class="material-icons-round">
+                close
+                </span></button>
+        ACHIEVEMENTS
+        <button
+              type="button", class='button square minimal close-fs-modal-button' for="achievements_modal"><span class="material-icons-round" >
+                close
+                </span></button>
+      
+      </div>
+    
+      <div id="achievements_stat" class="centered"></div> <!-- 14/29 -->
+
+      <div id="achievement_holder" style="overflow: auto;"> <!-- Keep achievements in scrollable box so header is always visible-->
+        
+      </div>
+
     </div>
 
     <!-- Full Leaderboard -->

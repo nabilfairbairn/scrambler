@@ -8,6 +8,8 @@ const start_date = new Date('2023-02-26')
 const date_today = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
+const admin_ips = ['0.qv9u2ts9ew20231023']
+
 const version = 'V1.2.2'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 let not_logging_in;
@@ -373,7 +375,6 @@ function weightedGreeting(input) {
 function weightedCelebration(input) { //doesnt use input
     const weights = {}
     weights['🎉Congratulations!🎉'] = 5
-    weights['🎆🎇🎆'] = 5
     weights['Never doubted you for a minute!💪💪'] = 5
     weights['☀️Absolutely Godlike!☀️'] = 10
     weights['🌌Out of this world!🪐'] = 15
@@ -384,8 +385,122 @@ function weightedCelebration(input) { //doesnt use input
     return { weights, lowest }
 }
 
+function mark_seen_achievements() {
+    let name_list = []
+    document.querySelectorAll('.achievement.unseen').forEach(a => {
+        a.classList.remove('unseen')
+        a.querySelectorAll('.achievement_title').forEach(title_e => {
+            name_list.push(title_e.innerText)
+        })
+    })
+    console.log(name_list)
 
+    let params = {
+        'name_list': JSON.stringify(name_list),
+        'user_id': user.id,
+        'user_ip': user.ip
+    }
+    fetchPostWrapper('/achievements/seen', params, null)
+    // Send namelist to APi, mark as seen
+    // API needs to verify that achievement is unlocked
+}
 
+async function process_achievements(achievement_data) {
+    let { new_unlock, unseen, unlocked, locked } = achievement_data
+    // keys = seen, unseen, new, locked
+    if (new_unlock.length) {
+        // toast new achievements with 2 second delay
+        toast_all_achievements(new_unlock)
+    }
+
+    // new_unlock is not exclusive of unseen. Total achievements = unseen + unlocked + locked
+
+    // replace user seen, unseen, locked achievements
+    // if any unseen, display notification bubble on menu, achievement nav item, and respective achievement items
+    let n_total = 0
+    let n_unlocked = 0
+
+    document.getElementById('achievement_holder').textContent = '' 
+
+    if (unseen.length) {
+        n_total += unseen.length
+        n_unlocked += unseen.length
+        // Add unseen to top of achievement list
+        await add_achievements_to_list(unseen, 'unseen')
+    }
+    if (unlocked.length) {
+        n_total += unlocked.length
+        n_unlocked += unlocked.length
+        // Add unseen to top of achievement list
+        await add_achievements_to_list(unlocked, 'unlocked')
+    }
+    if (locked.length) {
+        n_total += locked.length
+        // Add unseen to top of achievement list
+        await add_achievements_to_list(locked, 'locked')
+    }
+
+    document.getElementById('achievements_stat').innerText = `${n_unlocked}/${n_total}`
+
+    // Unseen remains highlighted until clicked on or achievements modal is closed
+    // When seen, send API call
+}
+
+async function add_achievements_to_list(ach_list, ach_type) {
+
+    ach_list.forEach(({ title, description }) => {
+        let achievement = document.createElement('div')
+        achievement.classList.add('achievement', ach_type)
+
+        let ach_title = document.createElement('div')
+        ach_title.innerText = title
+        ach_title.classList.add('achievement_title')
+
+        let ach_description = document.createElement('div')
+        ach_description.innerText = description
+        ach_description.classList.add('achievement_description')
+
+        achievement.appendChild(ach_title)
+        achievement.appendChild(ach_description)
+        
+        document.getElementById('achievement_holder').appendChild(achievement)
+
+    })
+
+    return
+}
+
+async function toast_all_achievements(ach_list) {
+    let remove_list = []
+    for (let i = 0; i < ach_list.length; i++) {
+        // toast achievement
+        let a = document.createElement('div')
+        a.classList.add('achievement', 'unseen')
+
+        let head_text = document.createElement('div')
+        head_text.innerText = 'New Achievement!'
+        head_text.classList.add('achievement_title', 'toast') // placed in top left. toast will make it smaller
+
+        let title = document.createElement('div')
+        title.classList.add('achievement_description', 'toast') // placed in center. toast will make larger and upper case
+        title.innerText = ach_list[i]['title']
+
+        a.appendChild(head_text)
+        a.appendChild(title)
+
+        a.classList.add('toast')
+
+        a.addEventListener('click', function() {openFullscreenModal('achievements_modal')})
+
+        document.getElementById('modal_container').appendChild(a)
+        await sleep(4000)
+        remove_list.push(a)
+    }
+    await sleep (1000)
+    remove_list.forEach(a => {
+        document.getElementById('modal_container').removeChild(a)
+    })
+}
 
 async function switchDifficulty(e) {
     const source_toggle = e.target
@@ -1172,9 +1287,11 @@ async function login(event) {
     original_login_child.appendChild(carousel_loader)
 
     not_logging_in = false
+    nav_source = 'login'
+
     await fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
 
-    nav_source = 'login'
+    
     logNavEvent('login', nav_source)
     
 }
@@ -1185,9 +1302,11 @@ async function playGuest(event) {
     if (puzzle.id) { // if refusing login and puzzle is loaded, send start
         loadPuzzleAndGuesses()
     }
+    nav_source = 'guest'
+
     openFullscreenModal('howToModal')
 
-    nav_source = 'guest'
+    
     logNavEvent('guest', nav_source)
 
 }
@@ -1301,6 +1420,12 @@ async function fetchPostWrapper(url_endpoint, params, response_function, error_f
             return null
         })
         .then(data => {
+            
+            if (data !== null && 'achievements' in data) { // some requests will return achievements
+                let achievements_data = data['achievements']
+
+                process_achievements(achievements_data)
+            }
             // if no function supplied, ignore
             if (response_function) {
                 response_function(data)
@@ -3190,7 +3315,9 @@ async function openFullscreenModal(e) {
     } else {
         target = e.target
         modal_id = target.getAttribute('for')
+        console.log(e.target)
     }
+    
     
 
     if (['deleteModal'].includes(modal_id)) {
@@ -3266,6 +3393,9 @@ async function openFullscreenModal(e) {
         let params = {user_id: user.id, puzzle_ids: JSON.stringify(ids)}
 
         fetchPostWrapper('/rewards/seen', params, null)
+    }
+    if (modal_id == 'achievements_modal') {
+        mark_seen_achievements()
     }
 
     if (['deleteModal'].includes(modal_id)) {
@@ -3455,10 +3585,15 @@ function evalTutorial3() {
 }
 
 
-function create_random_ip() {
-    const random_ip = Math.random().toString(36).substring(0,15);
-    user.ip = random_ip;
-    fetchPostWrapper('/visits', {ip: user.ip}, null)
+function create_random_device_id() {
+    let device_id = Math.random().toString(36).substring(0,12);
+    let today = new Date()
+    let year = today.getFullYear()
+    let month = today.getMonth()
+    let day = today.getDate()
+    device_id += `${year}${month}${day}`
+    return device_id
+    
 }
 
 document.getElementById('contact_form').addEventListener('submit', sendContactMessage)
@@ -3627,8 +3762,18 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
 }
 
 
-
 window.onload = async function() {
+    let device_id = localStorage.getItem("device_id")
+    console.log(device_id)
+
+    if (!device_id) {
+        device_id = create_random_device_id()
+        localStorage.setItem("device_id", device_id)
+    }
+
+    user.ip = device_id
+
+
     await clear_puzzle()
     // Need solution for resetting all user variables
 
@@ -3797,16 +3942,11 @@ window.onload = async function() {
 
   }
 
-  // send load info and IP to db
-  await fetch('https://api.ipify.org?format=json')
-  .then(response => response.json())
-  .then(data => {
-      user.ip = data.ip
-      fetchPostWrapper('/visit', {ip: data.ip}, null)
-  })
-  .catch(err => {
-    create_random_ip()
-  });
+  if (admin_ips.includes(user.ip)) {
+    console.log('logging visit')
+    fetchPostWrapper('/visit', {ip: user.ip}, null)
+  }
+  
   
   
 }
