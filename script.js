@@ -1,7 +1,7 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -1580,6 +1580,12 @@ function replace_user_state(all_guess_data) {
             user_states[diff].puzzle_attempt = guess_data['last_incomplete_attempt'] ? guess_data['last_incomplete_attempt'] : guess_data['last_started_attempt'] + 1
             user_states[diff]['new_attempt'] = !guess_data['last_incomplete_attempt']
 
+            if ('social_stats' in guess_data) {
+                set_social_stats(guess_data['social_stats'], diff)
+                
+                
+            }
+
             if (guess_data['guess_number']) { // lazy check whether guess data exists
                 user_states[diff]['guesses_made'] = guess_data['guess_number']
                 user_states[diff]['last_guess'] = guess_data['words']
@@ -1714,6 +1720,9 @@ function update_attempt_banner() {
     if (puzzle_attempt > 1 && !document.getElementById('rowHolder').classList.contains('finished')) { // When finishing a puzzle not logged in, then logging in, resends attempt
         addBannerMessage(true, `Since you've already completed this puzzle before, any future attempts won't earn you any rewards.`)
     }
+    if (puzzle_attempt > 1) {
+        document.getElementById('share_results_home').classList.remove('invisible')
+    }
     
 }
 
@@ -1730,9 +1739,9 @@ function refreshUserInputs() {
     add_validity_styling()
     
     // update input styling
-    reload_word_styling() // styling from last input, in case it's newer than last submitted guess
+    reload_word_styling() // styling from last input, in case it's newer than last submitted guess. Also show stats share button
 
-    update_attempt_banner() // show banner if current_attempt > 1
+    update_attempt_banner() // show banner if current_attempt > 1. 
 }
 
 async function reload_word_styling() {
@@ -1749,6 +1758,11 @@ async function reload_word_styling() {
         setLetterBoxesFinished()
 
     } else {
+        if (user_states[getDiff()]['puzzle_attempt'] > 1) {
+            document.getElementById('share_results_home').classList.remove('invisible')
+        } else {
+            document.getElementById('share_results_home').classList.add('invisible')
+        }
         // styling saved in user_states
         let word_styling = user_states[getDiff()].word_styling
 
@@ -2726,18 +2740,22 @@ const process_puzzle_complete = async (data) => {
         }
         user.streak = data['streak']
         user.max_streak = data['max_streak']
-        displayLogin() //reresh total user points
+        displayLogin() //refresh total user points
     }
     // set duration, time, validity for this puzzle
-    user_states[getDiff()]['share_duration'] = data['social_stats']['duration']
-    user_states[getDiff()]['share_daily_date'] = data['social_stats']['daily_date']
-    
-    user_states[getDiff()]['share_validity'] = data['social_stats']['validity']
+    set_social_stats(data['social_stats'], getDiff());
+
     await sleep(3000)
     showPointsPopup(data) //popup with points earned summary
     await sleep(200)
     document.getElementById('share_results_home').classList.remove('invisible')
 
+}
+
+function set_social_stats(data, difficulty) {
+    user_states[difficulty]['share_duration'] = data['duration'];
+    user_states[difficulty]['share_daily_date'] = data['daily_date'];
+    user_states[difficulty]['share_validity'] = data['validity'];
 }
 
 async function process_guess_styling(real_guess) {
@@ -3558,11 +3576,9 @@ function evalTutorial3() {
     } else {
         document.getElementById('guess_number_c1').classList.add('wrong')
         if (a1) {
-            if (a1 == 'WORDS') {
-                toast(false, `Surprise! You win nothing!`)
-            } else {
-                toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 8)
-            }
+            
+            toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 8)
+            
         } else {
             toast(true, `Did you read anything? You click the boxes first to put in your answer.`, 6)
         }

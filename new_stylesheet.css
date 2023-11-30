@@ -515,6 +515,7 @@ input[type="submit"], .input_button {
   
 .share {
   cursor: pointer;
+  font-size: 1.6rem !important;
 }
 
 #share_results_home {
