@@ -1,7 +1,7 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -12,7 +12,7 @@ const admin_ips = ['0.qv9u2ts9ew20231023']
 
 const version = 'V1.2.3'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
-let not_logging_in;
+
 
 let lowest_loadin_timeout = 0
 let show_time_interval; // For updating time left until next puzzle. Not to be cleared
@@ -719,7 +719,7 @@ async function fetchPuzzle() {
         // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
         // Or, user refused login. closing modal set not_logging_in to true.
         // If user later decides to log in, clicking login button will set not_loggin_in to false
-        if (user.id || (!user.id && not_logging_in == true) ) { 
+        if (user.id) { 
              
             loadPuzzleAndGuesses()
         }
@@ -1095,8 +1095,7 @@ async function create_row_letters(word, wordrow, solution, i) {
 }
 
 function finishLogin(httpResponse) {
-    // login_data contains cookie
-    // parse cookie data to feed client-facing user data
+    // if user is guest, will fill limited info (like not hiding login button, profile)
 
     setUser(httpResponse)
     const newparams = {
@@ -1112,7 +1111,13 @@ function finishLogin(httpResponse) {
     
     displayLogin()
 
-    document.getElementById("username").innerText = weightedRandomizer(user.username, 'greeting')
+    if (!user.is_guest) {
+        // show greeting. replaces login.
+        // load past puzzle rewards
+        document.getElementById("username").innerText = weightedRandomizer(user.username, 'greeting')
+        processAnyPastPuzzleRewards()
+    }
+    
     // Login successful
     document.getElementById('login_modal').classList.remove('opened')
     document.getElementById('overlay').classList.add('closed')
@@ -1122,7 +1127,8 @@ function finishLogin(httpResponse) {
 
     // Look for past puzzle with unseen rewards. Show if exists
     // Send seen on close
-    processAnyPastPuzzleRewards()
+
+    
 }
 
 
@@ -1285,7 +1291,6 @@ async function login(event) {
 
     original_login_child.appendChild(carousel_loader)
 
-    not_logging_in = false
     nav_source = 'login'
 
     await fetchPostWrapper('/users/login', params, finishLogin, manageLoginError)
@@ -1296,31 +1301,42 @@ async function login(event) {
 }
 
 async function playGuest(event) {
-    closeFullscreenModal('login_modal')
-    not_logging_in = true
-    if (puzzle.id) { // if refusing login and puzzle is loaded, send start
-        loadPuzzleAndGuesses()
+    // New plan. Attempt login. Create new optional parameter in API for guests.
+    // user table needs new column for whether person is registered. This needs to be referenced for everything that is profiled users only
+    // create would actually need to update the users
+    // If logging in as guest, look for user with same ip if exists. If exists, gather all info with that IP where user_id is null
+    // Need to double check that there aren't any functions or calculations that will break if using a guest. Ex, user row with an id will exist, 
+    // but they shouldn't be included in leaderboard calcs.
+    const params = {
+        user_ip: user.ip
     }
+
+    await fetchPostWrapper('/users', params, finishLogin)
+
+
+
     nav_source = 'guest'
 
-    openFullscreenModal('howToModal')
+    if (!user.max_streak) { // in otherwords, has not completed a puzzle
+        openFullscreenModal('howToModal')
+    }
 
-    
     logNavEvent('guest', nav_source)
 
 }
 
 async function createProfile(event) {
+    // update users if account with same ip exists, else create new
+
     const params = {
         uname: document.getElementById('create_uname').value,
         pword: document.getElementById('create_pword').value,
         email: document.getElementById('create_email').value.toLowerCase(),
         user_ip: user.ip
-    }
+    } 
     if (!params.uname || !params.pword || !params.email) {
         toast(true, 'Please include all fields.')
     } else {
-        not_logging_in = false
 
         // loader
         let original_login_child = event.target.firstElementChild
@@ -1820,11 +1836,19 @@ function fill_puzzle_with_guess(guess_words) {
 }
 
 function setUser(responseData) {
+    // might not have username if guest
+
     user.id = responseData['id']
-    user.username = responseData["username"]
     user.points = responseData["points"]
     user.streak = responseData['streak']
     user.max_streak = responseData['max_streak']
+
+    if (!responseData['is_guest']) {
+        user.username = responseData["username"]
+    } else {
+        // is guest
+        user['is_guest'] = true
+    }
 }
 
 
@@ -1894,14 +1918,18 @@ document.getElementById('close_privacy_button').addEventListener('click', functi
 document.getElementById('submit_profile_button').addEventListener('click', createProfile)
 
 function displayLogin() {
-    const username = user.username
     const points = user.points
     const streak = user.streak || 0
     const max_streak = user.max_streak || 0
 
 
     document.getElementById("points").innerText = points
-    document.getElementById('open_login_button').style.display = 'none'
+
+    // only hide if logged in. keep if guest
+    if (!user.is_guest) {
+        document.getElementById('open_login_button').style.display = 'none'
+    } 
+    
 
     var points_displays = document.getElementsByClassName('points')
     for (let i = 0; i < points_displays.length; i++) {
@@ -3955,7 +3983,7 @@ window.onload = async function() {
 
   }
 
-
+  console.log(user.ip)
 
   if (!admin_ips.includes(user.ip)) {
     fetchPostWrapper('/visit', {ip: user.ip}, null)
