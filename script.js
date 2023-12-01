@@ -1,7 +1,7 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
-const api_url_base = 'https://scrambler-server-development.onrender.com'
+const api_url_base = 'https://scrambler-api.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -1311,7 +1311,7 @@ async function playGuest(event) {
         user_ip: user.ip
     }
 
-    await fetchPostWrapper('/users', params, finishLogin)
+    await fetchPostWrapper('/users/login', params, finishLogin)
 
 
 
