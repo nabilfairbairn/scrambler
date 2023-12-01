@@ -190,7 +190,7 @@ button {
   left: var(--game-left);
   right: var(--game-right);
   bottom: 0;
-  overflow: scroll;
+  overflow: auto;
   z-index: 15;
   padding: 1rem; 
   background-color: var(--background-blue);
@@ -211,6 +211,7 @@ button {
 .fullscreen-modal.sidenav.opened {
   transform: translateX(0%);
   visibility: visible;
+  box-shadow: 1.5em 3em 1em 0 rgba(0, 0, 0, 0.6);
 }
 
 .fullscreen-modal-content {
@@ -225,6 +226,7 @@ button {
   padding: 1.3rem;
   margin-left: -1rem;
   margin-right: -1rem;
+  cursor: pointer;
 }
 
 .sidenav.fullscreen-modal .header {
@@ -246,6 +248,7 @@ button {
 
 .disabled {
   background: rgba(0, 0, 0, 0.15);
+  cursor: auto !important;
 }
 
 .copyright {
@@ -871,10 +874,6 @@ span.small {
   border: solid 0.3em var(--gray-tile-shadow);
   background: none;
   box-shadow: none;
-}
-.achievement.locked .achievement_description{
-  opacity: 0;
-  pointer-events: none;
 }
 
 .achievement_title {
@@ -1833,7 +1832,7 @@ div img {
     align-items: center;
     text-align: center;
     width: 18rem;
-    box-shadow: var(--almost-black) 0px 0px 1rem 5px;
+    box-shadow: 0 3em 0.6em 0.7em rgba(0, 0, 0, 0.6);
 
   border: 0.1rem solid var(--almost-black);
   position: absolute;
@@ -1883,17 +1882,19 @@ div img {
   position: absolute;
   z-index: 9;
   pointer-events: all;
-  background-color:rgba(0,0,0,0.4);
+  background-color:rgba(0,0,0,0.1);
   border: none;
   backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(3px);
   top: 0;
   left: 0;
   right: 0;
   bottom: -10%;
+
+  transition: 0.5s all ease-in;
 }
 .overlay.closed {
-  display: none;
+  opacity: 0;
   pointer-events: none;
 }
 

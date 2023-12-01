@@ -1,7 +1,7 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -393,7 +393,6 @@ function mark_seen_achievements() {
             name_list.push(title_e.innerText)
         })
     })
-    console.log(name_list)
 
     let params = {
         'name_list': JSON.stringify(name_list),
@@ -448,9 +447,13 @@ async function process_achievements(achievement_data) {
 
 async function add_achievements_to_list(ach_list, ach_type) {
 
-    ach_list.forEach(({ title, description }) => {
+    ach_list.forEach(({ title, description, hidden }) => {
         let achievement = document.createElement('div')
         achievement.classList.add('achievement', ach_type)
+
+        if (hidden) {
+            description = '???'
+        }
 
         let ach_title = document.createElement('div')
         ach_title.innerText = title
@@ -458,6 +461,7 @@ async function add_achievements_to_list(ach_list, ach_type) {
 
         let ach_description = document.createElement('div')
         ach_description.innerText = description
+        
         ach_description.classList.add('achievement_description')
 
         achievement.appendChild(ach_title)
@@ -3328,7 +3332,6 @@ async function openFullscreenModal(e) {
     } else {
         target = e.target
         modal_id = target.getAttribute('for')
-        console.log(e.target)
     }
     
     
@@ -3781,7 +3784,6 @@ window.onload = async function() {
     clear_variables()
 
     let device_id = localStorage.getItem("device_id")
-    console.log(device_id)
 
     if (!device_id) {
         device_id = create_random_device_id()
@@ -3952,6 +3954,8 @@ window.onload = async function() {
     }
 
   }
+
+  
 
   if (!admin_ips.includes(user.ip)) {
     fetchPostWrapper('/visit', {ip: user.ip}, null)
