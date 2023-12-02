@@ -394,6 +394,10 @@ function mark_seen_achievements() {
         })
     })
 
+    document.querySelectorAll('.notification').forEach(dot => {
+        dot.classList.remove('unseen')
+    })
+
     let params = {
         'name_list': JSON.stringify(name_list),
         'user_id': user.id,
@@ -410,6 +414,10 @@ async function process_achievements(achievement_data) {
     if (new_unlock && new_unlock.length) {
         // toast new achievements with 2 second delay
         toast_all_achievements(new_unlock)
+
+        document.querySelectorAll('.notification').forEach(dot => {
+            dot.classList.add('unseen')
+        })
     }
 
     // new_unlock is not exclusive of unseen. Total achievements = unseen + unlocked + locked
