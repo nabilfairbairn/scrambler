@@ -10,7 +10,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 
 const admin_ips = ['0.qv9u2ts9ew20231023']
 
-const version = 'V1.2.3'
+const version = 'V1.2.4'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 
 
@@ -414,7 +414,9 @@ async function process_achievements(achievement_data) {
     if (new_unlock && new_unlock.length) {
         // toast new achievements with 2 second delay
         toast_all_achievements(new_unlock)
+    }
 
+    if (unseen && unseen.length) {
         document.querySelectorAll('.notification').forEach(dot => {
             dot.classList.add('unseen')
         })
@@ -459,7 +461,7 @@ async function add_achievements_to_list(ach_list, ach_type) {
         let achievement = document.createElement('div')
         achievement.classList.add('achievement', ach_type)
 
-        if (hidden) {
+        if (hidden && ach_type == 'locked') {
             description = '???'
         }
 
@@ -3615,7 +3617,12 @@ function evalTutorial3() {
     } else {
         document.getElementById('guess_number_c1').classList.add('wrong')
         if (a1) {
-            toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 8)
+            if (a1 == 'WORDS') {
+                // do nothing. will get achievement
+            } else {
+                toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 12)
+            }
+            
         } else {
             toast(true, `Did you read anything? You click the boxes first to put in your answer.`, 6)
         }
