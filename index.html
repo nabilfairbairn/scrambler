@@ -626,11 +626,28 @@
         </div>
           <div class="vertical-flex-cont sidenav">
               <div id="dictionaryNavButton" class="open-fs-modal-button nav-item godnav" for="dictionary">Full Dictionary</div>
-              <div id="validateSuggestionsNavButton" class="disabled">See Suggested Words</div>
+              <div id="validateSuggestionsNavButton" class="nav-item disabled">See Suggested Words</div>
               <div id="seePageStatsNavButton" class="open-fs-modal-button nav-item godnav" for="analytics">See Analytics</div>
-              <div id="reportedUsernamesNavButton" class="disabled">Ban Hammer</div>
+              <div id="reportedUsernamesNavButton" class="nav-item disabled">Ban Hammer</div>
+              <div id="selectPuzzleButton" class="nav-item open-fs-modal-button godnav" for="choosePuzzleModal">Choose Puzzle</div>
           </div>
       </div>
+    </div>
+
+    <div id="choosePuzzleModal" class="popup-modal">
+      <div class="header">
+        <span>Enter Puzzle ID</span>
+        <button
+          type="button" class='button square minimal close-fs-modal-button' for="choosePuzzleModal"><span class="material-icons-round">
+            close
+            </span></button>
+      </div>
+
+      <form class="vertical-flex-cont">
+        <input id="input_puzzle-number" type="number">
+        <button id="enter_puzzle_number" class="accentButton">Open Puzzle</button>
+      </form> 
+        
     </div>
 
     <div id="analytics" class="fullscreen-modal">

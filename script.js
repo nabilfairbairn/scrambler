@@ -1,7 +1,7 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
-const api_url_base = 'https://scrambler-api.onrender.com'
+const api_url_base = 'https://scrambler-server-development.onrender.com'
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -689,6 +689,7 @@ async function declare_puzzle(httpResponse) {
     // receives json containing both easy and hard puzzles
     // assigns both daily puzzle variables
     // creates puzzle for easy
+    await clear_puzzle()
 
     Object.entries(httpResponse).forEach(([diff, puz]) => {
         let visible = puz['visible'] // ['THORN','__RCH','_O_C_','_RC__','_R_PS']
@@ -714,6 +715,8 @@ async function declare_puzzle(httpResponse) {
     document.getElementById('puzzle_loader').style.display = 'none'
     await create_puzzle()
     puzzle_loaded = true
+
+    return
 }
 
 async function fetchPuzzle() {
@@ -734,6 +737,26 @@ async function fetchPuzzle() {
             loadPuzzleAndGuesses()
         }
     }
+}
+
+document.getElementById('enter_puzzle_number').addEventListener('click', getPuzzleById)
+
+async function getPuzzleById(e) { // only called from godnav
+    e.preventDefault()
+
+    let puzz_id = document.getElementById('input_puzzle-number').value
+
+    let params = { puzzle_id: puzz_id }
+
+    let url = '/puzzles/id'
+
+    let puzzle_response = await fetchPostWrapper(url, params, null)
+
+    await declare_puzzle(puzzle_response)
+
+    loadInPuzzle()
+
+    closeFullscreenModal('choosePuzzleModal')
 }
 
 async function refreshLeaderboard() {
