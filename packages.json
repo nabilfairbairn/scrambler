@@ -1,0 +1,16 @@
+{
+  "name": "scrambler_site",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "set NODE_ENV=development&& nodemon index.js",
+    "start-prod": "set NODE_ENV=production&& nodemon index.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+  }
+}
