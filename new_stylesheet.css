@@ -679,6 +679,93 @@ input ~ .help-tip {
   100% { opacity:100%; }
 }
 
+.lb {
+  display: flex;
+  flex-direction: column;
+  height: max-content;
+}
+
+.leaderboard_tile {
+  display: flex;
+  height: 3rem;
+  margin: 0.5rem;
+  border: solid 2px var(--accent-shadow);
+  border-radius: 3em;
+  padding: 1em;
+  background: rgb(252, 247, 239);
+}
+.username_tile {
+  font-weight: 500;
+  font-size: 1.15em;
+}
+.title_1_tile {
+  font-size: 0.85em;
+  margin-left: 1em;
+}
+.title_2_tile {
+  font-size: 0.85em;
+  margin-left: 1.5em;
+}
+.lb_vert_cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.lb_vert_cont .bonus_icon {
+  width: 1rem;
+  height: 1rem;
+  max-height: 1rem;
+  max-width: 1rem;
+  min-height: 1rem;
+  min-width: 1rem;
+  
+}
+.rank_tile {
+  font-size: 2rem;
+  text-align: center;
+  vertical-align: center;
+  align-self: center;
+  justify-content: center;
+  align-items: center;
+  flex: 2 0 0;
+  color: var(--gray-tile-shadow);
+}
+.lb_div_1 {
+  display: flex;
+  flex: 8 0 0;
+}
+.time_tile, .guess_tile {
+  text-align: end;
+}
+.points_tile {
+  display: flex;
+  flex: 4 0 0;
+  align-self: center;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.lb_div_2 {
+  display: flex;
+  flex: 5 0 0;
+  height: 80%;
+  align-self: center;
+}
+.lb_div_3{
+  position: relative;
+  display: flex;
+  flex: 1 0 0;
+  justify-content: space-between;
+  height: 80%;
+  align-self: center;
+}
+
+.guess_medal {
+  position: absolute;
+  bottom: 0;
+}
+
 table {
   table-layout: fixed;
   width: 100%;
@@ -791,7 +878,7 @@ tbody tr:nth-child(even) {
   background: var(--background-blue);
 }
 
-tbody.invisible tr {
+.lb.invisible {
   display: none;
 }
 

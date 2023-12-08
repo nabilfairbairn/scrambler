@@ -783,6 +783,9 @@ function loadFullLeaderboard(httpResponse) {
     loadDailyLeaderboard(hard_leaderboard, 'hard')
     loadLongerLeaderboard(week_leaderboard, 'week')
     loadLongerLeaderboard(all_leaderboard, 'all')
+
+    showCheckedLeaderboard() //default to easy
+
     
     loadProfileStats()
     
@@ -812,12 +815,10 @@ function loadProfileStats() {
 }
 
 function loadDailyLeaderboard(lb, diff) {
-    const tbody_id = `${diff}_leaderboard_tbody`
-    const lb_tbody = document.getElementById(tbody_id)
+    const lb_tbody = document.getElementById(`${diff}_leaderboard_container`)
 
     lb_tbody.textContent = ''
 
-    let first_day = false
 
     for (let i = 0; i < lb.length && i < 25; i++) {
         
@@ -827,30 +828,24 @@ function loadDailyLeaderboard(lb, diff) {
         let username = lb_entry['username']
         let points = lb_entry['total_points']
 
-        if (points == 0) {
-            first_day = true
-            break
-        }
-
         let fast_bonus = create_medal(lb_entry['fast_bonus'], 'small')
         let guess_bonus = create_medal(lb_entry['guess_bonus'], 'small')
 
-        let row = createTableRow([rank, username, points, fast_bonus, guess_bonus])
+        // To add:
+        let duration = '2:17'
+        let guesses = 4
+
+        let row = createTableRow({ rank, username, points, fast_bonus, guess_bonus, duration, guesses }, 'single_result')
         lb_tbody.appendChild(row)
     }
     if (lb.length == 0) {
-        let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', ''])
-        lb_tbody.appendChild(row)
-    }
-    if (first_day) {
-        let row = createTableRow(['', `Come back tomorrow for the new ranking on today's puzzle!`, '', '', ''])
-        lb_tbody.appendChild(row)
+        lb_tbody.textContent = 'Waiting for someone to complete a puzzle...'
     }
 }
 
 function loadLongerLeaderboard(lb, timespan) {
-    const tbody_id = `${timespan}_leaderboard_tbody`
-    const lb_tbody = document.getElementById(tbody_id)
+
+    const lb_tbody = document.getElementById(`${timespan}_leaderboard_container`)
 
     lb_tbody.textContent = ''
 
@@ -864,12 +859,11 @@ function loadLongerLeaderboard(lb, timespan) {
         let bronze = lb_entry['bronze']
         let n_puzzles = lb_entry['n_puzzles']
 
-        let row = createTableRow([rank, username, points, gold, silver, bronze, n_puzzles])
+        let row = createTableRow({ rank, username, points, gold, silver, bronze, n_puzzles }, 'timespan_result')
         lb_tbody.appendChild(row)
     }
     if (lb.length == 0) {
-        let row = createTableRow(['', 'Waiting for someone to complete a puzzle.', '', '', '', '', ''])
-        lb_tbody.appendChild(row)
+        lb_tbody.textContent = 'Waiting for someone to complete a puzzle...'
     }
 }
 
@@ -1698,13 +1692,17 @@ async function closeAllBanners() {
 }
 
 function show_next_banner_message() {
+    let is_good;
+    let message;
     if (banner_message_queue.length) {
-        let [is_good, message] = banner_message_queue.pop()
-    if (is_good) {
-        goodBannerMessage(message)
-    } else {
-        badBannerMessage(message)
-    }
+        [is_good, message] = banner_message_queue.pop()
+
+
+        if (is_good) {
+            goodBannerMessage(message)
+        } else {
+            badBannerMessage(message)
+        }
     } else { // if no message, open stats banner
         openStatsBanner()
     }
@@ -2746,34 +2744,102 @@ function showPointsPopup(data) {
     fetchPostWrapper('/leaderboard/complete', params, loadInRewardLeaderboard) // hides loader
 }
 
-function createTableRow(input_list) {
+function createTableRow(input_list, schema) {
     // create tr (new row)
-    let tr = document.createElement('tr')
+    let leaderboard_tile = document.createElement('div')
+    leaderboard_tile.classList.add('leaderboard_tile')
+
+    let { rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2, n_puzzles, } = input_list
+
+    let rank_tile = document.createElement('div')
+    rank_tile.classList.add('rank_tile')
+    rank_tile.innerText = rank
+    leaderboard_tile.appendChild(rank_tile)
+
+    let lb_div_1 = document.createElement('div') // username and titles
+    lb_div_1.classList.add('lb_div_1', 'lb_vert_cont')
+
+    let username_tile = document.createElement('div')
+    username_tile.classList.add('username_tile')
+    username_tile.innerText = username
+
+    let title_1_tile = document.createElement('div')
+    title_1_tile.classList.add('title_1_tile')
+    // To add:
+    title_1 = 'Foolhardy'
+    title_1 = title_1 ? title_1 : ''
+    title_1_tile.innerText = title_1
+
     
-    for (let i = 0; i < input_list.length; i++) {
-        // create cell. th if first element of input row. else td
-        let cell;
-        if (i == 0) {
-            cell = document.createElement('th')
-            cell.setAttribute('scope', 'row')
-        } else {
-            cell = document.createElement('td')
-        }
+    title_2 = 'Centurion'
+    title_2 = title_2 ? title_2 : ''
+    let title_2_tile = document.createElement('div')
+    title_2_tile.classList.add('title_2_tile')
+    title_2_tile.innerText = title_2
+
+    lb_div_1.appendChild(username_tile)
+    lb_div_1.appendChild(title_1_tile)
+    lb_div_1.appendChild(title_2_tile)
+    leaderboard_tile.appendChild(lb_div_1)
+
+    // split whether row is for today, yesterday, or timespan leaderboard
+
+    let points_tile = document.createElement('div')
+    points_tile.classList.add('points_tile')
+    points_tile.innerText = `${points} Points`
+
+    if (schema == 'single_result') {
+        leaderboard_tile.appendChild(points_tile)
+
+        let lb_div_2 = document.createElement('div') // time and guesses
+        lb_div_2.classList.add('lb_div_2', 'lb_vert_cont')
+
+        let time_tile = document.createElement('div') // time
+        time_tile.classList.add('time_tile')
+        time_tile.innerText = duration
+
+        let guess_tile = document.createElement('div') // guesses
+        guess_tile.classList.add('guess_tile')
+        guess_tile.innerText = `${guesses} Guesses`
         
-        let cell_value = input_list[i]
-        if (cell_value === null || typeof cell_value === 'undefined') {
-            cell.innerText = ''
-            // empty cell
+        lb_div_2.appendChild(time_tile)
+        lb_div_2.appendChild(guess_tile)
+
+        let lb_div_3 = document.createElement('div') // time and guess medals
+        lb_div_3.classList.add('lb_div_3', 'lb_vert_cont')
+        if (fast_bonus) {
+            lb_div_3.appendChild(fast_bonus) // time medal
         }
-        else if (cell_value instanceof Element) { // is DOM element
-            cell.appendChild(cell_value)
-        } else { // assume text or number
-            cell.innerText = cell_value
+        if (guess_bonus) {
+            guess_bonus.classList.add('guess_medal')
+            lb_div_3.appendChild(guess_bonus) // guess medal
+        }
+        if (schema == 'timespan_result') {
+            let lb_div_2 = document.createElement('div') // vertical, separate points+puzzles from medals
+            lb_div_2.classList.add('lb_div_2', 'lb_vert_cont')
+
+            let lb_div_3 = document.createElement('div') // top cont, points + puzzles
+            lb_div_3.classList.add('lb_div_3', 'lb_hor_cont')
+
+            let lb_div_4 = document.createElement('div') // bottom cont, 3 medals
+            lb_div_4.classList.add('lb_div_4', 'lb_hor_cont')
+
+            lb_div_3.appendChild(points_tile)
+
+            let puzzles_tile = document.createElement('div')
+            puzzles_tile.classList.add('puzzles_tile')
+            let puzzle_icon = 
+
+            lb_div_3.appendChild(puzzles_tile)
         }
 
-        tr.appendChild(cell)
+        leaderboard_tile.appendChild(lb_div_2)
+        leaderboard_tile.appendChild(lb_div_3)
     }
-    return tr
+
+    // TODO: Create schema for period leaderboard and incomplete leaderboard
+
+    return leaderboard_tile
 }
 
 function loadInRewardLeaderboard(data) {
@@ -2877,6 +2943,11 @@ async function process_guess_styling(real_guess) {
         user_states[getDiff()].last_guess = complete_words // Update last_guess
         user_states[getDiff()].message = message
         user_states[getDiff()].validity = validity
+
+        if (message) {
+            update_message_banner()
+            show_next_banner_message()
+        }
 
     }
 
@@ -3261,17 +3332,13 @@ function changeLeaderboard(e) {
         // Show difficulty toggle
         document.getElementById('today_leaderboard_diff').classList.remove('invisible')
 
-        // change icons to bonuses
-        document.getElementById('today_thead').classList.remove('removed')
 
         showCheckedLeaderboard()
 
     } else { // week or all tab
         
 
-        var target_tbody = document.getElementById(`${change_to}_leaderboard_tbody`)
-        target_tbody.classList.remove('invisible')
-        document.getElementById('long_thead').classList.remove('removed')
+        document.getElementById(`${change_to}_leaderboard_container`).classList.remove('invisible')
         document.getElementById('today_leaderboard_diff').classList.add('invisible')
 
         // TODO load user stats for change_to
@@ -3323,21 +3390,14 @@ function loadUserStats() {
     
     document.getElementById('next_reset').innerText = reset
 
-    
-        
-            
-
-
-
 }
 
 function hideAllLeaderboards() {
-    var tbodys = document.getElementsByClassName('full-leaderboard-tbody')
-    for (let i = 0; i < tbodys.length; i++) {
-        tbodys[i].classList.add('invisible')
-    }
-    document.getElementById('today_thead').classList.add('removed') 
-    document.getElementById('long_thead').classList.add('removed')
+
+    document.getElementById('week_leaderboard_container').classList.add('invisible')
+    document.getElementById('all_leaderboard_container').classList.add('invisible')
+    document.getElementById('easy_leaderboard_container').classList.add('invisible')
+    document.getElementById('hard_leaderboard_container').classList.add('invisible')
 }
 
 
@@ -3347,10 +3407,7 @@ function showCheckedLeaderboard() {
     var value = checked_radio.value
 
     hideAllLeaderboards()
-    document.getElementById(`${value}_leaderboard_tbody`).classList.remove('invisible')
-    document.getElementById('today_thead').classList.remove('removed')
-
-    // TODO load user stats
+    document.getElementById(`${value}_leaderboard_container`).classList.remove('invisible')
 }
 
 var keyboard = document.getElementById('keyboard-cont')
@@ -3845,7 +3902,6 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
 window.onload = async function() {
     
     await clear_puzzle()
-    // Need solution for resetting all user variables
 
     clear_variables()
 

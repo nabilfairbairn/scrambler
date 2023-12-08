@@ -264,6 +264,7 @@
         <br>
         <span class="larger_text">Final points will be calculated at the end of day when the daily puzzle finishes.</span>
         <span id="final_reward_message" class="larger_text">Check back then to see how you did!</span>
+        
         <table>
           <caption>Finisher Leaderboard</caption>
           <thead id="daily_lb">
@@ -966,53 +967,10 @@
           
         </div>
       </div>
-      <div style="overflow: auto;">
-        <table id="full_leaderboard_table" class="longer">
-          <thead id="today_thead">
-            <tr>
-              <th scope="col">№</th>
-              <th scope="col">Username</th>
-              <th scope="col">Points</th>
-              <th scope="col" id="lb_second_icon"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
-              <th scope="col" id="lb_third_icon"><img class="bonus_icon small" src="strategy.svg"/></th> <!-- <img  class="bonus_icon small" src="strategy.svg"/> -->
-            </tr>
-          </thead>
-          <thead id="long_thead" class="removed">
-            <tr>
-              <th scope="col">№</th>
-              <th scope="col">Username</th>
-              <th scope="col">Points</th>
-              <th scope="col" id="lb_first_icon"><img class="bonus_icon small" src="gold-medal.svg"/></th>
-              <th scope="col" id="lb_second_icon"><img class="bonus_icon small" src="silver-medal.svg"/></th>
-              <th scope="col" id="lb_third_icon"><img class="bonus_icon small" src="bronze-medal.svg"/></th>
-              <th scope="col" id="lb_fourth_icon"><img class="bonus_icon small" src="puzzle_piece.svg"/></th> <!-- <img  class="bonus_icon small" src="strategy.svg"/> -->
-            </tr>
-          </thead>
-          <tbody id="easy_leaderboard_tbody" class="full-leaderboard-tbody">
-            <!-- EXAMPLE ROWS FOR TESTING CSS
-            <tr>
-              <th scope="row">1</th>
-              <td>BEEEEEEEEESSAHAHAHA</td>
-              <td>420</td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-              <td></td>
-              <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>CuteJade</td>
-              <td>69</td>
-              <td></td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-            </tr>
-          -->
-          </tbody>
-          <tbody id="hard_leaderboard_tbody" class="full-leaderboard-tbody invisible"></tbody>
-          <tbody id="week_leaderboard_tbody" class="full-leaderboard-tbody invisible"></tbody>
-          <tbody id="all_leaderboard_tbody" class="full-leaderboard-tbody invisible"></tbody>
-        </table>
-      </div>
+      <div id="week_leaderboard_container" class="lb" ></div>
+      <div id="all_leaderboard_container" class="lb" ></div>
+      <div id="easy_leaderboard_container" class="lb"></div>
+      <div id="hard_leaderboard_container" class="lb" ></div>
 
     </div>
   </div>
