@@ -265,36 +265,10 @@
         <span class="larger_text">Final points will be calculated at the end of day when the daily puzzle finishes.</span>
         <span id="final_reward_message" class="larger_text">Check back then to see how you did!</span>
         
-        <table>
-          <caption>Finisher Leaderboard</caption>
-          <thead id="daily_lb">
-            <tr>
-              <th scope="col">Username</th>
-              <th scope="col"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
-              <th scope="col"><img class="bonus_icon small" src="strategy.svg"/></th>
-            </tr>
-          </thead>
-          <tbody id="daily_leaderboard_tbody">
-            <!-- EXAMPLE ROWS FOR TESTING CSS
-            <tr>
-              <th scope="row">1st</th>
-              <td>BEEEEEEEEESSAHAHAHA</td>
-              <td>420</td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-              <td></td>
-              <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
-            </tr>
-            <tr>
-              <th scope="row">2nd</th>
-              <td>CuteJade</td>
-              <td>69</td>
-              <td></td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-            </tr>
-          -->
-          </tbody>
-        </table>
+        <span>Finishers</span>
+        <div id="finisher_leaderboard" class="lb">
+        </div>
+        
         <div id="reward_leaderboard_loader" class="dot-flashing"></div>
       </div>
 
@@ -366,39 +340,9 @@
         <div id="last_puzzle_solution" class="rowHolder ex">
 
         </div>
+        <span>Finisher Leaderboard</span>
+        <div id="last_puzzle_leaderboard" class="lb"></div>
 
-        <table>
-          <caption>Finisher Leaderboard</caption>
-          <thead id="yesterday_lb_thead">
-            <tr>
-              <th scope="col">№</th>
-              <th scope="col">Username</th>
-              <th scope="col">Points</th>
-              <th scope="col"><img class="bonus_icon small" src="fast_bonus.svg"/></th>
-              <th scope="col"><img class="bonus_icon small" src="strategy.svg"/></th>
-            </tr>
-          </thead>
-          <tbody id="last_puzz_leaderboard_tbody">
-            <!-- EXAMPLE ROWS FOR TESTING CSS
-            <tr>
-              <th scope="row">1st</th>
-              <td>BEEEEEEEEESSAHAHAHA</td>
-              <td>420</td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-              <td></td>
-              <td><img class="bonus_icon small" src="gold-medal.svg"/></td>
-            </tr>
-            <tr>
-              <th scope="row">2nd</th>
-              <td>CuteJade</td>
-              <td>69</td>
-              <td></td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-              <td><img class="bonus_icon small" src="silver-medal.svg"/></td>
-            </tr>
-          -->
-          </tbody>
-        </table>
 
       </div>
     </div>
@@ -410,6 +354,17 @@
             close
             </span></button>
       </div>
+      <p><u>V1.2.5 - Dec 12 2023</u></p>
+
+      <ul>
+        <li><p>Changed: Leaderboard tables have been redesigned! There's now more space for displaying information, as well as space to hold special Titles...</p></li>
+        <li><p>Changed: Puzzles themselves have been greatly updated. Now every possible branch you take will be guaranteed to have a next word which is relatively common.
+          You won't need to worry about choosing a word that limits you to later words that are wildly obscure.
+        </p></li>
+      </ul>
+
+      <br>
+
       <p><u>V1.2.4 - Dec 2 2023</u></p>
 
       <ul>

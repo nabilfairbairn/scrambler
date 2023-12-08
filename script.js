@@ -10,7 +10,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 
 const admin_ips = ['0.qv9u2ts9ew20231023']
 
-const version = 'V1.2.4'
+const version = 'V1.2.5'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 
 
@@ -1004,19 +1004,37 @@ async function load_reward(diff) {
     let past_puzzle = past_rewards[diff]['puzzle_words']
     let solution = past_rewards[diff]['last_guess']
 
-    let user_stats = past_rewards[diff]['all_rewards'][user.id]
-
-    // load values
-    let fast_bonus = create_medal(user_stats['fast_bonus'])
-    let fast_points = user_stats['fast_points']
-
-    let guess_bonus = create_medal(user_stats['guess_bonus'])
-    let guess_points = user_stats['guess_points']
-
+    let user_stats, fast_bonus, fast_points, guess_bonus, guess_points, total_points, bonus_points, base_points
     
-    let total_points = user_stats['total_points']
-    let bonus_points = user_stats['bonus_points']
-    let base_points = total_points - bonus_points
+
+    if (user.id == 3) {
+
+        // load values
+        fast_bonus = create_medal(1)
+        fast_points = 1
+
+        guess_bonus = create_medal(1)
+        guess_points = 1
+
+        
+        total_points = 2
+        bonus_points = 3
+        base_points = total_points - bonus_points
+    } else {
+        user_stats = past_rewards[diff]['all_rewards'][user.id]
+
+        // load values
+        fast_bonus = create_medal(user_stats['fast_bonus'])
+        fast_points = user_stats['fast_points']
+
+        guess_bonus = create_medal(user_stats['guess_bonus'])
+        guess_points = user_stats['guess_points']
+
+        
+        total_points = user_stats['total_points']
+        bonus_points = user_stats['bonus_points']
+        base_points = total_points - bonus_points
+    }
     
 
     document.getElementById('fast_bonus').innerHTML = ''
@@ -1065,7 +1083,8 @@ async function load_reward(diff) {
 
     lb.sort((a, b) => b.total_points - a.total_points);
 
-    const lb_tbody = document.getElementById("last_puzz_leaderboard_tbody")
+    // no longer table
+    const lb_tbody = document.getElementById("last_puzzle_leaderboard")
 
     lb_tbody.textContent = ''
 
@@ -1074,10 +1093,10 @@ async function load_reward(diff) {
         let rank = i + 1
         let username = lb_entry['username']
         let points = lb_entry['total_points']
-        let time = parse_duration(lb_entry['duration'])
+        let duration = parse_duration(lb_entry['duration'])
         let guesses = lb_entry['total_guesses']
 
-        let row = createTableRow([rank, username, points, time, guesses])
+        let row = createTableRow({ rank, username, points, duration, guesses }, 'yesterday')
         lb_tbody.appendChild(row)
     }
 }
@@ -2749,12 +2768,17 @@ function createTableRow(input_list, schema) {
     let leaderboard_tile = document.createElement('div')
     leaderboard_tile.classList.add('leaderboard_tile')
 
-    let { rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2, n_puzzles, } = input_list
+    let { rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2, n_puzzles, gold, silver, bronze } = input_list
 
-    let rank_tile = document.createElement('div')
-    rank_tile.classList.add('rank_tile')
-    rank_tile.innerText = rank
-    leaderboard_tile.appendChild(rank_tile)
+    guesses = guesses == 1 ? `${guesses} Guess` : `${guesses} Guesses` 
+    // no rank on finisher
+    if (schema != 'finisher') {
+        let rank_tile = document.createElement('div')
+        rank_tile.classList.add('rank_tile')
+        rank_tile.innerText = rank
+        leaderboard_tile.appendChild(rank_tile)
+    }
+    
 
     let lb_div_1 = document.createElement('div') // username and titles
     lb_div_1.classList.add('lb_div_1', 'lb_vert_cont')
@@ -2763,15 +2787,14 @@ function createTableRow(input_list, schema) {
     username_tile.classList.add('username_tile')
     username_tile.innerText = username
 
+    // Titles
     let title_1_tile = document.createElement('div')
     title_1_tile.classList.add('title_1_tile')
-    // To add:
-    title_1 = 'Foolhardy'
+
     title_1 = title_1 ? title_1 : ''
     title_1_tile.innerText = title_1
 
     
-    title_2 = 'Centurion'
     title_2 = title_2 ? title_2 : ''
     let title_2_tile = document.createElement('div')
     title_2_tile.classList.add('title_2_tile')
@@ -2800,7 +2823,7 @@ function createTableRow(input_list, schema) {
 
         let guess_tile = document.createElement('div') // guesses
         guess_tile.classList.add('guess_tile')
-        guess_tile.innerText = `${guesses} Guesses`
+        guess_tile.innerText = guesses
         
         lb_div_2.appendChild(time_tile)
         lb_div_2.appendChild(guess_tile)
@@ -2814,37 +2837,114 @@ function createTableRow(input_list, schema) {
             guess_bonus.classList.add('guess_medal')
             lb_div_3.appendChild(guess_bonus) // guess medal
         }
-        if (schema == 'timespan_result') {
-            let lb_div_2 = document.createElement('div') // vertical, separate points+puzzles from medals
-            lb_div_2.classList.add('lb_div_2', 'lb_vert_cont')
-
-            let lb_div_3 = document.createElement('div') // top cont, points + puzzles
-            lb_div_3.classList.add('lb_div_3', 'lb_hor_cont')
-
-            let lb_div_4 = document.createElement('div') // bottom cont, 3 medals
-            lb_div_4.classList.add('lb_div_4', 'lb_hor_cont')
-
-            lb_div_3.appendChild(points_tile)
-
-            let puzzles_tile = document.createElement('div')
-            puzzles_tile.classList.add('puzzles_tile')
-            let puzzle_icon = 
-
-            lb_div_3.appendChild(puzzles_tile)
-        }
 
         leaderboard_tile.appendChild(lb_div_2)
         leaderboard_tile.appendChild(lb_div_3)
+        leaderboard_tile.classList.add('single')
     }
 
-    // TODO: Create schema for period leaderboard and incomplete leaderboard
+    if (schema == 'timespan_result') {
+        let lb_div_2 = document.createElement('div') // vertical, separate points+puzzles from medals
+        lb_div_2.classList.add('lb_div_2', 'lb_vert_cont')
+
+        let lb_div_3 = document.createElement('div') // top cont, points + puzzles
+        lb_div_3.classList.add('lb_div_3', 'lb_hor_cont')
+
+        let lb_div_4 = document.createElement('div') // bottom cont, 3 medals
+        lb_div_4.classList.add('lb_div_4', 'lb_hor_cont')
+
+        lb_div_3.appendChild(points_tile)
+
+        // separate icon and text
+        let puzzles_tile = document.createElement('div')
+        puzzles_tile.classList.add('icon_text_tile')
+
+        let puzzle_icon = document.createElement('img')
+        puzzle_icon.classList.add('bonus_icon', 'small')
+        puzzle_icon.src = "puzzle_piece.svg"
+
+        let puzzle_number = document.createElement('div')
+        puzzle_number.innerText = n_puzzles
+
+        puzzles_tile.appendChild(puzzle_icon)
+        puzzles_tile.appendChild(puzzle_number)
+
+        lb_div_3.appendChild(puzzles_tile)
+
+        // separate each medal icon and text
+        let gold_tile = document.createElement('div')
+        gold_tile.classList.add('icon_text_tile')
+
+        let gold_icon = create_medal(1, 'bonus_icon small')
+        let gold_number = document.createElement('div')
+        gold_number.innerText = gold
+
+        gold_tile.appendChild(gold_icon)
+        gold_tile.appendChild(gold_number)
+
+        // silver
+        let silver_tile = document.createElement('div')
+        silver_tile.classList.add('icon_text_tile')
+
+        let silver_icon = create_medal(2, 'bonus_icon small')
+        let silver_number = document.createElement('div')
+        silver_number.innerText = silver
+
+        silver_tile.appendChild(silver_icon)
+        silver_tile.appendChild(silver_number)
+
+        // bronze
+        let bronze_tile = document.createElement('div')
+        bronze_tile.classList.add('icon_text_tile')
+
+        let bronze_icon = create_medal(3, 'bonus_icon small')
+        let bronze_number = document.createElement('div')
+        bronze_number.innerText = bronze
+
+        bronze_tile.appendChild(bronze_icon)
+        bronze_tile.appendChild(bronze_number)
+
+
+        lb_div_4.appendChild(gold_tile)
+        lb_div_4.appendChild(silver_tile)
+        lb_div_4.appendChild(bronze_tile)
+
+        lb_div_2.appendChild(lb_div_3)
+        lb_div_2.appendChild(lb_div_4)
+
+        leaderboard_tile.appendChild(lb_div_2)
+        leaderboard_tile.classList.add('timespan')
+        
+    }
+
+    if (schema == 'finisher' || schema == 'yesterday') {
+        let time_tile = document.createElement('div') // time
+        time_tile.classList.add('time_tile')
+        time_tile.innerText = duration
+
+        let guess_tile = document.createElement('div') // guesses
+        guess_tile.classList.add('guess_tile')
+        guess_tile.innerText = guesses
+
+        let lb_div_2 = document.createElement('div')
+        lb_div_2.appendChild(time_tile)
+        lb_div_2.appendChild(guess_tile)
+        lb_div_2.classList.add('lb_vert_cont', 'lb_div_2')
+
+        if (schema == 'yesterday') {
+            leaderboard_tile.appendChild(points_tile)
+        }
+
+        leaderboard_tile.appendChild(lb_div_2)
+        leaderboard_tile.classList.add('finisher')
+    }
 
     return leaderboard_tile
 }
 
 function loadInRewardLeaderboard(data) {
-
-    const table_body = document.getElementById("daily_leaderboard_tbody")
+    // No longer table, just div
+    const table_body = document.getElementById("finisher_leaderboard")
     table_body.textContent = ''
 
     for (let i = 0; i < data.length; i++) {
@@ -2854,9 +2954,11 @@ function loadInRewardLeaderboard(data) {
         let duration = parse_duration(row['duration'])
         let guesses = row['total_guesses']
 
-        let tr = createTableRow([username, duration, guesses])
+        // Add titles to sent data
+        let leaderboard_tile = createTableRow({ username, duration, guesses }, 'finisher')
 
-        table_body.appendChild(tr)
+        
+        table_body.appendChild(leaderboard_tile)
     }
     document.getElementById("reward_leaderboard_loader").style.display = 'none';
 }

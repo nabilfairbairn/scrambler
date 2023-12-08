@@ -684,7 +684,9 @@ input ~ .help-tip {
   flex-direction: column;
   height: max-content;
 }
-
+#last_puzzle_leaderboard {
+  margin: 0.5rem;
+}
 .leaderboard_tile {
   display: flex;
   height: 3rem;
@@ -694,9 +696,16 @@ input ~ .help-tip {
   padding: 1em;
   background: rgb(252, 247, 239);
 }
+.leaderboard_tile.finisher {
+  height: 2rem;
+  margin: 0.2rem;
+  align-content: center;
+  padding: 0.4em 0.8em;
+}
 .username_tile {
   font-weight: 500;
   font-size: 1.15em;
+  text-align: left;
 }
 .title_1_tile {
   font-size: 0.85em;
@@ -711,6 +720,11 @@ input ~ .help-tip {
   flex-direction: column;
   justify-content: space-between;
 }
+.lb_hor_cont {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
 .lb_vert_cont .bonus_icon {
   width: 1rem;
@@ -723,17 +737,19 @@ input ~ .help-tip {
 }
 .rank_tile {
   font-size: 2rem;
-  text-align: center;
+  text-align: right;
   vertical-align: center;
   align-self: center;
-  justify-content: center;
-  align-items: center;
-  flex: 2 0 0;
+  justify-content: right;
+  align-items: flex-end;
+  width: 1.5rem;
   color: var(--gray-tile-shadow);
+  direction: rtl;
 }
 .lb_div_1 {
   display: flex;
-  flex: 8 0 0;
+  width: 9rem;
+  margin-left: 0.3rem;
 }
 .time_tile, .guess_tile {
   text-align: end;
@@ -745,14 +761,20 @@ input ~ .help-tip {
   font-size: 1rem;
   text-align: center;
 }
-
+.timespan .points_tile {
+  font-size: inherit;
+  text-align: left;
+}
 .lb_div_2 {
   display: flex;
   flex: 5 0 0;
   height: 80%;
   align-self: center;
 }
-.lb_div_3{
+.finisher .lb_div_2 {
+  height: 100%;
+}
+.single .lb_div_3{
   position: relative;
   display: flex;
   flex: 1 0 0;
@@ -760,7 +782,13 @@ input ~ .help-tip {
   height: 80%;
   align-self: center;
 }
-
+.timespan .lb_div_3 {
+  font-size: 0.9rem;
+}
+.icon_text_tile {
+  display: flex;
+  flex-direction: row;
+}
 .guess_medal {
   position: absolute;
   bottom: 0;
