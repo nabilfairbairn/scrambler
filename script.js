@@ -832,8 +832,8 @@ function loadDailyLeaderboard(lb, diff) {
         let guess_bonus = create_medal(lb_entry['guess_bonus'], 'small')
 
         // To add:
-        let duration = '2:17'
-        let guesses = 4
+        let duration = parse_duration(lb_entry['duration'])
+        let guesses = lb_entry['n_guesses']
 
         let row = createTableRow({ rank, username, points, fast_bonus, guess_bonus, duration, guesses }, 'single_result')
         lb_tbody.appendChild(row)
