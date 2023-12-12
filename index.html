@@ -862,8 +862,14 @@
     
       <div id="achievements_stat" class="centered"></div> <!-- 14/29 -->
 
-      <p>In the coming week or two I'll be adding more achievements. Eventually, you'll be able to select 2 titles to display alongside your username on leaderboards.</p>
-      <p>Also, unlocking a certain number of achievements will grant you some customization features to the colour of your leaderboard tile!</p>
+      <div id="selected_title_holder">
+        Select up to 2 Titles:
+          <ol>
+            <li><span id="selected_title_1"></span></li>
+            <li><span id="selected_title_2"></span></li>
+          </ol>
+      </div>
+      <div class="horizontal-flex-cont"><button id="save_title_button" class="accentButton">Save</button><button id="reset_title_button" class="neutralbutton">Reset</button></div>
 
       <div id="achievement_holder" style="overflow: auto;"> <!-- Keep achievements in scrollable box so header is always visible-->
         

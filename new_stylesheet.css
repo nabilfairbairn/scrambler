@@ -689,11 +689,11 @@ input ~ .help-tip {
 }
 .leaderboard_tile {
   display: flex;
-  height: 3rem;
+  height: 2.5rem;
   margin: 0.5rem;
   border: solid 2px var(--accent-shadow);
   border-radius: 3em;
-  padding: 1em;
+  padding: 0.8em;
   background: rgb(252, 247, 239);
 }
 .leaderboard_tile.finisher {
@@ -927,6 +927,20 @@ span.small {
   font-size: 0.85em;
 }
 
+#selected_title_holder {
+  display: flex;
+  flex-direction: column;
+}
+#selected_title_holder span{
+  display: flex;
+  margin: auto;
+  text-align: center;
+  align-self: center;
+}
+
+#achievement_holder {
+  margin-top: 1em;
+}
 #achievements_stat {
   margin: 2em;
   margin-bottom: 1em;
@@ -941,6 +955,13 @@ span.small {
   margin: 1em;
   background: var(--sandstone-tile);
   transition: all ease-out 0.5s;
+  cursor: pointer;
+}
+.achievement.selected {
+  border: solid 0.3em var(--wrong-text-colour);
+}
+.achievement div {
+  pointer-events: none;
 }
 .achievement.toast .achievement_title {
   font-weight: 500;
@@ -1009,6 +1030,7 @@ span.small {
   border: solid 0.3em var(--gray-tile-shadow);
   background: none;
   box-shadow: none;
+  cursor: auto;
 }
 
 .achievement_title {

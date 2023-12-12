@@ -1,7 +1,15 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
-const api_url_base = 'https://scrambler-api.onrender.com'
+const currentDomain = window.location.hostname;
+let api_url_base
+console.log(currentDomain)
+if (currentDomain == 'https://scrambler.onrender.com') {
+    api_url_base = 'https://scrambler-api.onrender.com'
+} else {
+    api_url_base = 'https://scrambler-server-development.onrender.com'
+}
+
 const wordrow_id_prefix = 'guess_number_';
 var blurred;
 const start_date = new Date('2023-02-26')
@@ -451,8 +459,8 @@ async function process_achievements(achievement_data) {
 
     document.getElementById('achievements_stat').innerText = `${n_unlocked}/${n_total}`
 
-    // Unseen remains highlighted until clicked on or achievements modal is closed
-    // When seen, send API call
+    // create onclick event listener to select titles
+
 }
 
 async function add_achievements_to_list(ach_list, ach_type) {
@@ -479,9 +487,89 @@ async function add_achievements_to_list(ach_list, ach_type) {
         
         document.getElementById('achievement_holder').appendChild(achievement)
 
+        achievement.addEventListener('click', selectAchievementTitle)
+
     })
 
     return
+}
+
+function selectAchievementTitle(e) {
+    let ach = e.target
+
+    // if not unlocked, ignore
+    // else, get title, add to list.
+    if (ach.classList.contains('unseen') || ach.classList.contains('unlocked')) {
+        let title = ach.querySelector('.achievement_title')
+        title = title.innerText
+
+        // if title_1 empty, set title_1
+        // if title 1 full, set title_2
+        // if both full, do nothing.
+        
+        let title_preloaded = preloadNewTitle(title) // not saved, just load title into selection
+        // returns 1 if saved, 0 if not saved
+        if (title_preloaded) {
+            ach.classList.add('selected')
+        }
+    }
+}
+
+function preloadNewTitle(title) {
+    // Returns 0 if not loaded. 1 if loaded
+    let t1_holder = document.getElementById('selected_title_1')
+    let t2_holder = document.getElementById('selected_title_2')
+
+    if (t1_holder.innerText && t2_holder.innerText) { // both titles already selected.
+        return 0
+    }
+    if (t1_holder.innerText && !t2_holder.innerText) { // cant set same title twice
+        if (t1_holder.innerText == title) {
+            return 0
+        }
+        t2_holder.innerText = title
+        return 1
+    }
+    t1_holder.innerText = title
+    return 1
+}
+
+// in achievements menu
+document.getElementById('reset_title_button').addEventListener('click', resetTitle)
+
+function resetTitle(e) {
+    e.preventDefault()
+
+    document.getElementById('selected_title_1').innerText = ''
+    document.getElementById('selected_title_2').innerText = ''
+
+    document.querySelectorAll('.achievement.selected').forEach(ach => {
+        ach.classList.remove('selected')
+    })
+    
+}
+
+document.getElementById('save_title_button').addEventListener('click', saveTitles)
+
+async function saveTitles() {
+    let t1 = document.getElementById('selected_title_1').innerText
+    if (!t1) {
+        return
+    }
+    let t2 = document.getElementById('selected_title_2').innerText
+
+    let params = {
+        user_id: user.id,
+        user_ip: user.ip,
+        t1: t1,
+        t2: t2
+    }
+
+    let url = '/achievements/title'
+
+    fetchPostWrapper(url, params, refreshLeaderboard) // reload leaderboard
+
+    toast(false, `Your titles on the leaderboard have been updated.`)
 }
 
 async function toast_all_achievements(ach_list) {
@@ -835,7 +923,10 @@ function loadDailyLeaderboard(lb, diff) {
         let duration = parse_duration(lb_entry['duration'])
         let guesses = lb_entry['total_guesses']
 
-        let row = createTableRow({ rank, username, points, fast_bonus, guess_bonus, duration, guesses }, 'single_result')
+        let title_1 = lb_entry['title_1']
+        let title_2 = lb_entry['title_2']
+
+        let row = createTableRow({ rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2 }, 'single_result')
         lb_tbody.appendChild(row)
     }
     if (lb.length == 0) {
@@ -859,7 +950,10 @@ function loadLongerLeaderboard(lb, timespan) {
         let bronze = lb_entry['bronze']
         let n_puzzles = lb_entry['n_puzzles']
 
-        let row = createTableRow({ rank, username, points, gold, silver, bronze, n_puzzles }, 'timespan_result')
+        let title_1 = lb_entry['title_1']
+        let title_2 = lb_entry['title_2']
+
+        let row = createTableRow({ rank, username, points, gold, silver, bronze, n_puzzles, title_1, title_2 }, 'timespan_result')
         lb_tbody.appendChild(row)
     }
     if (lb.length == 0) {
@@ -1096,7 +1190,10 @@ async function load_reward(diff) {
         let duration = parse_duration(lb_entry['duration'])
         let guesses = lb_entry['total_guesses']
 
-        let row = createTableRow({ rank, username, points, duration, guesses }, 'yesterday')
+        let title_1 = lb_entry['title_1']
+        let title_2 = lb_entry['title_2']
+
+        let row = createTableRow({ rank, username, points, duration, guesses, title_1, title_2 }, 'yesterday')
         lb_tbody.appendChild(row)
     }
 }
@@ -2954,8 +3051,11 @@ function loadInRewardLeaderboard(data) {
         let duration = parse_duration(row['duration'])
         let guesses = row['total_guesses']
 
+        let title_1 = lb_entry['title_1']
+        let title_2 = lb_entry['title_2']
+
         // Add titles to sent data
-        let leaderboard_tile = createTableRow({ username, duration, guesses }, 'finisher')
+        let leaderboard_tile = createTableRow({ username, duration, guesses, title_1, title_2 }, 'finisher')
 
         
         table_body.appendChild(leaderboard_tile)
