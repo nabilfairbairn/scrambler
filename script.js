@@ -4,7 +4,7 @@
 const currentDomain = window.location.hostname;
 let api_url_base
 console.log(currentDomain)
-if (currentDomain == 'https://scrambler.onrender.com') {
+if (['https://scrambler.onrender.com', 'scrambler.onrender.com'].includes(currentDomain)) {
     api_url_base = 'https://scrambler-api.onrender.com'
 } else {
     api_url_base = 'https://scrambler-server-development.onrender.com'
