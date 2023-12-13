@@ -761,6 +761,9 @@ input ~ .help-tip {
   font-size: 1rem;
   text-align: center;
 }
+.finisher .points_tile {
+  flex: 3 0 0;
+}
 .timespan .points_tile {
   font-size: inherit;
   text-align: left;

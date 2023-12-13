@@ -417,7 +417,7 @@ function mark_seen_achievements() {
 }
 
 async function process_achievements(achievement_data) {
-    let { new_unlock, unseen, unlocked, locked } = achievement_data
+    let { new_unlock, unseen, unlocked, locked, title_1, title_2 } = achievement_data
     // keys = seen, unseen, new, locked
     if (new_unlock && new_unlock.length) {
         // toast new achievements with 2 second delay
@@ -449,7 +449,7 @@ async function process_achievements(achievement_data) {
         n_total += unlocked.length
         n_unlocked += unlocked.length
         // Add unseen to top of achievement list
-        await add_achievements_to_list(unlocked, 'unlocked')
+        await add_achievements_to_list(unlocked, 'unlocked', title_1, title_2)
     }
     if (locked && locked.length) {
         n_total += locked.length
@@ -463,7 +463,7 @@ async function process_achievements(achievement_data) {
 
 }
 
-async function add_achievements_to_list(ach_list, ach_type) {
+async function add_achievements_to_list(ach_list, ach_type, title_1='', title_2='') {
 
     ach_list.forEach(({ title, description, hidden }) => {
         let achievement = document.createElement('div')
@@ -476,6 +476,10 @@ async function add_achievements_to_list(ach_list, ach_type) {
         let ach_title = document.createElement('div')
         ach_title.innerText = title
         ach_title.classList.add('achievement_title')
+
+        if (title == title_1 || title == title_2) {
+            achievement.classList.add('selected')
+        }
 
         let ach_description = document.createElement('div')
         ach_description.innerText = description
@@ -491,6 +495,14 @@ async function add_achievements_to_list(ach_list, ach_type) {
 
     })
 
+    if (title_1) {
+        document.getElementById('selected_title_1').innerText = title_1
+    }
+    if (title_2) {
+        document.getElementById('selected_title_2').innerText = title_2
+
+    }
+    
     return
 }
 
@@ -553,9 +565,6 @@ document.getElementById('save_title_button').addEventListener('click', saveTitle
 
 async function saveTitles() {
     let t1 = document.getElementById('selected_title_1').innerText
-    if (!t1) {
-        return
-    }
     let t2 = document.getElementById('selected_title_2').innerText
 
     let params = {
@@ -565,7 +574,7 @@ async function saveTitles() {
         t2: t2
     }
 
-    let url = '/achievements/title'
+    let url = '/achievements/titles'
 
     fetchPostWrapper(url, params, refreshLeaderboard) // reload leaderboard
 
