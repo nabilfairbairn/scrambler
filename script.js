@@ -3060,8 +3060,8 @@ function loadInRewardLeaderboard(data) {
         let duration = parse_duration(row['duration'])
         let guesses = row['total_guesses']
 
-        let title_1 = lb_entry['title_1']
-        let title_2 = lb_entry['title_2']
+        let title_1 = row['title_1']
+        let title_2 = row['title_2']
 
         // Add titles to sent data
         let leaderboard_tile = createTableRow({ username, duration, guesses, title_1, title_2 }, 'finisher')
