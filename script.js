@@ -7,7 +7,7 @@ console.log(currentDomain)
 if (['https://scrambler.onrender.com', 'scrambler.onrender.com'].includes(currentDomain)) {
     api_url_base = 'https://scrambler-api.onrender.com'
 } else {
-    api_url_base = 'https://scrambler-server-development.onrender.com'
+    api_url_base = 'https://scrambler-api.onrender.com'
 }
 
 const wordrow_id_prefix = 'guess_number_';
@@ -263,7 +263,7 @@ let puzzle = {
 }
 function getDiff() {
     var diff_scale = ['easy', 'hard']
-    if (!puzzle.difficulty) {
+    if (!puzzle.difficulty || puzzle.difficulty > 2) { //custom puzzles are currently set to difficulty 3, but are sent by API as easy
         return 'easy'
     }
     return diff_scale[puzzle.difficulty - 1] // 1 indexed difficulty
