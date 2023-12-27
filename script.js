@@ -1472,12 +1472,11 @@ async function playGuest(event) {
     const params = {
         user_ip: user.ip
     }
+    nav_source = 'guest'
 
     await fetchPostWrapper('/users/login', params, finishLogin)
 
 
-
-    nav_source = 'guest'
 
     if (!user.max_streak) { // in otherwords, has not completed a puzzle
         openFullscreenModal('howToModal')
@@ -1489,6 +1488,8 @@ async function playGuest(event) {
 
 async function createProfile(event) {
     // update users if account with same ip exists, else create new
+    nav_source = 'create'
+
 
     const params = {
         uname: document.getElementById('create_uname').value,
@@ -1513,7 +1514,6 @@ async function createProfile(event) {
         
     }
 
-    nav_source = 'create'
     logNavEvent('create', nav_source)
 }
 
@@ -3705,7 +3705,11 @@ async function openFullscreenModal(e) {
 
     document.getElementById('overlay').classList.remove('closed')
 
-    logNavEvent(`open_${modal_id}`, nav_source)
+    if (modal_id != 'offline_modal') {
+        logNavEvent(`open_${modal_id}`, nav_source)
+    }
+    
+    
   }
 
   function closeFullscreenModal(e) { // TODO: close rewards modal takes very long?
@@ -3759,6 +3763,9 @@ async function openFullscreenModal(e) {
         document.getElementById('overlay').classList.remove('higher')
     } else {
         document.getElementById('overlay').classList.add('closed')
+    }
+    if (modal_id == 'offline_modal') {
+        logNavEvent(`was_offline`, nav_source)
     }
 
   }
