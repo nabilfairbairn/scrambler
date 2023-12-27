@@ -18,7 +18,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 
 const admin_ips = ['0.qv9u2ts9ew20231023']
 
-const version = 'V1.2.6'
+const version = 'V1.2.7'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 
 
@@ -803,10 +803,20 @@ async function declare_puzzle(httpResponse) {
             'difficulty': puz['difficulty'],
             'base_points': puz['base_points']
         }
+
+        let daily_puzzle_date = puz['daily_date']
+        let puz_year = daily_puzzle_date.slice(0, 4)
+        let puz_month = daily_puzzle_date.slice(5, 7)
+        let puz_day = daily_puzzle_date.slice(8, 10)
+        puzzle_date = new Date()
+        puzzle_date.setUTCFullYear(puz_year, puz_month - 1, puz_day)
+        puzzle_date.setUTCHours(0, 0, 0, 0)
     })
     
     // set current puzzle to easy
     puzzle = todays_puzzles['easy']
+
+    
     
     // hide loader
     document.getElementById('puzzle_loader').style.display = 'none'
@@ -1213,7 +1223,7 @@ function parse_duration(duration) {
     // mm:ss
     let hours = duration['hours'] ? duration['hours'] : 0
     let minutes = duration['minutes'] ? duration['minutes'] : 0
-    let seconds = duration['seconds']
+    let seconds = duration['seconds'] ? duration['seconds'] : 0
     minutes = minutes + hours*60
 
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}` // 72:12 = 72 minutes 12 seconds
@@ -3656,6 +3666,7 @@ async function openFullscreenModal(e) {
     let modal_id;
     let target;
 
+
     if (typeof(e) == 'string') {
         modal_id = e
     } else {
@@ -3665,7 +3676,7 @@ async function openFullscreenModal(e) {
     
     
 
-    if (['deleteModal'].includes(modal_id)) {
+    if (['deleteModal', 'offline_modal'].includes(modal_id)) {
         document.getElementById('overlay').classList.add('higher')
     }
 
@@ -4109,6 +4120,7 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
     })
 }
 
+let puzzle_date;
 
 window.onload = async function() {
     
@@ -4207,22 +4219,49 @@ window.onload = async function() {
 
   const next_game = document.getElementById('next_game')
 
+  let expiry_message_sent = false
+  let tomorrow = new Date();
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  tomorrow.setUTCHours(0, 0, 0, 0);
+
   function ShowTime() {
     var now = new Date();
-    var tomorrow = new Date(now);
-    tomorrow.setUTCDate(now.getUTCDate() + 1);
-    tomorrow.setUTCHours(0, 0, 0, 0);
-
     var timeLeft = tomorrow - now;
 
     var hrs = Math.floor((timeLeft / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
     var mins = Math.floor((timeLeft / (1000 * 60)) % 60).toString().padStart(2, '0');
     var secs = Math.floor((timeLeft / 1000) % 60).toString().padStart(2, '0');
-    var timeLeft = "" +hrs+':'+mins+':'+secs;
+    var timeLeft = hrs+':'+mins+':'+secs;
     next_game.innerHTML = timeLeft
+
+    now.setUTCDate(now.getUTCDate())
+    now.setUTCHours(0, 0, 0, 0)
+
+    if (now.getDate() != puzzle_date.getDate() && !expiry_message_sent) {
+
+        expiry_message_sent = true
+        if (user.username && user_states[getDiff()].puzzle_attempt == 1 && !user_states[getDiff()].finished) { // proxy for is registered
+            addBannerMessage(true, `This puzzle is now over. Completing it will only earn base points. Refresh the page for the current puzzle.`)
+        } else {
+            addBannerMessage(true, `The next puzzle is available to play. Refresh the page to load it.`)
+        }
+        
+        
     }
+    
+  }
         
   show_time_interval = setInterval(ShowTime ,1000);
+
+
+  window.addEventListener('offline', function() {
+    console.log('offline')
+    openFullscreenModal('offline_modal')
+  })
+  window.addEventListener('online', function() {
+    console.log('online')
+    closeFullscreenModal('offline_modal')
+  })
 
 
   document.querySelectorAll('.open-fs-modal-button').forEach(element => {
