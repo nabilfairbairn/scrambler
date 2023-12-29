@@ -1238,7 +1238,9 @@ span.small {
   margin-right: auto;
   margin-bottom: 1em;
 }
-
+.instruction {
+  text-align: center;
+}
 
 .stat {
   display: flex;

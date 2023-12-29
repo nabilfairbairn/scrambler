@@ -675,37 +675,32 @@
       <div>
         <span>
           <h3>I think you're going to love this!</h3>
-          <p>Scrambler is quite simple. There are only 3 things you need to know:</p>
-          <p><ol>
-            <li>1 letter changes between each word</li>
-            <li>The letters can be placed in any order</li>
-            <li>No repeating words</li>
-          </ol></p>
+          <p>Scrambler is quite simple. We're going to show you 4 simple puzzles that will teach you everything you need to know!</p>
           <br>
-          <p>It's your choice whether you guess one word at a time, or try to solve the puzzle in one guess (<i>for bonus points!</i>)</p>
           <p>If it's your first time, I <b>highly</b> recommend you solve these tutorial puzzles:</p>
           <hr>
           <br>
-          <h3>Swapping 1 letter</h3>
-          <p>To get from one word to the next, you need to swap out <b>1 letter</b> for another one.</p>
-          <p>If your guess is correct it turn <span style="color: var(--correct-color);">green</span>. If it's wrong it'll turn <span style="color: var(--wrong-color)">orange</span>. </p>
-          <div class="instruction"><p>Select the empty square below. Now create a new word that replaces the <i>'W'</i> in WASTE</p></div>
+          <h3>New word, new letter</h3>
+          <p>Every time you make a new word, you need to change a letter. Sometimes the puzzle even shows you what that letter is.</p>
+          <p>When you make your guess, it will turn <span style="color: var(--correct-color);">GREEN</span> if correct. If it's wrong, it'll turn <span style="color: var(--wrong-color)">ORANGE</span>. </p>
+          <div class="instruction"><p>Select the empty squares and create a new word. 
+            You already know that 'I' is the new letter.</p></div>
         </span>
         <div class="vertical-flex-cont ex">
         <div id="tutorial-1" class='rowHolder minimal ex'>
           <div id="guess_number_a0" class='wordRow horizontal-flex-cont ex'> 
-            <div class='letterBox ex' depth="a0"><div>W</div></div> 
-            <div class='letterBox ex' depth="a0"><div>A</div></div> 
-            <div class='letterBox ex' depth="a0"><div>S</div></div>
-          <div class='letterBox ex' depth="a0"><div>T</div></div> 
-          <div class='letterBox ex' depth="a0"><div>E</div></div> </div>
+            <div class='letterBox ex' depth="a0"><div>R</div></div> 
+            <div class='letterBox ex' depth="a0"><div>E</div></div> 
+            <div class='letterBox ex' depth="a0"><div>A</div></div>
+          <div class='letterBox ex' depth="a0"><div>C</div></div> 
+          <div class='letterBox ex' depth="a0"><div>H</div></div> </div>
 
           <div id='guess_number_a1' class='wordRow horizontal-flex-cont ex'> 
-            <div id="tutorial-1-answer" class='letterBox letterInput ex ex-input' depth="a1"><div></div></div> 
-            <div class='letterBox ex ' depth="a1"><div>A</div></div> 
-            <div class='letterBox ex ' depth="a1"><div>S</div></div>
-          <div class='letterBox ex ' depth="a1"><div>T</div></div> 
-          <div class='letterBox ex' depth="a1"><div>E</div></div> </div>
+            <div class='letterBox ex' depth="a1"><div>C</div></div> 
+            <div id="tut-1-1" class='letterBox letterInput ex ex-input' depth="a1" order="1"><div></div></div> 
+            <div class='letterBox ex' depth="a1"><div>A</div></div>
+          <div class='letterBox ex letterAdded' depth="a1"><div>I</div></div> 
+          <div id="tut-1-2" class='letterBox letterInput ex ex-input' depth="a1" order="2"><div></div></div> </div>
           
         </div>
         <button id="tutorial-1-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
@@ -713,33 +708,26 @@
         <hr>
         <br>
         <span>
-          <h3>Changing letter order</h3>
-          <p>Letters can be in any order, even the one you swap.</p>
+          <h3>Picking a new letter</h3>
+          <p>Sometimes you aren't shown what the new letter is and need to pick one.</p>
           
-          <div class="instruction"><p>Find out which letters from TASTE have been repeated, then replace the missing one with a different letter:</p></div>
+          <div class="instruction"><p>From REACH, E, A, and H have been used for the new word. Pick one of the remaining letters and one <b>new letter</b> to make a new word.</p></div>
         </span>
         <div class="vertical-flex-cont ex">
           <div id="tutorial-2" class='rowHolder minimal ex'>
             <div id="guess_number_b0" class='wordRow horizontal-flex-cont ex'> 
-              <div class='letterBox ex letterRemoved' depth="b0"><div>W</div></div> 
-              <div class='letterBox ex below' depth="b0"><div>A</div></div> 
-              <div class='letterBox ex below' depth="b0"><div>S</div></div>
-            <div class='letterBox ex below' depth="b0"><div>T</div></div> 
-            <div class='letterBox ex below' depth="b0"><div>E</div></div> </div>
+              <div class='letterBox ex' depth="b0"><div>R</div></div> 
+              <div class='letterBox ex' depth="b0"><div>E</div></div> 
+              <div class='letterBox ex' depth="b0"><div>A</div></div>
+            <div class='letterBox ex' depth="b0"><div>C</div></div> 
+            <div class='letterBox ex' depth="b0"><div>H</div></div> </div>
   
             <div id='guess_number_b1' class='wordRow horizontal-flex-cont ex'> 
-              <div class='letterBox ex letterAdded' depth="b1"><div>T</div></div> 
-              <div class='letterBox ex above below' depth="b1"><div>A</div></div> 
-              <div class='letterBox ex above below' depth="b1"><div>S</div></div>
-            <div class='letterBox ex above below letterRemoved' depth="b1"><div>T</div></div> 
-            <div class='letterBox ex above below' depth="b1"><div>E</div></div> </div>
-
-            <div id='guess_number_b2' class='wordRow horizontal-flex-cont ex'> 
-              <div  class='letterBox ex above' depth="b2"><div>S</div></div> 
-              <div class='letterBox ex above above' depth="b2"><div>T</div></div> 
-              <div class='letterBox ex above above' depth="b2"><div>A</div></div>
-            <div id="tutorial-2-answer" class='letterBox ex letterInput ex-input' depth="b2"><div></div></div> 
-            <div class='letterBox ex above above' depth="b2"><div>E</div></div> </div>
+              <div class='letterBox ex' depth="b1"><div>H</div></div> 
+              <div class='letterBox ex' depth="b1"><div>E</div></div> 
+              <div class='letterBox ex' depth="b1"><div>A</div></div>
+            <div id="tut-2-1" class='letterBox letterInput ex ex-input' depth="b1" order="1"><div></div></div> 
+            <div id="tut-2-2" class='letterBox letterInput ex ex-input' depth="b1" order="2"><div></div></div> </div>
             
           </div>
           <button id="tutorial-2-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
@@ -748,39 +736,76 @@
         <br>
         <span>
           <h3>Each word is unique</h3>
-          <p>However, some puzzles have more than one solution!</p>
-          <p>Blue markings outside the boxes show which letters <i>you</i> have swapped. If you've changed more than one letter, they will turn orange.</p>
+          <p>The puzzles you solve will have more than one word. When working on the 3rd word of a puzzle, you are changing one letter from the <b>2nd word</b> - NOT from the 1st word.</p>
         </span>
         <hr>
-        <div class="instruction"><p>No repeating words, so the second word can't be WORDS. Good luck!</p></div>
+        <div class="instruction"><p>Try checking your answer after putting in the 2nd word, then again for the 3rd word. Remember, the 3rd word can't be REACH since it is already used in the puzzle.</p></div>
         <div class="vertical-flex-cont ex">
           <div id="tutorial-3" class='rowHolder minimal ex'>
             <div id="guess_number_c0" class='wordRow horizontal-flex-cont ex'> 
-              <div class='letterBox ex below' depth="c0"><div>W</div></div> 
-              <div class='letterBox ex below' depth="c0"><div>O</div></div> 
-              <div class='letterBox ex below' depth="c0"><div>R</div></div>
-            <div class='letterBox ex ' depth="c0"><div>D</div></div> 
-            <div class='letterBox ex' depth="c0"><div>S</div></div> </div>
+              <div class='letterBox ex below' depth="c0"><div>R</div></div> 
+              <div class='letterBox ex below' depth="c0"><div>E</div></div> 
+              <div class='letterBox ex below' depth="c0"><div>A</div></div>
+            <div class='letterBox ex ' depth="c0"><div>C</div></div> 
+            <div class='letterBox ex' depth="c0"><div>H</div></div> </div>
   
             <div id='guess_number_c1' class='wordRow horizontal-flex-cont ex'> 
-              <div class='letterBox ex above below' depth="c1"><div>W</div></div> 
-              <div class='letterBox ex above below' depth="c1"><div>O</div></div> 
-              <div class='letterBox ex above below' depth="c1"><div>R</div></div>
-            <div id="tut-3-1" class='letterBox letterInput ex-input ex' depth="c1" order="1"><div></div></div> 
-            <div id="tut-3-2" class='letterBox letterInput ex-input ex' depth="c1" order="2"><div></div></div> 
+              <div id="tut-3-1" class='letterBox letterInput ex-input ex' depth="c1" order="1"><div></div></div> 
+              <div class='letterBox ex above below' depth="c1"><div>H</div></div> 
+              <div id="tut-3-2" class='letterBox letterInput ex-input ex' depth="c1" order="2"><div></div></div>
+            <div class='letterBox ex' depth="c1"><div>A</div></div> 
+            <div class='letterBox ex letterAdded' depth="c1"><div>T</div></div> 
           </div>
 
             <div id='guess_number_c2' class='wordRow horizontal-flex-cont ex'> 
               <div id="tut-3-3"  class='letterBox letterInput ex-input ex' depth="c2" order="3"><div></div></div> 
-              <div class='letterBox ex above ' depth="c2"><div>R</div></div> 
-              <div class='letterBox ex above' depth="c2"><div>O</div></div>
-            <div class='letterBox ex above' depth="c2"><div>W</div></div> 
+              <div class='letterBox ex above ' depth="c2"><div>E</div></div> 
+              <div class='letterBox ex above' depth="c2"><div>A</div></div>
+            <div class='letterBox ex above' depth="c2"><div>C</div></div> 
             <div id="tut-3-4" class='letterBox letterInput ex-input ex' depth="c2" order="4"><div></div></div> 
           </div>
             
           </div>
           <button id="tutorial-3-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
         </div>
+
+        <hr>
+        <br>
+        <span>
+          <h3>There can be dead-ends</h3>
+          <p>It's possible to find a 2nd word that won't work for the rest of the puzzle. When you submit a guess, the <span style="color: var(--correct-color);">GREEN</span> and <span style="color: var(--wrong-color)">ORANGE</span> colours will tell you whether a solution exists based on the words used so far.</p>
+        </span>
+        <hr>
+        <div class="instruction"><p>If you use RACER as a 2nd word, you won't be able to make a 3rd word from it. Try to find a word that works!</p></div>
+        <div class="vertical-flex-cont ex">
+          <div id="tutorial-4" class='rowHolder minimal ex'>
+            <div id="guess_number_d0" class='wordRow horizontal-flex-cont ex'> 
+              <div class='letterBox ex below' depth="d0"><div>R</div></div> 
+              <div class='letterBox ex below' depth="d0"><div>E</div></div> 
+              <div class='letterBox ex below' depth="d0"><div>A</div></div>
+            <div class='letterBox ex ' depth="d0"><div>C</div></div> 
+            <div class='letterBox ex' depth="d0"><div>H</div></div> </div>
+  
+            <div id='guess_number_d1' class='wordRow horizontal-flex-cont ex'> 
+              <div class='letterBox ex' depth="d1"><div>R</div></div> 
+              <div id="tut-4-1" class='letterBox letterInput ex-input ex'depth="d1" order="1"><div></div></div> 
+              <div  class='letterBox ex' depth="d1" ><div>C</div></div>
+            <div class='letterBox ex' depth="d1"><div>E</div></div> 
+            <div id="tut-4-2" class='letterBox letterInput ex-input ex' depth="d1" order="2"><div></div></div> 
+          </div>
+
+            <div id='guess_number_d2' class='wordRow horizontal-flex-cont ex'> 
+              <div id="tut-4-3"  class='letterBox letterInput ex-input ex' depth="d2" order="3"><div></div></div> 
+              <div class='letterBox ex above ' depth="d2"><div>U</div></div> 
+              <div class='letterBox ex above' depth="d2"><div>R</div></div>
+            <div id="tut-4-4" class='letterBox letterInput ex-input ex' depth="d2" order="4"><div></div></div> 
+            <div  class='letterBox ex' depth="d2" ><div>E</div></div> 
+          </div>
+            
+          </div>
+          <button id="tutorial-4-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Guess</button>
+        </div>
+
         <br>
         <span>
           <p>That's all :)</p>

@@ -2183,8 +2183,16 @@ function focus_next_letter(element, event) {
 
     //For tutorial
     if (!isNumeric(depth) && order < parseInt(4)) { //order only in 3rd tutorial puzzle
-        
-        next_letter = document.getElementById(`tut-3-${parseInt(order) + 1}`)
+        let element_id = element.id
+
+        if (['a', 'b'].includes(depth[0]) && order == 2) {
+            return
+        }
+        if (['c', 'd'].includes(depth[0]) && order == 4) {
+            return
+        }
+
+        next_letter = document.getElementById(element_id.slice(0, -1) + (parseInt(order) + 1))
     } else {
         var word_letters = Array.from(word.querySelectorAll(`.letterInput`))
         .filter(el => Number(el.getAttribute('order')) > order)
@@ -2360,10 +2368,6 @@ function isNumeric(value) {
 
 function determine_local_changed_letters(element) {
     var el_depth = element.getAttribute('depth')
-    
-    if (['a'].includes(el_depth.slice(0, 1))) {
-        return;
-    }
 
     // tutorial elements don't have depth
     if (el_depth) {
@@ -2419,12 +2423,12 @@ function determine_changed_letters(depth) {
     [this_element, this_word, _] = get_depth(depth)
 
     if (!isNumeric(depth)) {
-        let tut_n = depth.slice(0, 1)
+        let tut_letter = depth.slice(0, 1)
 
-        let prev_d = tut_n + (parseInt(depth.slice(-1)) - 1).toString()
-        let next_d = tut_n + (parseInt(depth.slice(-1)) + 1).toString()
+        let prev_d = tut_letter + (parseInt(depth.slice(-1)) - 1).toString()
+        let next_d = tut_letter + (parseInt(depth.slice(-1)) + 1).toString()
         prev_word = prev_d.slice(1) == '-1' ? null : get_word(prev_d)
-        next_word = next_d.slice(1) == '3' ? null : get_word(next_d)
+        next_word = (next_d.slice(1) == '3' && ['c', 'd'].includes(tut_letter)) || next_d.slice(1) == 2 && ['a', 'b'].includes(tut_letter) ? null : get_word(next_d)
     } else {
         prev_word = depth - 1 < 0 ? null : get_word(depth-1)
         next_word = parseFloat(depth) + 1 >= puzzle.words.length ? null : get_word(parseFloat(depth)+1)
@@ -3825,18 +3829,28 @@ let t_1_guesses = 0
 function evalTutorial1() {
     t_1_guesses++
     let correct = false
-    const answer = document.getElementById('tutorial-1-answer').firstElementChild.innerText
-    if (['T','P','H','C'].includes(answer)) {
+    let a1 = document.getElementById('tut-1-1').firstElementChild.innerText
+    let a2 = document.getElementById('tut-1-2').firstElementChild.innerText
+    const answer = 'C' + a1 + 'AI' + a2
+    if (answer == 'CHAIR') {
         document.getElementById('guess_number_a1').classList.add('correct')
         document.getElementById('guess_number_a0').classList.add('correct')
         correct = true
     } else {
         document.getElementById('guess_number_a1').classList.add('wrong')
         document.getElementById('guess_number_a0').classList.add('correct')
-        if (answer) {
-            toast(true, `Try to make any of the following words: 'TASTE', 'PASTE', 'HASTE', 'BASTE', or 'CASTE'`, 6)
+        if (answer.length == 5) {
+            if (['R', 'E', 'H'].includes(a1) && ['R', 'E', 'H'].includes(a2) && a1 != a2) {
+                toast(true, `That isn't a valid word. Try again`)
+            }
+            else if (!['R', 'E', 'H'].includes(a1) || !['R', 'E', 'H'].includes(a2)) {
+                toast(true, `Since 'I' is the new letter, the remaining letters need to come from the previous word. You can only use R, E, and H.`, 9)
+            }
+            else if (a1 == a2 && ['R', 'E', 'A', 'C', 'H'].includes(a1)) {
+                toast(true, `Since there's only 1 of each letter in REACH, you'll only be able to use them once.`, 7)
+            }
         } else {
-            toast(true, `Click on the empty box under the 'W' to place a letter`)
+            toast(true, `Fill in a new word before you submit your guess.`)
         }
     }
     const params = {
@@ -3845,7 +3859,7 @@ function evalTutorial1() {
         puzzle_id: -1,
         guess_n: t_1_guesses,
         attempt: 1,
-        words: JSON.stringify([correct.toString(), answer+'ASTE'])
+        words: JSON.stringify([correct.toString(), answer])
     }
     fetchPostWrapper('/guesses', params, null)
 
@@ -3855,21 +3869,24 @@ let t_2_guesses = 0
 function evalTutorial2() {
     t_2_guesses++
     let correct = false
-    const answer = document.getElementById('tutorial-2-answer').firstElementChild.innerText
-    if (['G', 'K', 'R', 'L', 'V', 'D'].includes(answer)) {
+    const a1 = document.getElementById('tut-2-1').firstElementChild.innerText
+    const a2 = document.getElementById('tut-2-2').firstElementChild.innerText
+    const answer = 'HEA' + a1 + a2
+    if (['HEART', 'HEARD', 'HEARS'].includes(answer)) {
         document.getElementById('guess_number_b1').classList.add('correct')
         document.getElementById('guess_number_b0').classList.add('correct')
-        document.getElementById('guess_number_b2').classList.add('correct')
         correct = true
     } else {
-        document.getElementById('guess_number_b1').classList.add('correct')
         document.getElementById('guess_number_b0').classList.add('correct')
-        document.getElementById('guess_number_b2').classList.add('wrong')
-        if (answer) {
-            if (answer == 'T') {
-                toast(true, `TASTE and STATE use all the same letters. You'll have to change one of them.`, 5)
+        document.getElementById('guess_number_b1').classList.add('wrong')
+        if (answer.length == 5) {
+            if (['E', 'A', 'H'].includes(a1) || [ 'E', 'A', 'H'].includes(a2)) {
+                toast(true, `Careful - H, E, and A have already been used from REACH. You have to use C or R, and 1 new letter.`)
+            }
+            else if (!['R', 'E', 'A', 'C', 'H'].includes(a1) && !['R', 'E', 'A', 'C', 'H'].includes(a2)) {
+                toast(true, `You used 2 new letters. Only one can be new.`, 6)
             } else {
-                toast(true, `That word isn't valid. Try again!`)
+                toast(true, `That word isn't valid. Try again.`)
             }
             
         } else {
@@ -3890,50 +3907,43 @@ function evalTutorial2() {
 let tutorial_guesses = 0
 function evalTutorial3() {
     tutorial_guesses++
-    const a1 = 'WOR' + document.getElementById('tut-3-1').firstElementChild.innerText + document.getElementById('tut-3-2').firstElementChild.innerText
-    const a2 = document.getElementById('tut-3-3').firstElementChild.innerText + 'ROW' + document.getElementById('tut-3-4').firstElementChild.innerText
+    let a1_1 = document.getElementById('tut-3-1').firstElementChild.innerText
+    let a1_2 = document.getElementById('tut-3-2').firstElementChild.innerText
+
+
+    const a1 = a1_1 + 'H' + a1_2 + 'AT'
+    const a2 = document.getElementById('tut-3-3').firstElementChild.innerText + 'EAC' + document.getElementById('tut-3-4').firstElementChild.innerText
     document.getElementById('guess_number_c0').classList.add('correct')
     let correct = false
-    if (['WORLD', 'WORMS', 'WORSE', 'WORST', 'WORKS'].includes(a1)) {
+    if (a1 == 'CHEAT') {
         document.getElementById('guess_number_c1').classList.add('correct')
 
-        switch (a1) {
-            case 'WORLD':
-                if (['CROWD', 'PROWL', 'DROWN', 'GROWL'].includes(a2)) {
-                    document.getElementById('guess_number_c2').classList.add('correct')
-                    correct = true
-                } else {
-                    document.getElementById('guess_number_c2').classList.add('wrong')
-                    if (a2) {
-                        toast(false, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`,5)
-                    }
-                    
-                }
-                break;
-            default:
-                if (['CROWS', 'BROWS', 'GROWS'].includes(a2)) {
-                    document.getElementById('guess_number_c2').classList.add('correct')
-                    correct = true
-                } else {
-                    document.getElementById('guess_number_c2').classList.add('wrong')
-                    if (a2) {
-                        toast(false, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`,5)
-                    }
-                }
-                break;
+        if (['PEACH', 'LEACH', 'BEACH', 'REACT'].includes(a2)) {
+            document.getElementById('guess_number_c2').classList.add('correct')
+            correct = true
+        } else if (a2 == 'REACH') {
+            document.getElementById('guess_number_c2').classList.add('wrong')
+            // no toast, will get achievement
+        } else {
+            
+            if (a2.length == 5) {
+                toast(true, `You're getting close. Make sure your 3rd word uses all but 1 letter from the previous word.`, 5)
+                document.getElementById('guess_number_c2').classList.add('wrong')
+            }
+            
         }
-
+                
     } else {
         document.getElementById('guess_number_c1').classList.add('wrong')
-        if (a1) {
-            if (a1 == 'WORDS') {
-                // do nothing. will get achievement
+        if (a1.length == 5) {
+            if (!['R', 'E', 'C'].includes(a1_1) || !['R', 'E', 'C'].includes(a1_2)) {
+                toast(true, `You can see that T is a new letter, so the remaining letters will all have to come from REACH.`, 12)
             } else {
-                toast(true, `For the second word, you'll need to use the same letters as 'WORDS', except for one that is swapped. The 'W' 'O' and 'R' are already placed for you. So make sure you use either the 'R' or 'S' in the second word.`, 12)
+                toast(true, `That isn't a word. Try again`)
             }
             
         } else {
-            toast(true, `Did you read anything? You click the boxes first to put in your answer.`, 6)
+            toast(true, `You'll need to actually put in an answer...`)
         }
         
     }
@@ -3942,6 +3952,61 @@ function evalTutorial3() {
         user_ip: user.ip,
         puzzle_id: -3,
         guess_n: tutorial_guesses,
+        attempt: 1,
+        words: JSON.stringify([correct.toString(), a1, a2])
+    }
+    fetchPostWrapper('/guesses', params, null)
+}
+
+let tut_4_guesses = 0
+function evalTutorial4() {
+    tutorial_guesses++
+    let a1_1 = document.getElementById('tut-4-1').firstElementChild.innerText
+    let a1_2 = document.getElementById('tut-4-2').firstElementChild.innerText
+
+
+    const a1 = 'R' + a1_1 + 'CE' + a1_2
+
+    let a2_1 = document.getElementById('tut-4-3').firstElementChild.innerText
+    let a2_2 = document.getElementById('tut-4-4').firstElementChild.innerText
+    const a2 = a2_1 + 'UR' + a2_2 + 'E'
+
+    document.getElementById('guess_number_d0').classList.add('correct')
+    let correct = false
+    if (a1 == 'RACES') {
+        document.getElementById('guess_number_d1').classList.add('correct')
+
+        if (a2 == 'CURSE') {
+            document.getElementById('guess_number_d2').classList.add('correct')
+            correct = true
+        } else if (a2.length == 5 && !['A', 'E', 'S'].includes(a2_1) && !['A', 'E', 'S'].includes(a2_2)) {
+            document.getElementById('guess_number_d2').classList.add('wrong')
+            toast(false, `You're getting close. Since U is new, the remaining letters need to come from A, C, or S.`, 8)
+            
+        } else if (a2.length == 5) {
+            document.getElementById('guess_number_d2').classList.add('wrong')
+            toast(true, `That's not a valid word. Try again.`)
+        }
+                
+    } else {
+        document.getElementById('guess_number_d1').classList.add('wrong')
+        if (a1.length == 5) {
+            if (['RACER', 'RACED'].includes(a1)) {
+                toast(true, `Those words work for the 2nd word, but you won't be able to use them to create a 3rd word that fits the puzzle.`, 7)
+            } else {
+                toast(true, `Not a valid word. You've got to use letters from REACH, and still need to add a new letter.`)
+            }
+            
+        } else {
+            toast(true, `You'll need to actually put in an answer...`)
+        }
+        
+    }
+    const params = {
+        user_id: user.id,
+        user_ip: user.ip,
+        puzzle_id: -4,
+        guess_n: tut_4_guesses,
         attempt: 1,
         words: JSON.stringify([correct.toString(), a1, a2])
     }
@@ -4160,6 +4225,7 @@ window.onload = async function() {
     document.getElementById("tutorial-1-answer-button").addEventListener('click', evalTutorial1)
     document.getElementById('tutorial-2-answer-button').addEventListener('click', evalTutorial2)
     document.getElementById('tutorial-3-answer-button').addEventListener('click', evalTutorial3)
+    document.getElementById('tutorial-4-answer-button').addEventListener('click', evalTutorial4)
       
 
     document.getElementById('logout').addEventListener('click', logout)
@@ -4262,11 +4328,9 @@ window.onload = async function() {
 
 
   window.addEventListener('offline', function() {
-    console.log('offline')
     openFullscreenModal('offline_modal')
   })
   window.addEventListener('online', function() {
-    console.log('online')
     closeFullscreenModal('offline_modal')
   })
 
