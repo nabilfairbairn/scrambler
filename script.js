@@ -927,7 +927,7 @@ function loadDailyLeaderboard(lb, diff) {
     lb_tbody.textContent = ''
 
 
-    for (let i = 0; i < lb.length && i < 25; i++) {
+    for (let i = 0; i < lb.length; i++) {
         
 
         let lb_entry = lb[i]
@@ -959,7 +959,7 @@ function loadLongerLeaderboard(lb, timespan) {
 
     lb_tbody.textContent = ''
 
-    for (let i = 0; i < lb.length && i < 25; i++) {
+    for (let i = 0; i < lb.length; i++) {
         let lb_entry = lb[i]
         let rank = i + 1
         let username = lb_entry['username']
@@ -971,6 +971,10 @@ function loadLongerLeaderboard(lb, timespan) {
 
         let title_1 = lb_entry['title_1']
         let title_2 = lb_entry['title_2']
+
+        if (!points) {
+            continue
+        }
 
         let row = createTableRow({ rank, username, points, gold, silver, bronze, n_puzzles, title_1, title_2 }, 'timespan_result')
         lb_tbody.appendChild(row)
@@ -1201,7 +1205,7 @@ async function load_reward(diff) {
 
     lb_tbody.textContent = ''
 
-    for (let i = 0; i < lb.length && i < 15; i++) {
+    for (let i = 0; i < lb.length; i++) {
         let lb_entry = lb[i]
         let rank = i + 1
         let username = lb_entry['username']
@@ -1211,6 +1215,10 @@ async function load_reward(diff) {
 
         let title_1 = lb_entry['title_1']
         let title_2 = lb_entry['title_2']
+
+        if (!points) {
+            continue
+        }
 
         let row = createTableRow({ rank, username, points, duration, guesses, title_1, title_2 }, 'yesterday')
         lb_tbody.appendChild(row)
