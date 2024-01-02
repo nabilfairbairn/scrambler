@@ -783,12 +783,12 @@ function parseArrayWithSpaces(array) {
   }
 
 async function declare_puzzle(httpResponse) {
-    // receives json containing both easy and hard puzzles
+    // receives json containing both easy and hard puzzles, and daily Sixes puzzle
     // assigns both daily puzzle variables
     // creates puzzle for easy
     await clear_puzzle()
 
-    Object.entries(httpResponse).forEach(([diff, puz]) => {
+    Object.entries(httpResponse['solve']).forEach(([diff, puz]) => {
         let visible = puz['visible'] // ['THORN','__RCH','_O_C_','_RC__','_R_PS']
 
         let answer = puz['answer'] // ["SWORD","LORDS FORDS CORDS DORMS WARDS","LOADS ROADS","SODAS","DOSES"] -> Needs to become comma separated nested list
@@ -813,16 +813,11 @@ async function declare_puzzle(httpResponse) {
         puzzle_date.setUTCHours(0, 0, 0, 0)
     })
     
-    // set current puzzle to easy
-    puzzle = todays_puzzles['easy']
-
-    
+    todays_puzzles['sixes'] = httpResponse['sixes']
     
     // hide loader
     document.getElementById('puzzle_loader').style.display = 'none'
-    await create_puzzle()
-    puzzle_loaded = true
-
+    
     return
 }
 
@@ -835,14 +830,7 @@ async function fetchPuzzle() {
     http.responseType = 'json'
     http.send() // Make sure to stringify
     http.onload = function() {
-        declare_puzzle(http.response) // easy and hard
-        // Puzzle slow to load, user already logged in. Once puzzle done loading, send start info.
-        // Or, user refused login. closing modal set not_logging_in to true.
-        // If user later decides to log in, clicking login button will set not_loggin_in to false
-        if (user.id) { 
-             
-            loadPuzzleAndGuesses()
-        }
+        declare_puzzle(http.response) // easy and hard Solve puzzles
     }
 }
 
@@ -1064,6 +1052,7 @@ const past_rewards = {
     easy: {},
     hard: {}
 }
+
 let reward_showing;
 
 async function processAnyPastPuzzleRewards() {
@@ -1086,11 +1075,21 @@ async function processAnyPastPuzzleRewards() {
         if (reward_showing) {
             document.getElementById(`${reward_showing}_radio_yesterday`).checked = true
             load_reward(reward_showing)
+            add_past_reward_buttons()
         }
-    }
-
-    
+    }  
 }
+
+function add_past_reward_buttons() {
+    document.querySelectorAll('.show_past_rewards_button').forEach(button => {
+        button.classList.remove('removed')
+        button.addEventListener('click', function() {
+            openFullscreenModal('last_puzzle_ranking')
+        })
+    })
+}
+
+
 
 document.getElementById('easy_radio_yesterday').addEventListener('click', switchRewardDifficulty)
 document.getElementById('hard_radio_yesterday').addEventListener('click', switchRewardDifficulty)
@@ -1114,9 +1113,6 @@ function switchRewardDifficulty(e) {
 }
 
 async function load_reward(diff) {
-
-    // open div (first, so player doesn't start puzzle)
-    openFullscreenModal('last_puzzle_ranking')
 
     let past_puzzle = past_rewards[diff]['puzzle_words']
     let solution = past_rewards[diff]['last_guess']
@@ -1273,34 +1269,31 @@ function finishLogin(httpResponse) {
         user_ip: user.ip
     }
     fetchPostWrapper('/version/get', newparams, highlightVersionButton)
-
-    // User logs in, but puzzle already exists?????
-    if (puzzle.id) {
-        loadPuzzleAndGuesses() // if puzzle isn't loaded, loadPuzzle function will load guesses
-    }
     
     displayLogin()
 
     if (!user.is_guest) {
         // show greeting. replaces login.
         // load past puzzle rewards
-        document.getElementById("username").innerText = weightedRandomizer(user.username, 'greeting')
-        processAnyPastPuzzleRewards()
+        processAnyPastPuzzleRewards() // Add *show past puzzle results* as button on greeting popup. Also exists in leaderboard
     }
     
     // Login successful
-    document.getElementById('login_modal').classList.remove('opened')
-    document.getElementById('overlay').classList.add('closed')
-
+    closeFullscreenModal('login_modal')
+    openFullscreenModal('greeting_modal')
     // TODO: visit request is first to be sent to server. Should return cookie if exists. 
     // Send callback here to parse cookie
-
-    // Look for past puzzle with unseen rewards. Show if exists
-    // Send seen on close
-
-    
 }
 
+document.getElementById('start_solve_button').addEventListener('click', function() {
+    closeFullscreenModal('greeting_modal')
+    loadPuzzleAndGuesses('Solve')
+    
+})
+document.getElementById('start_sixes_button').addEventListener('click', function() {
+    closeFullscreenModal('greeting_modal')
+    loadPuzzleAndGuesses('Sixes')
+})
 
 function manageLoginError(errorResponse, errorParams) {
     // replace loader with original text
@@ -1710,8 +1703,8 @@ function processAllGuesses(all_guess_data) {
     
 }
 
-function add_validity_styling() {
-    const validity_list = user_states[getDiff()]['validity']
+function add_validity_styling(sixes_validity) {
+    const validity_list = sixes_validity === undefined || !sixes_validity.length ? user_states[getDiff()]['validity'] : sixes_validity
 
     if (validity_list === undefined || !validity_list.length) { // if no guess, first word is always correct
         style_guessword(document.getElementById(`${wordrow_id_prefix}0`), true)
@@ -1731,12 +1724,21 @@ function add_validity_styling() {
     
 }
 
-async function loadPuzzleAndGuesses() {
+async function loadPuzzleAndGuesses(puzzle_type) {
     // start current puzzle, update attempt
     
+    if (puzzle_type == 'sixes') {
+        puzzle = todays_puzzles['sixes']
+    } else {
+        puzzle = todays_puzzles['easy']
+    }
+    
+
+    await create_puzzle(puzzle_type)
+    puzzle_loaded = true
 
     // load guesses for both puzzles
-    loadAllGuesses()
+    loadAllGuesses(puzzle_type)
 
     // Get Leaderboard since puzzle_ids are in.
     await refreshLeaderboard()
@@ -2154,7 +2156,7 @@ function days_between(StartDate, EndDate) {
     return (start - end) / oneDay;
   }
 
-function limit(element, key) {
+async function limit(element, key) {
     element.firstElementChild.innerText = key.toUpperCase()
     determine_local_changed_letters(element)
     setTimeout(function(){focus_next_letter(element)},80)
@@ -2173,9 +2175,6 @@ function delete_letter(element) {
         determine_local_changed_letters(element)
     }
 
-    
-
-    
 }
 
 function focus_next_letter(element, event) {
@@ -2228,7 +2227,7 @@ function focus_next_letter(element, event) {
     }
 }
 
-async function process_input(element, event) {
+async function process_input(element, event, puzzle_type) {
     // Remove extra letters
     if (typeof event === "string") {
         switch(event) {
@@ -2239,8 +2238,7 @@ async function process_input(element, event) {
                 process_guess();
                 return;
             default:
-                limit(element, event)
-                /*focus_next_letter(element)*/
+                await limit(element, event)
                 break
         }
     } else {
@@ -2248,9 +2246,8 @@ async function process_input(element, event) {
             
             let key = event.key
             
-            limit(element, key)
+            await limit(element, key)
             
-            /*element.blur()*/
         }
         if (event.key === 'Backspace' || event.key === 'Delete') {
             delete_letter(element)
@@ -2276,9 +2273,12 @@ async function process_input(element, event) {
     var depth = element.getAttribute('depth')
     var word = document.getElementById(wordrow_id_prefix + depth.toString())
 
-    
     // remove styling from any words after this one
     remove_lower_word_styling(word)
+
+    if (puzzle_type == 'sixes') {
+        check_validity_of_complete_words(depth)
+    }
     
 }
 
@@ -3408,77 +3408,88 @@ async function loadWordRow(letterboxes, load_quickly) {
 }
 
 
-async function create_puzzle() {
-  set_global_style_variables(puzzle['words'])
-
-  var rowHolder = document.getElementById("rowHolder")
-
-  var n_words = puzzle.words.length
-  let input_index = 0
-  for (let i = 0; i < n_words; i++) {
-    var row = document.createElement("div");
-    row.className = "wordRow horizontal-flex-cont";
-    if (i == 0) {
-        row.className += ' correct'
+async function create_puzzle(puzzle_type) {
+    let puzzle_words;
+    var n_words;
+    if (puzzle_type == 'sixes') {
+        puzzle_words = [puzzle['word']]
+        n_words = 7 // starting word + 6
+    } else { // easy/hard Solve
+        puzzle_words = puzzle['words']
+        n_words = puzzle.words.length
     }
-    row.id = wordrow_id_prefix + i.toString()
-    
+    set_global_style_variables(puzzle_words);
 
-    rowHolder.appendChild(row)
-
-    // Add invis button to start of each row
-    let invis_reset_button = createResetButton(i)
-    invis_reset_button.classList.add('invisible')
-    row.appendChild(invis_reset_button)
-
-
-    var rowWord = puzzle.words[i]
+    var rowHolder = document.getElementById("rowHolder");
 
     
-
-    for (let j = 0; j < rowWord.length; j++) {
-      var letter = rowWord[j]
-      if (letter === "_") {
-        let input = document.createElement("div")
-        input.appendChild(document.createElement('div'))
-        input.classList.add("letterInput", 'letterBox', 'flex-item', 'waiting')
-        style_letterBox(input)
-        input.tabIndex = 0
-        input.setAttribute('index', input_index)
-        input_index++
-
-        input.onblur = function() {
-            blurred = this;
+    let input_index = 0;
+    for (let i = 0; i < n_words; i++) {
+        var row = document.createElement("div");
+        row.className = "wordRow horizontal-flex-cont";
+        if (i == 0) {
+            row.className += ' correct';
         }
-        input.onclick = function() {
-            input.focus()
+        row.id = wordrow_id_prefix + i.toString();
+
+
+        rowHolder.appendChild(row);
+
+        // Add invis button to start of each row
+        let invis_reset_button = createResetButton(i);
+        invis_reset_button.classList.add('invisible');
+        row.appendChild(invis_reset_button);
+
+        var rowWord
+        if (puzzle_type == 'sixes') {
+            rowWord = i == 0 ? puzzle['word'] : '_____'  // only first word exists, rest are user inputs
+        } else {
+            rowWord = puzzle.words[i];
         }
-        input.addEventListener('keydown', function myfunc(event) {
-            process_input(input, event)
-            /*setTimeout(function(){focus_next_letter(input, event)},80)*/
-        })
-        input.setAttribute('depth', i)
-        input.setAttribute('order', j)
+        
 
-        row.appendChild(input)
-      } else {
-        var letter_holder = document.createElement("div")
-        style_letterBox(letter_holder)
-        letter_holder.classList.add("letterBox", 'flex-item', 'waiting')
+        for (let j = 0; j < rowWord.length; j++) {
+            var letter = rowWord[j];
+            if (letter === "_") {
+                let input = document.createElement("div");
+                input.appendChild(document.createElement('div'));
+                input.classList.add("letterInput", 'letterBox', 'flex-item', 'waiting');
+                style_letterBox(input);
+                input.tabIndex = 0;
+                input.setAttribute('index', input_index);
+                input_index++;
 
-        let innerTextNode = document.createElement('div')
-        letter_holder.appendChild(innerTextNode)
-        innerTextNode.innerText = letter
-        row.appendChild(letter_holder)
-      }
-      
+                input.onblur = function () {
+                    blurred = this;
+                };
+                input.onclick = function () {
+                    input.focus();
+                };
+                input.addEventListener('keydown', function myfunc(event) {
+                    process_input(input, event, puzzle_type);
+                });
+                input.setAttribute('depth', i);
+                input.setAttribute('order', j);
+
+                row.appendChild(input);
+            } else {
+                var letter_holder = document.createElement("div");
+                style_letterBox(letter_holder);
+                letter_holder.classList.add("letterBox", 'flex-item', 'waiting');
+
+                let innerTextNode = document.createElement('div');
+                letter_holder.appendChild(innerTextNode);
+                innerTextNode.innerText = letter;
+                row.appendChild(letter_holder);
+            }
+
+        }
+        // Add reset button to end of each row
+        let reset_button = createResetButton(i);
+        reset_button.classList.add('waiting');
+        row.appendChild(reset_button);
     }
-    // Add reset button to end of each row
-    let reset_button = createResetButton(i)
-    reset_button.classList.add('waiting')
-    row.appendChild(reset_button)
-  }
-  determine_all_changed_letters()
+    determine_all_changed_letters();
 
     function createResetButton(i) {
         let reset_button = document.createElement("img");
@@ -3496,8 +3507,32 @@ async function create_puzzle() {
         reset_holder.classList.add('button', 'square', 'minimal', 'reset', 'flex-item');
         return reset_holder;
     }
+  
     add_validity_styling()
     readjustContainallPadding()
+}
+
+async function check_validity_of_complete_words(depth) {
+    // Only happens in Sixes puzzles.
+    // If word is newly complete, check validity of this word and all previous words.
+    // element is inputBox
+
+    let word = get_word(depth)
+
+    if (!word.includes('_')) {
+        // word is newly
+        let word_list = []
+        for (let i = 0; i < 7; i++) {
+            word = get_word(i)
+            word_list.push(word)
+        }
+        params = {
+            word_list: word_list
+        }
+        let validity = await fetchPostWrapper('/sixes/check', params)
+        add_validity_styling(validity)
+    }
+
 }
 
 function refreshLastGuess(e) {
