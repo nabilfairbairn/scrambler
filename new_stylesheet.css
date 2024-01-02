@@ -293,7 +293,7 @@ button {
   margin-right: auto;
 }
 
-#username_holder {
+#gametype_holder {
   position: relative;
   display: flex;
   align-self: center;
