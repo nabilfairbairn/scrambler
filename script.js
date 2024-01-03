@@ -1287,12 +1287,12 @@ function finishLogin(httpResponse) {
 
 document.getElementById('start_solve_button').addEventListener('click', function() {
     closeFullscreenModal('greeting_modal')
-    loadPuzzleAndGuesses('Solve')
+    loadPuzzleAndGuesses('solve')
     
 })
 document.getElementById('start_sixes_button').addEventListener('click', function() {
     closeFullscreenModal('greeting_modal')
-    loadPuzzleAndGuesses('Sixes')
+    loadPuzzleAndGuesses('sixes')
 })
 
 function manageLoginError(errorResponse, errorParams) {
@@ -2235,7 +2235,7 @@ async function process_input(element, event, puzzle_type) {
                 delete_letter(element);
                 break;
             case 'enter':
-                process_guess();
+                process_guess(puzzle_type);
                 return;
             default:
                 await limit(element, event)
@@ -2260,7 +2260,7 @@ async function process_input(element, event, puzzle_type) {
                 // send start puzzle to api
 
             } else {
-                process_guess()
+                process_guess(puzzle_type)
             }
         
         }
@@ -2763,7 +2763,7 @@ function remove_all_word_style() {
     })
 }
 
-async function process_guess() {
+async function process_guess(puzzle_type) {
     var focused_element = null;
     if (
         document.hasFocus() &&
@@ -2777,7 +2777,7 @@ async function process_guess() {
     }
 
     // function returns bool - real_guess. If new guess same as last, don't increment guesses
-    const new_guess_bool = await process_guess_styling(true) // Process real guess -> send guess to API
+    const new_guess_bool = await process_guess_styling(true, puzzle_type) // Process real guess -> send guess to API
 
     if (new_guess_bool) {
         user_states[getDiff()].guesses_made++;
@@ -3097,6 +3097,8 @@ function loadInRewardLeaderboard(data) {
 const process_puzzle_complete = async (data) => {
     refreshLeaderboard() // Just for giggles, do it even if puzzle wasn't first attempt
 
+    let puzzle_type = data['puzzle_type']
+
     if (user.id) { // only update if logged in
         
         if (user_states[getDiff()].puzzle_attempt > 1) { // puzzle hasn't earned any new points. nothing to display
@@ -3107,22 +3109,29 @@ const process_puzzle_complete = async (data) => {
         displayLogin() //refresh total user points
     }
     // set duration, time, validity for this puzzle
-    set_social_stats(data['social_stats'], getDiff());
+    set_social_stats(data['social_stats'], getDiff(), puzzle_type);
 
     await sleep(3000)
-    showPointsPopup(data) //popup with points earned summary
+    showPointsPopup(data, puzzle_type) //popup with points earned summary
     await sleep(200)
     document.getElementById('share_results_home').classList.remove('invisible')
 
 }
 
-function set_social_stats(data, difficulty) {
-    user_states[difficulty]['share_duration'] = data['duration'];
-    user_states[difficulty]['share_daily_date'] = data['daily_date'];
-    user_states[difficulty]['share_validity'] = data['validity'];
+function set_social_stats(data, difficulty, puzzle_type) {
+    if (puzzle_type == 'solve') {
+        user_states[difficulty]['share_duration'] = data['duration'];
+        user_states[difficulty]['share_daily_date'] = data['daily_date'];
+        user_states[difficulty]['share_validity'] = data['validity'];
+    } else { // sixes
+        user_states[difficulty]['share_duration'] = data['duration'];
+        user_states[difficulty]['share_daily_date'] = data['daily_date'];
+        user_states[difficulty]['share_avg_freq'] = data['freq'];
+    }
+    
 }
 
-async function process_guess_styling(real_guess) {
+async function process_guess_styling(real_guess, puzzle_type) {
     remove_all_word_style()
     
     var valid_depths = []
@@ -3169,8 +3178,14 @@ async function process_guess_styling(real_guess) {
             attempt: user_states[getDiff()].puzzle_attempt,
             guess_n: user_states[getDiff()].guesses_made + 1, // When 2 guesses made, this guess is 3rd.
             words: JSON.stringify(complete_words), // prepare array to be read as json
-            user_ip: user.ip
+            user_ip: user.ip,
+            puzzle_type: puzzle_type
         };
+
+        if (puzzle_type == 'sixes' && complete_words.length != 7) {
+            toast(true, 'You need to enter all six words at once.')
+            return
+        }
 
         ({ validity, message } = await fetchPostWrapper('/guesses', params, null)) // valid words is list of bools, representing whether the submitted word is a possible answer
         user_states[getDiff()].last_guess = complete_words // Update last_guess
@@ -3203,10 +3218,15 @@ async function process_guess_styling(real_guess) {
                 user_id: user.id,
                 attempt: user_states[getDiff()].puzzle_attempt,
                 total_guesses: user_states[getDiff()].guesses_made + 1, // Incrementing 'guesses_made' occurs later
-                user_ip: user.ip
+                user_ip: user.ip,
+                puzzle_type: puzzle_type
             }
             fetchPostWrapper('/completed_puzzles', params, process_puzzle_complete)
-            fetchPostWrapper('/rewards/new', {user_id: user.id, puzzle_id: puzzle.id, user_ip: user.ip}, null)
+
+            if (puzzle_type == 'solve') {
+                fetchPostWrapper('/rewards/new', {user_id: user.id, puzzle_id: puzzle.id, user_ip: user.ip}, null)
+            }
+            
         }
     }
 
@@ -4436,7 +4456,8 @@ window.onload = async function() {
         // send start puzzle to api
 
     } else {
-        process_guess()
+        let puzzle_type = puzzle.puzzle_type
+        process_guess(puzzle_type)
     }
 
   }
@@ -4445,8 +4466,5 @@ window.onload = async function() {
 
   if (!admin_ips.includes(user.ip)) {
     fetchPostWrapper('/visit', {ip: user.ip}, null)
-  }
-  
-  
-  
+  } 
 }
