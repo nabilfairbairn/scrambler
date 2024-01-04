@@ -2449,8 +2449,8 @@ function determine_changed_letters(depth) {
         prev_word = depth - 1 < 0 ? null : get_word(depth-1)
         next_word = parseFloat(depth) + 1 >= puzzle_len ? null : get_word(parseFloat(depth)+1)
     }
-    
-    
+    console.log(depth)
+    console.log(this_word)
     let this_letters_count = count_letters(this_word)
     
     if (next_word) {
