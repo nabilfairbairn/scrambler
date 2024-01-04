@@ -2319,8 +2319,8 @@ function remove_lower_word_styling(wordRow) {
 }
 
 function count_letters(str){
-    console.log(str)
-    console.log(str.length)
+    console.log('count string: ', str)
+    console.log('count string length: ', str.length)
     let outp_map = create_count_map(str);
     for (let i = 0 ; i < str.length ;i++) {
         let k = outp_map.get(str[i]);
@@ -2372,7 +2372,7 @@ function calc_letters_changed(word1, word2) {
 function determine_all_changed_letters() {
     let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
     for (let i = 0; i < puzzle_len; i++) {
-        console.log(puzzle_len)
+        console.log('puzz len: ', puzzle_len)
         console.log('depth', i)
         determine_changed_letters(i)
     }
@@ -2451,8 +2451,8 @@ function determine_changed_letters(depth) {
         prev_word = depth - 1 < 0 ? null : get_word(depth-1)
         next_word = parseFloat(depth) + 1 >= puzzle_len ? null : get_word(parseFloat(depth)+1)
     }
-    console.log(depth)
-    console.log(this_word)
+    console.log('outer depth: ', depth)
+    console.log('returned this_word: ', this_word)
     let this_letters_count = count_letters(this_word)
     
     if (next_word) {
@@ -2591,7 +2591,7 @@ function get_depth(d) {
         guess_received += letter_text ? letter_text : '_'
         
     })
-    console.log(d)
+    console.log('inner_depth', d)
     console.log('final word: ', guess_received)
     return [guess_wordrow, guess_received, answer_words] // guess_wordrow = DOM element, guess_received = word string, answer_words = list of all valid answers for this word
 }
