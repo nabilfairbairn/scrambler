@@ -2365,7 +2365,8 @@ function calc_letters_changed(word1, word2) {
 }
 
 function determine_all_changed_letters() {
-    for (let i = 0; i < puzzle.words.length; i++) {
+    let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
+    for (let i = 0; i < puzzle_len; i++) {
         determine_changed_letters(i)
     }
 }
