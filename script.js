@@ -713,7 +713,7 @@ async function saveCurrentInput() {
     let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
 
     for (w = 0; w < puzzle_len; w++) {
-      const [guess_word, guess_received, answer_words] = get_depth(w)
+      const [guess_word, guess_received] = get_depth(w)
 
       if (word_complete(guess_received)) {
         complete_words.push(guess_received) // string
@@ -2302,7 +2302,7 @@ function remove_lower_word_styling(wordRow) {
         }
 
         while (depth_n < puzz_len) {
-            const [next_word, ng, na] = get_depth(depth)
+            const [next_word, ng] = get_depth(depth)
             remove_word_style(next_word)
             depth_n++
         }
@@ -2310,7 +2310,7 @@ function remove_lower_word_styling(wordRow) {
     } else { // normal puzzle
         depth++
         while (depth < puzzle_len) {
-            const [next_word, ng, na] = get_depth(depth) 
+            const [next_word, ng] = get_depth(depth) 
             remove_word_style(next_word)
             depth++
         }
@@ -2434,12 +2434,13 @@ function determine_local_changed_letters(element) {
 
 function determine_changed_letters(depth) {
     // If tutorial, depth will be c0, c1, c2
-    let this_element, this_word, prev_word, next_word, _;
+    let this_element, this_word, prev_word, next_word;
 
     let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
 
     console.log('first depth: ', depth)
-    [this_element, this_word, _] = get_depth(depth)
+    [this_element, this_word] = get_depth(depth)
+    console.log('returned this_word: ', this_word)
 
     if (!isNumeric(depth)) {
         let tut_letter = depth.slice(0, 1)
@@ -2453,7 +2454,7 @@ function determine_changed_letters(depth) {
         next_word = parseFloat(depth) + 1 >= puzzle_len ? null : get_word(parseFloat(depth)+1)
     }
     console.log('second depth: ', depth)
-    console.log('returned this_word: ', this_word)
+    
     let this_letters_count = count_letters(this_word)
     
     if (next_word) {
@@ -2575,7 +2576,6 @@ function get_wordrow_letter_boxes(wordrow) {
 
 function get_depth(d) {
     let guess_wordrow
-    let answer_words = ''
     if (!isNumeric(d)) {    
         guess_wordrow = document.getElementById(`${wordrow_id_prefix}${d}`)
         
@@ -2594,7 +2594,7 @@ function get_depth(d) {
     })
     console.log('inner_depth', d)
     console.log('final word: ', guess_received)
-    return [guess_wordrow, guess_received, answer_words] // guess_wordrow = DOM element, guess_received = word string, answer_words = list of all valid answers for this word
+    return [guess_wordrow, guess_received] // guess_wordrow = DOM element, guess_received = word string, answer_words = list of all valid answers for this word
 }
 
 
@@ -2632,7 +2632,7 @@ function reaches_word(thisword, thisdepth, wuc, wuc_depth) {
 } 
 
 function get_word(word_number) {
-    let [guess_word, guess_received, answer_words] = get_depth(word_number)
+    let [guess_word, guess_received] = get_depth(word_number)
     return guess_received
 }
 
@@ -3157,7 +3157,7 @@ async function process_guess_styling(real_guess, puzzle_type) {
     let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
     
     for (let w = 0; w < puzzle_len; w++) {
-        const [guess_word, guess_received, answer_words] = get_depth(w)
+        const [guess_word, guess_received] = get_depth(w)
         guesswords.push(guess_word)
 
         if (word_complete(guess_received)) {
@@ -3271,7 +3271,7 @@ async function setLetterBoxesFinished() {
     let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
 
     for (let i = 0; i < puzzle_len; i++) {
-        let [row, _, __] = get_depth(i)
+        let [row, _,] = get_depth(i)
         
         let letters = row.querySelectorAll('.letterBox')
         animateLetters(letters)
@@ -3366,7 +3366,7 @@ async function loadInPuzzle(load_quickly=false) {
 
         for (let i = puzzle_len - 1; i >= 0; i--) { // starting with last row
             
-            let [wordrow, _, __] = get_depth(i)
+            let [wordrow, _,] = get_depth(i)
             let letterboxes = wordrow.querySelectorAll('.letterBox')
             
             let resetButtons = wordrow.querySelectorAll('.reset')
