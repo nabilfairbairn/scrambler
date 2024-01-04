@@ -666,7 +666,7 @@ async function switchDifficulty(e) {
     if (current_puzzle_started && puzzle_loaded) {
         saveCurrentInput()
     }
-    let current_words = puzzle.words.length
+    let current_words = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
 
     // replace visible puzzle
     puzzle = todays_puzzles[new_diff]
@@ -683,7 +683,7 @@ async function switchDifficulty(e) {
     // display current puzzle
     await create_puzzle()
 
-    let new_words = puzzle.words.length
+    let new_words = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
 
     if (new_puzzle_started) {
         if (current_words == new_words) { // spin button if button wont end up moving
@@ -710,7 +710,9 @@ async function saveCurrentInput() {
     // mirrors code from process_guess_styling
     // iterate through puzzle words, extracting words from inputs
     let w ;
-    for (w = 0; w < puzzle.words.length; w++) {
+    let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
+
+    for (w = 0; w < puzzle_len; w++) {
       const [guess_word, guess_received, answer_words] = get_depth(w)
 
       if (word_complete(guess_received)) {
@@ -2285,6 +2287,7 @@ async function process_input(element, event, puzzle_type) {
 function remove_lower_word_styling(wordRow) {
     // remove word style
     remove_word_style(wordRow)
+    let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
     
     let depth = wordRow.id.slice(wordrow_id_prefix.length)
     // remove word style from later words
@@ -2306,7 +2309,7 @@ function remove_lower_word_styling(wordRow) {
 
     } else { // normal puzzle
         depth++
-        while (depth < puzzle.words.length) {
+        while (depth < puzzle_len) {
             const [next_word, ng, na] = get_depth(depth) 
             remove_word_style(next_word)
             depth++
@@ -2429,6 +2432,8 @@ function determine_changed_letters(depth) {
     // If tutorial, depth will be c0, c1, c2
     let this_element, this_word, prev_word, next_word, _;
 
+    let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
+
     [this_element, this_word, _] = get_depth(depth)
 
     if (!isNumeric(depth)) {
@@ -2440,7 +2445,7 @@ function determine_changed_letters(depth) {
         next_word = (next_d.slice(1) == '3' && ['c', 'd'].includes(tut_letter)) || next_d.slice(1) == 2 && ['a', 'b'].includes(tut_letter) ? null : get_word(next_d)
     } else {
         prev_word = depth - 1 < 0 ? null : get_word(depth-1)
-        next_word = parseFloat(depth) + 1 >= puzzle.words.length ? null : get_word(parseFloat(depth)+1)
+        next_word = parseFloat(depth) + 1 >= puzzle_len ? null : get_word(parseFloat(depth)+1)
     }
     
     
@@ -3141,8 +3146,10 @@ async function process_guess_styling(real_guess, puzzle_type) {
     var guesswords = []
 
     let empty_guess = true // make sure not to send to api if guess is empty
+
+    let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
     
-    for (let w = 0; w < puzzle.words.length; w++) {
+    for (let w = 0; w < puzzle_len; w++) {
         const [guess_word, guess_received, answer_words] = get_depth(w)
         guesswords.push(guess_word)
 
@@ -3254,7 +3261,9 @@ async function process_guess_styling(real_guess, puzzle_type) {
 }
 
 async function setLetterBoxesFinished() {
-    for (let i = 0; i < puzzle.words.length; i++) {
+    let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
+
+    for (let i = 0; i < puzzle_len; i++) {
         let [row, _, __] = get_depth(i)
         
         let letters = row.querySelectorAll('.letterBox')
@@ -3326,7 +3335,7 @@ async function loadInPuzzle(load_quickly=false) {
 
     lowest_loadin_timeout = setTimeout(() => {}, 0)
 
-
+    let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
 
     answerButton.classList.remove('waiting')
 
@@ -3348,7 +3357,7 @@ async function loadInPuzzle(load_quickly=false) {
 
         let reset_buttons = []
 
-        for (let i = puzzle.words.length - 1; i >= 0; i--) { // starting with last row
+        for (let i = puzzle_len - 1; i >= 0; i--) { // starting with last row
             
             let [wordrow, _, __] = get_depth(i)
             let letterboxes = wordrow.querySelectorAll('.letterBox')
@@ -3430,6 +3439,7 @@ async function loadWordRow(letterboxes, load_quickly) {
 async function create_puzzle(puzzle_type) {
     let puzzle_words;
     var n_words;
+
     if (puzzle_type == 'sixes') {
         puzzle_words = [puzzle['word']]
         n_words = 7 // starting word + 6
