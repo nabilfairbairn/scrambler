@@ -2439,6 +2439,7 @@ function determine_changed_letters(depth) {
     let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
 
     console.log('first depth: ', depth)
+    console.log(get_depth(depth))
     [this_element, this_word] = get_depth(depth)
     console.log('returned this_word: ', this_word)
 
