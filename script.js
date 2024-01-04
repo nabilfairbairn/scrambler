@@ -2587,6 +2587,10 @@ function get_depth(d) {
     guess_received += letter_text ? letter_text : '_'
     
   })
+
+  console.log(d)
+  console.log(guess_wordrow)
+  console.log(guess_received)
   return [guess_wordrow, guess_received, answer_words] // guess_wordrow = DOM element, guess_received = word string, answer_words = list of all valid answers for this word
 }
 
