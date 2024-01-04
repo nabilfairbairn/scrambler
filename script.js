@@ -2565,14 +2565,12 @@ function get_wordrow_letter_boxes(wordrow) {
 
 function get_depth(d) {
     let guess_wordrow
-    let answer_words
+    let answer_words = null
     if (!isNumeric(d)) {    
         guess_wordrow = document.getElementById(`${wordrow_id_prefix}${d}`)
-        answer_words = null
         
     } else {
         guess_wordrow = get_nth_word(d)
-        answer_words = puzzle.answers[d]
     }
 
   const guess_letters = get_wordrow_letter_boxes(guess_wordrow)
