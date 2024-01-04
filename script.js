@@ -7,7 +7,7 @@ console.log(currentDomain)
 if (['https://scrambler.onrender.com', 'scrambler.onrender.com'].includes(currentDomain)) {
     api_url_base = 'https://scrambler-api.onrender.com'
 } else {
-    api_url_base = 'https://scrambler-api.onrender.com'
+    api_url_base = 'https://scrambler-server-development.onrender.com'
 }
 
 const wordrow_id_prefix = 'guess_number_';
@@ -4255,7 +4255,7 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
     })
 }
 
-let puzzle_date;
+let puzzle_date = new Date();
 
 window.onload = async function() {
     
@@ -4466,5 +4466,8 @@ window.onload = async function() {
 
   if (!admin_ips.includes(user.ip)) {
     fetchPostWrapper('/visit', {ip: user.ip}, null)
-  } 
+  }
+  
+  
+  
 }
