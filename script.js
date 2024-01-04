@@ -2575,7 +2575,7 @@ function get_wordrow_letter_boxes(wordrow) {
 
 function get_depth(d) {
     let guess_wordrow
-    let answer_words = null
+    let answer_words = ''
     if (!isNumeric(d)) {    
         guess_wordrow = document.getElementById(`${wordrow_id_prefix}${d}`)
         
@@ -3476,14 +3476,13 @@ async function create_puzzle(puzzle_type) {
         invis_reset_button.classList.add('invisible');
         row.appendChild(invis_reset_button);
 
-        var rowWord
+        var rowWord;
         if (puzzle_type == 'sixes') {
             rowWord = i == 0 ? puzzle['word'] : '_____'  // only first word exists, rest are user inputs
         } else {
             rowWord = puzzle.words[i];
         }
         
-
         for (let j = 0; j < rowWord.length; j++) {
             var letter = rowWord[j];
             if (letter === "_") {
