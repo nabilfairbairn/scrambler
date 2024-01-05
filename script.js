@@ -1297,7 +1297,7 @@ document.getElementById('start_solve_button').addEventListener('click', function
     loadPuzzleAndGuesses('solve')
 
     // Need to know number of solve puzzles and number of sixes completed. Or if player has completed 1.
-    if (!user.max_streak) { // in otherwords, has not completed a puzzle
+    if (!user.played_solve) { // in otherwords, has not completed a puzzle
         // if user hasn't completed a solve puzzle, open solve modal
         openFullscreenModal('howToModal')
     }
@@ -1307,10 +1307,9 @@ document.getElementById('start_sixes_button').addEventListener('click', function
     // if user hasn't completed a sixes puzzle, open sixes how-to
     // if hasn't completed a solve, also open the solve how-to on top.
 
-    if (!user.max_streak) { // Open Solve how-to if no puzzles completed at all
+    if (!user.played_sixes) { // Open Solve how-to if no puzzles completed at all
         openFullscreenModal('howToModal')
     }
-    if ()
     loadPuzzleAndGuesses('sixes')
 })
 
@@ -2032,6 +2031,8 @@ function setUser(responseData) {
     user.points = responseData["points"]
     user.streak = responseData['streak']
     user.max_streak = responseData['max_streak']
+    user.played_sixes = responseData['played_sixes']
+    user.played_solve = responseData['played_solve']
 
     if (!responseData['is_guest']) {
         user.username = responseData["username"]
