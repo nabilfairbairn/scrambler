@@ -263,6 +263,11 @@ let puzzle = {
 }
 function getDiff() {
     var diff_scale = ['easy', 'hard']
+
+    if (puzzle.difficulty == -1) {
+        return 'sixes'
+    }
+
     if (!puzzle.difficulty || puzzle.difficulty > 2) { //custom puzzles are currently set to difficulty 3, but are sent by API as easy
         return 'easy'
     }
@@ -1290,10 +1295,22 @@ function finishLogin(httpResponse) {
 document.getElementById('start_solve_button').addEventListener('click', function() {
     closeFullscreenModal('greeting_modal')
     loadPuzzleAndGuesses('solve')
-    
+
+    // Need to know number of solve puzzles and number of sixes completed. Or if player has completed 1.
+    if (!user.max_streak) { // in otherwords, has not completed a puzzle
+        // if user hasn't completed a solve puzzle, open solve modal
+        openFullscreenModal('howToModal')
+    }
 })
 document.getElementById('start_sixes_button').addEventListener('click', function() {
     closeFullscreenModal('greeting_modal')
+    // if user hasn't completed a sixes puzzle, open sixes how-to
+    // if hasn't completed a solve, also open the solve how-to on top.
+
+    if (!user.max_streak) { // Open Solve how-to if no puzzles completed at all
+        openFullscreenModal('howToModal')
+    }
+    if ()
     loadPuzzleAndGuesses('sixes')
 })
 
@@ -1479,11 +1496,6 @@ async function playGuest(event) {
 
     await fetchPostWrapper('/users/login', params, finishLogin)
 
-
-
-    if (!user.max_streak) { // in otherwords, has not completed a puzzle
-        openFullscreenModal('howToModal')
-    }
 
     logNavEvent('guest', nav_source)
 
@@ -2096,7 +2108,7 @@ document.getElementById('close_privacy_button').addEventListener('click', functi
 document.getElementById('submit_profile_button').addEventListener('click', createProfile)
 
 function displayLogin() {
-    const points = user.points
+    const points = user.points || 0
     const streak = user.streak || 0
     const max_streak = user.max_streak || 0
 
@@ -2319,8 +2331,6 @@ function remove_lower_word_styling(wordRow) {
 }
 
 function count_letters(str){
-    console.log('count string: ', str)
-    console.log('count string length: ', str.length)
     let outp_map = create_count_map(str);
     for (let i = 0 ; i < str.length ;i++) {
         let k = outp_map.get(str[i]);
@@ -2372,8 +2382,6 @@ function calc_letters_changed(word1, word2) {
 function determine_all_changed_letters() {
     let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
     for (let i = 0; i < puzzle_len; i++) {
-        console.log('puzz len: ', puzzle_len)
-        console.log('depth', i)
         determine_changed_letters(i)
     }
 }
@@ -2438,9 +2446,7 @@ function determine_changed_letters(depth) {
 
     let puzzle_len = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length;
 
-    console.log('first depth: ', depth);
     let [this_element, this_word] = get_depth(depth)
-    console.log('returned this_word: ', this_word)
 
     if (!isNumeric(depth)) {
         let tut_letter = depth.slice(0, 1)
@@ -2453,7 +2459,6 @@ function determine_changed_letters(depth) {
         prev_word = depth - 1 < 0 ? null : get_word(depth-1)
         next_word = parseFloat(depth) + 1 >= puzzle_len ? null : get_word(parseFloat(depth)+1)
     }
-    console.log('second depth: ', depth)
     
     let this_letters_count = count_letters(this_word)
     
@@ -2585,15 +2590,12 @@ function get_depth(d) {
 
     const guess_letters = get_wordrow_letter_boxes(guess_wordrow)
     var guess_received = ''
-    console.log('word: ', guess_received)
     guess_letters.forEach((letter_box) => {
 
         let letter_text = letter_box.firstElementChild.innerText.toUpperCase()
         guess_received += letter_text ? letter_text : '_'
         
     })
-    console.log('inner_depth', d)
-    console.log('final word: ', guess_received)
     return [guess_wordrow, guess_received] // guess_wordrow = DOM element, guess_received = word string, answer_words = list of all valid answers for this word
 }
 
@@ -3182,6 +3184,8 @@ async function process_guess_styling(real_guess, puzzle_type) {
 
     let validity;
     let message;
+    let word_freqs;
+    let avg_freq;
     if (real_guess) {
         // Push guess to API
         // Always send with IP. if not logged in, server manages
@@ -3200,10 +3204,12 @@ async function process_guess_styling(real_guess, puzzle_type) {
             return
         }
 
-        ({ validity, message } = await fetchPostWrapper('/guesses', params, null)) // valid words is list of bools, representing whether the submitted word is a possible answer
+        ({ validity, message, word_freqs, avg_freq } = await fetchPostWrapper('/guesses', params, null)) // valid words is list of bools, representing whether the submitted word is a possible answer
         user_states[getDiff()].last_guess = complete_words // Update last_guess
         user_states[getDiff()].message = message
         user_states[getDiff()].validity = validity
+        user_states[getDiff()].word_freqs = word_freqs
+        user_states[getDiff()].avg_freq = avg_freq
 
         if (message) {
             update_message_banner()

@@ -428,7 +428,13 @@ input[type="submit"], .input_button {
   border-width: 4px;
 }
 #open_login_button {
-  font-size: 1em;
+  position: absolute;
+  right: 3rem;
+  top: 5rem;
+
+  height: 1.6rem;
+  width: 3.8rem;
+  font-size: 1rem;
   font-weight: 500;
   padding: 0.2rem 0.4rem;
   border: none;
