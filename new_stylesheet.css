@@ -297,8 +297,10 @@ button {
   position: relative;
   display: flex;
   align-self: center;
-  font-size: 0.8em;
+  font-size: 1rem;
+  font-weight: 600;
   text-align: center;
+  border-bottom: solid var(--accent-shadow) 0.15rem;
 }
 
 #gameBox {
@@ -549,8 +551,8 @@ input[type="submit"], .input_button {
 
 #share_results_home {
   position: absolute;
-  left: 6rem;
-  top: 1.35rem;
+  left: 4rem;
+  top: -2.2rem;
 }
 
 .larger_text {
@@ -1368,8 +1370,11 @@ div img {
   border-radius: 0.2em;
 }
 .horizontal-flex-cont.desc {
-  font-size: 1.6em;
+  font-size: 1.3em;
   justify-content: flex-start;
+}
+.horizontal-flex-cont.desc span{
+  width: 86%;
 }
 
 .formodal .button {
@@ -1930,7 +1935,7 @@ div img {
     z-index: 5;
   }
 
-#howToModal {
+#howToModal, #howToSixes {
   padding-bottom: 12rem; /* Same as keyboard height */
 }
 

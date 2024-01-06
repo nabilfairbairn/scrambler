@@ -676,9 +676,73 @@
       </div>
     </div>
 
+    <div id="howToSixes", class='fullscreen-modal'>
+      <div class='header'>
+        <span>How to play "Sixes"</span>
+        <button
+          type="button" class='button square minimal close-fs-modal-button' for="howToSixes"><span  class="material-icons-round">
+            close
+            </span></button>
+      </div> <!-- modal header close -->
+      <div>
+        <span>
+          <h3>You're in for a treat!</h3>
+          <p>Scrambler Sixes is a solo challenge of speed versus creativity. Your goal is to fill in 6 new words as quickly as possible, and to choose the most uncommon words that will fit.</p>
+          <p>Once you've put in your answer, your score will be determined by your time and the <i>appearance frequency</i> that your words have (more below). The lower your score, the higher your points.</p>
+          <hr>
+          <br>
+          <h3>Test it out!</h3>
+          
+          <div class="instruction"><p>One letter needs to change between each word (order doesn't matter), and you can't use the same word twice. </p></div>
+        </span>
+        <div class="vertical-flex-cont ex">
+          <div id="tutorial-sixes" class='rowHolder minimal ex'>
+            <div id="guess_number_s0" class='wordRow horizontal-flex-cont ex correct'> 
+              <div class='letterBox ex' depth="s0"><div>S</div></div> 
+              <div class='letterBox ex' depth="s0"><div>M</div></div> 
+              <div class='letterBox ex' depth="s0"><div>A</div></div>
+              <div class='letterBox ex' depth="s0"><div>R</div></div> 
+              <div class='letterBox ex' depth="s0"><div>T</div></div> </div>
+
+            <div id='guess_number_s1' class='wordRow horizontal-flex-cont ex'> 
+              <div class='letterBox letterInput ex ex-input' index="-11" depth="s1" order="1"><div></div></div> 
+              <div class='letterBox letterInput ex ex-input' index="-10" depth="s1" order="2"><div></div></div> 
+              <div class='letterBox letterInput ex ex-input' index="-9" depth="s1" order="3"><div></div></div>
+              <div class='letterBox letterInput ex ex-input' index="-8" depth="s1" order="4"><div></div></div> 
+              <div class='letterBox letterInput ex ex-input' index="-7" depth="s1" order="5"><div></div></div> </div>
+
+            <div id='guess_number_s2' class='wordRow horizontal-flex-cont ex'> 
+              <div class='letterBox letterInput ex ex-input' index="-6" depth="s2" order="1"><div></div></div> 
+              <div class='letterBox letterInput ex ex-input' index="-5" depth="s2" order="2"><div></div></div> 
+              <div class='letterBox letterInput ex ex-input' index="-4" depth="s2" order="3"><div></div></div>
+              <div class='letterBox letterInput ex ex-input' index="-3" depth="s2" order="4"><div></div></div> 
+              <div class='letterBox letterInput ex ex-input' index="-2" depth="s2" order="5"><div></div></div> </div>
+          </div>
+          <button id="tutorial-sixes-answer-button" name="answerPuzzleButton" type="button" class='button answerButton accentButton'>Enter</button>
+        </div>
+        <h3>Guess Frequencies:</h3>
+        <div class="instruction" id="tutorial_word_freq">
+          <p>SMART : 4.83</p>
+        </div>
+        <br>
+        <p>As you fill in words, they will turn <span style="color: var(--correct-color);">GREEN</span> if they are valid words and have one letter changed. If a word isn't real or doesn't follow the rule, it'll turn <span style="color: var(--wrong-color)">ORANGE</span>. </p>
+        <p>Lastly, there are blue indicators that will appear above or below a letter if you've changed that letter. If you change more than one letter by accident, the indicators will turn orange.</p>
+        <hr>
+        <p>The frequency values are on a base-10 log scale (like a Richter scale for earthquakes) of the number of times a word appears per billion words. A value of 6 has a frequency of 1 per 1,000. A value of 3 has a frequency of 1 per 1,000,000</p>
+        <hr>
+        <h3>Menu Legend</h3>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="keyboard.svg"/></div></div><span> - Keyboard Toggle</span></div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="menu.svg"/></div></div><span> - Navigation Menu (Change game modes)</span></div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="leaderboard.svg"/></div></div><span>- Leaderboard</span></div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="question.svg"/></div></div><span> - Tutorial (You are here.)</span></div>
+        <div class="vertical-flex-cont ex"><button class="large-button accentButton start_playing">Start Playing</button></div>
+        <br>
+      </div>
+    </div>
+
     <div id="howToModal", class='fullscreen-modal'>
       <div id="modal-header" class='header'>
-        <span>HOW TO PLAY</span>
+        <span>How to play "Solve"</span>
         <button
           type="button" class='button square minimal close-fs-modal-button' for="howToModal"><span  class="material-icons-round">
             close
@@ -687,7 +751,7 @@
       <div>
         <span>
           <h3>I think you're going to love this!</h3>
-          <p>Scrambler is quite simple. We're going to show you 4 simple puzzles that will teach you everything you need to know!</p>
+          <p>Scrambler Solve is quite simple. We're going to show you 4 simple puzzles that will teach you everything you need to know!</p>
           <br>
           <p>If it's your first time, I <b>highly</b> recommend you solve these tutorial puzzles:</p>
           <hr>
@@ -826,11 +890,11 @@
         </span>
         <hr>
         <h3>Menu Legend</h3>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="keyboard.svg"/></div></div> - Keyboard Toggle</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="menu.svg"/></div></div> - Navigation Menu</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="leaderboard.svg"/></div></div> - Leaderboard</div>
-        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="question.svg"/></div></div> - Tutorial (You are here.)</div>
-        <div class="vertical-flex-cont ex"><button id="start_playing" class="large-button accentButton">Start Playing</button></div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="keyboard.svg"/></div></div><span> - Keyboard Toggle</span></div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="menu.svg"/></div></div><span> - Navigation Menu (Change game modes)</span></div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="leaderboard.svg"/></div></div><span>- Leaderboard</span></div>
+        <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="question.svg"/></div></div><span> - Tutorial (You are here.)</span></div>
+        <div class="vertical-flex-cont ex"><button class="large-button accentButton start_playing">Start Playing</button></div>
         <br>
       </div> <!-- modal body div close -->
     </div> <!-- modal close -->
