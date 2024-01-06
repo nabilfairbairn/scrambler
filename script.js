@@ -149,6 +149,23 @@ function clear_variables() {
             'share_duration': '', // for social share
             'share_daily_date': '',
             'share_validity': ''
+        },
+        'sixes': {
+            'guesses_made': 0,
+            'puzzle_attempt': 1,
+            'last_input': [],
+            'last_guess': [],
+            'word_styling': {},
+            'answer_button_state': [],
+            'whole_puzzle_state': [],
+            'message': '',
+            'validity': [],
+            'started': false,
+            'finished': false,
+            'new_attempt': false,
+            'share_duration': '', // for social share
+            'share_daily_date': '',
+            'share_validity': ''
         }
     }
     puzzle = {
@@ -160,7 +177,8 @@ function clear_variables() {
     }
     todays_puzzles = {
         'easy': null,
-        'hard': null
+        'hard': null,
+        'sixes': null
     }
     
     opened_hard_puzzle = false
@@ -210,7 +228,8 @@ let leaderboards = {
 
 let todays_puzzles = {
     'easy': null,
-    'hard': null
+    'hard': null,
+    'sixes': null
 }
 
 let opened_hard_puzzle = false
@@ -235,6 +254,23 @@ let user_states = {
         'share_validity': ''
     },
     'hard': {
+        'guesses_made': 0,
+        'puzzle_attempt': 1,
+        'last_input': [],
+        'last_guess': [],
+        'word_styling': {},
+        'answer_button_state': [],
+        'whole_puzzle_state': [],
+        'message': '',
+        'validity': [],
+        'started': false,
+        'finished': false,
+        'new_attempt': false,
+        'share_duration': '', // for social share
+        'share_daily_date': '',
+        'share_validity': ''
+    },
+    'sixes': {
         'guesses_made': 0,
         'puzzle_attempt': 1,
         'last_input': [],
@@ -808,7 +844,8 @@ async function declare_puzzle(httpResponse) {
             'words': visible,
             'answers': parsed_answer,
             'difficulty': puz['difficulty'],
-            'base_points': puz['base_points']
+            'base_points': puz['base_points'],
+            'puzzle_type': 'solve'
         }
 
         let daily_puzzle_date = puz['daily_date']
@@ -819,8 +856,16 @@ async function declare_puzzle(httpResponse) {
         puzzle_date.setUTCFullYear(puz_year, puz_month - 1, puz_day)
         puzzle_date.setUTCHours(0, 0, 0, 0)
     })
-    
-    todays_puzzles['sixes'] = httpResponse['sixes']
+    let sixes_puz = httpResponse['sixes']
+    sixes_puz['visible'].push(...(new Array(6).fill('_____')))
+    todays_puzzles['sixes'] = {
+        'id': sixes_puz['id'],
+        'words': sixes_puz['visible'],
+        'answers': null,
+        'difficulty': sixes_puz['difficulty'],
+        'base_points': 0,
+        'puzzle_type': 'sixes'
+    }
     
     // hide loader
     document.getElementById('puzzle_loader').style.display = 'none'
@@ -1301,6 +1346,7 @@ document.getElementById('start_solve_button').addEventListener('click', function
         // if user hasn't completed a solve puzzle, open solve modal
         openFullscreenModal('howToModal')
     }
+    document.getElementById('gametype').innerText = 'Solve'
 })
 document.getElementById('start_sixes_button').addEventListener('click', function() {
     closeFullscreenModal('greeting_modal')
@@ -1311,6 +1357,7 @@ document.getElementById('start_sixes_button').addEventListener('click', function
         openFullscreenModal('howToModal')
     }
     loadPuzzleAndGuesses('sixes')
+    document.getElementById('gametype').innerText = 'Sixes'
 })
 
 function manageLoginError(errorResponse, errorParams) {
@@ -1716,8 +1763,8 @@ function processAllGuesses(all_guess_data) {
     
 }
 
-function add_validity_styling(sixes_validity) {
-    const validity_list = sixes_validity === undefined || !sixes_validity.length ? user_states[getDiff()]['validity'] : sixes_validity
+function add_validity_styling() {
+    const validity_list = user_states[getDiff()]['validity'] 
 
     if (validity_list === undefined || !validity_list.length) { // if no guess, first word is always correct
         style_guessword(document.getElementById(`${wordrow_id_prefix}0`), true)
@@ -1751,7 +1798,10 @@ async function loadPuzzleAndGuesses(puzzle_type) {
     puzzle_loaded = true
 
     // load guesses for both puzzles
-    loadAllGuesses(puzzle_type)
+    if (puzzle_type == 'solve') { // no prev guess to load for sixes
+        loadAllGuesses(puzzle_type)
+    }
+    
 
     // Get Leaderboard since puzzle_ids are in.
     await refreshLeaderboard()
@@ -1766,7 +1816,8 @@ async function startPuzzle() {
     const params = {
         user_id: user.id,
         puzzle_id: puzzle.id,
-        user_ip: user.ip
+        user_ip: user.ip,
+        puzzle_type: puzzle.puzzle_type
     }
 
     await fetchPostWrapper('/completed_puzzles/start', params, function(data) {
@@ -1913,6 +1964,7 @@ function update_message_banner() {
 
     if (message) {
         addBannerMessage(false, message)
+        user_states[getDiff()]['message'] = '' // empty message
     } else {
         closeBannerMessage()
     }
@@ -2204,17 +2256,32 @@ function focus_next_letter(element, event) {
     var next_letter;
 
     //For tutorial
-    if (!isNumeric(depth) && order < parseInt(4)) { //order only in 3rd tutorial puzzle
+    if (!isNumeric(depth)) { //order only in 3rd tutorial puzzle
         let element_id = element.id
 
-        if (['a', 'b'].includes(depth[0]) && order == 2) {
+
+        if (['a', 'b'].includes(depth[0]) && order >= 2) {
             return
         }
-        if (['c', 'd'].includes(depth[0]) && order == 4) {
+        if (['c', 'd'].includes(depth[0]) && order >= 4) {
             return
         }
 
         next_letter = document.getElementById(element_id.slice(0, -1) + (parseInt(order) + 1))
+
+        if (depth[0] == 's') {
+            let next_order = Number(order) + 1
+            let next_depth = depth
+            if (next_order == 6) {
+                next_order = 1
+                next_depth = 's' + (Number(next_depth[1]) + 1)
+            }
+            if (next_depth == 's3') {
+                return
+            }
+            next_letter = Array.from(document.querySelectorAll('.letterInput.ex-input'))
+            .filter(el => Number(el.getAttribute('order')) == next_order && el.getAttribute('depth') == next_depth)[0]
+        }
     } else {
         var word_letters = Array.from(word.querySelectorAll(`.letterInput`))
         .filter(el => Number(el.getAttribute('order')) > order)
@@ -2455,7 +2522,7 @@ function determine_changed_letters(depth) {
         let prev_d = tut_letter + (parseInt(depth.slice(-1)) - 1).toString()
         let next_d = tut_letter + (parseInt(depth.slice(-1)) + 1).toString()
         prev_word = prev_d.slice(1) == '-1' ? null : get_word(prev_d)
-        next_word = (next_d.slice(1) == '3' && ['c', 'd'].includes(tut_letter)) || next_d.slice(1) == 2 && ['a', 'b'].includes(tut_letter) ? null : get_word(next_d)
+        next_word = (next_d.slice(1) == '3' && ['c', 'd', 's'].includes(tut_letter)) || next_d.slice(1) == 2 && ['a', 'b'].includes(tut_letter) ? null : get_word(next_d)
     } else {
         prev_word = depth - 1 < 0 ? null : get_word(depth-1)
         next_word = parseFloat(depth) + 1 >= puzzle_len ? null : get_word(parseFloat(depth)+1)
@@ -3182,6 +3249,18 @@ async function process_guess_styling(real_guess, puzzle_type) {
             toast(false, 'I know, the first step is usually the hardest. ')
         }
     }
+    if (puzzle_type == 'sixes' && user_states[getDiff()]['validity'].some(x => x === false)) {
+        real_guess = false
+
+        if (complete_words.length != 7) {
+            toast(true, 'You need to enter all six words at once.')
+            return
+        } 
+        if (user_states[getDiff()].message) {
+            update_message_banner()
+            show_next_banner_message()
+        }
+    }
 
     let validity;
     let message;
@@ -3200,10 +3279,7 @@ async function process_guess_styling(real_guess, puzzle_type) {
             puzzle_type: puzzle_type
         };
 
-        if (puzzle_type == 'sixes' && complete_words.length != 7) {
-            toast(true, 'You need to enter all six words at once.')
-            return
-        }
+        
 
         ({ validity, message, word_freqs, avg_freq } = await fetchPostWrapper('/guesses', params, null)) // valid words is list of bools, representing whether the submitted word is a possible answer
         user_states[getDiff()].last_guess = complete_words // Update last_guess
@@ -3334,7 +3410,13 @@ async function move_start_button() {
     if (!user_states[getDiff()]['started']) {
         answerButton.innerText = 'Start'
     } else {
-        answerButton.innerText = 'Guess'
+        if (puzzle.puzzle_type == 'solve') {
+            answerButton.innerText = 'Guess'
+        }
+        if (puzzle.puzzle_type == 'sixes') {
+            answerButton.innerText = 'Enter'
+        }
+        
     }
 
 }
@@ -3389,7 +3471,13 @@ async function loadInPuzzle(load_quickly=false) {
             await sleep(150, load_quickly) // wait  between rows
             
         }
-        answerButton.innerText = 'Guess'
+        if (puzzle.puzzle_type == 'solve') {
+            answerButton.innerText = 'Guess'
+        }
+        if (puzzle.puzzle_type == 'sixes') {
+            answerButton.innerText = 'Enter'
+        }
+        
         await sleep(150, load_quickly)
         // load reset buttons last
         
@@ -3399,7 +3487,10 @@ async function loadInPuzzle(load_quickly=false) {
 
         await sleep(200, load_quickly)
         
-        refresh_button.classList.remove('waiting')
+        if (puzzle.puzzle_type == 'solve') {
+            refresh_button.classList.remove('waiting')
+        }
+        
         
         await sleep(300, load_quickly)
         
@@ -3414,7 +3505,7 @@ async function loadInPuzzle(load_quickly=false) {
 }
 
 async function load_reset_buttons(buttons, load_quickly) {
-    for (let i = 0; i < buttons.length; i++) {
+    for (let i = 0; i < buttons.length - 2; i++) { // -2 so last two buttons (left and right of first word) arent shown
         let button = buttons[i]
         button.classList.remove('waiting')
         await sleep(75, load_quickly) // will be double between each button because invisible button on left
@@ -3455,7 +3546,7 @@ async function create_puzzle(puzzle_type) {
     var n_words;
 
     if (puzzle_type == 'sixes') {
-        puzzle_words = [puzzle['word']]
+        puzzle_words = puzzle['words']
         n_words = 7 // starting word + 6
     } else { // easy/hard Solve
         puzzle_words = puzzle['words']
@@ -3483,12 +3574,7 @@ async function create_puzzle(puzzle_type) {
         invis_reset_button.classList.add('invisible');
         row.appendChild(invis_reset_button);
 
-        var rowWord;
-        if (puzzle_type == 'sixes') {
-            rowWord = i == 0 ? puzzle['word'] : '_____'  // only first word exists, rest are user inputs
-        } else {
-            rowWord = puzzle.words[i];
-        }
+        var rowWord = puzzle.words[i]
         
         for (let j = 0; j < rowWord.length; j++) {
             var letter = rowWord[j];
@@ -3526,10 +3612,12 @@ async function create_puzzle(puzzle_type) {
             }
 
         }
-        // Add reset button to end of each row
+        // Add reset button to end of each row, except first
+        
         let reset_button = createResetButton(i);
         reset_button.classList.add('waiting');
         row.appendChild(reset_button);
+        
     }
     determine_all_changed_letters();
 
@@ -3561,18 +3649,48 @@ async function check_validity_of_complete_words(depth) {
 
     let word = get_word(depth)
 
+
     if (!word.includes('_')) {
-        // word is newly
+        // word is newly complete
+
         let word_list = []
-        for (let i = 0; i < 7; i++) {
-            word = get_word(i)
-            word_list.push(word)
+        if (!isNumeric(depth) && depth[0] == 's') {
+            // hardcode for tutorial
+            word_list.push(get_word('s0'))
+            word_list.push(get_word('s1'))
+            word_list.push(get_word('s2'))
+        } else {
+            for (let i = 0; i < 7; i++) {
+                word = get_word(i)
+                word_list.push(word)
+            }
         }
-        params = {
-            word_list: word_list
+        
+        let params = {
+            word_list: JSON.stringify(word_list)
         }
-        let validity = await fetchPostWrapper('/sixes/check', params)
-        add_validity_styling(validity)
+        let {validity, message} = await fetchPostWrapper('/sixes/check', params)
+
+        user_states[getDiff()]['validity'] = validity
+        user_states[getDiff()]['message'] = message
+
+        if (!isNumeric(depth)) {
+            // is sixes tutorial
+            if (validity[1]) {
+                document.getElementById('guess_number_s1').classList.add('correct')
+            } else {
+                document.getElementById('guess_number_s1').classList.add('wrong')
+            }
+
+            if (validity[2]) {
+                document.getElementById('guess_number_s2').classList.add('correct')
+            } else {
+                document.getElementById('guess_number_s2').classList.add('wrong')
+            }
+        } else {
+            add_validity_styling()
+        }
+        
     }
 
 }
@@ -3779,6 +3897,10 @@ async function openFullscreenModal(e) {
     
     if (modal_id == 'howToModal') {
         keyboard_default_open = window.getComputedStyle(document.getElementById('keyboard-cont'))['display'] == 'flex'
+
+        if (puzzle.puzzle_type == 'sixes') {
+            modal_id = 'howToSixes'
+        }
     }
 
     let modal = document.getElementById(modal_id)
@@ -3900,7 +4022,7 @@ for (let i = 0; i < ex_inputs.length; i++) {
         blurred = this
     }
     input.addEventListener('keydown', function myfunc(event) {
-        process_input(input, event)
+        process_input(input, event, puzzle.puzzle_type)
         /*setTimeout(function(){focus_next_letter(input, event)},80)*/
     })
     /* tooltip.addEventListener("pointerleave", (event) => {
@@ -3908,6 +4030,63 @@ for (let i = 0; i < ex_inputs.length; i++) {
         const tooltipText = tooltip.firstElementChild
         tooltipText.style.display = 'none'
     }) */
+}
+
+let t_sixes_guesses = 0
+function evalTutorialSixes() {
+    t_sixes_guesses++
+    let correct = false
+
+    let s0 = 'SMART'
+    let s1 = '';
+    document.getElementById('guess_number_s1').querySelectorAll('.letterInput').forEach(element => {
+        s1 += element.firstElementChild.innerText
+    }) 
+
+    let s2 = '';
+    document.getElementById('guess_number_s2').querySelectorAll('.letterInput').forEach(element => {
+        s2 += element.firstElementChild.innerText
+    }) 
+
+    if (user_states[getDiff()]['message']) {
+        toast(true, message, 7)
+        user_states[getDiff()]['message'] = ''
+        
+    } else {
+        correct = true
+    }
+    let words = JSON.stringify([correct.toString(), s1, s2])
+    const params = {
+        user_id: user.id,
+        user_ip: user.ip,
+        puzzle_id: -5,
+        guess_n: t_sixes_guesses,
+        attempt: 1,
+        words: words,
+        puzzle_type: 'sixes'
+    }
+    fetchPostWrapper('/guesses', params, function(response) {
+        let { word_freqs, avg_freq } = response
+        words = JSON.parse(words)
+        let tut_freq = document.getElementById('tutorial_word_freq')
+        tut_freq.innerHTML = ''
+
+        let p = document.createElement('p')
+        p.innerText = 'SMART → One in 14791 words'
+        tut_freq.appendChild(p)
+        for (let i = 0; i < word_freqs.length; i++) {
+            let j = i+1
+            if (words[j]) {
+                let p = document.createElement('p')
+                p.innerText = `${words[j]} → One in ${zipf_to_freq(word_freqs[i])} words`
+                tut_freq.appendChild(p)
+            }
+        }
+    })
+}
+
+const zipf_to_freq = (zipf) => {
+    return parseInt(1000000000 / (Math.pow(10, zipf)))
 }
 
 let t_1_guesses = 0
@@ -4277,7 +4456,7 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
     })
 }
 
-let puzzle_date = new Date();
+let puzzle_date;
 
 window.onload = async function() {
     
@@ -4303,14 +4482,19 @@ window.onload = async function() {
 
     document.getElementById('godmode_button').addEventListener('click', areYouGod)
 
-    document.getElementById('start_playing').addEventListener('click', function() {
-        closeFullscreenModal('howToModal')
+    document.querySelectorAll('.start_playing').forEach(element => {
+        element.addEventListener('click', function() {
+            let modal_name = puzzle.puzzle_type == 'sixes' ? 'howToSixes' : 'howToModal'
+            closeFullscreenModal(modal_name)
+        })
     })
+    
 
     document.getElementById("tutorial-1-answer-button").addEventListener('click', evalTutorial1)
     document.getElementById('tutorial-2-answer-button').addEventListener('click', evalTutorial2)
     document.getElementById('tutorial-3-answer-button').addEventListener('click', evalTutorial3)
     document.getElementById('tutorial-4-answer-button').addEventListener('click', evalTutorial4)
+    document.getElementById('tutorial-sixes-answer-button').addEventListener('click', evalTutorialSixes)
       
 
     document.getElementById('logout').addEventListener('click', logout)
