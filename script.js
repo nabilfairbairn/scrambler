@@ -1352,11 +1352,12 @@ document.getElementById('start_sixes_button').addEventListener('click', function
     closeFullscreenModal('greeting_modal')
     // if user hasn't completed a sixes puzzle, open sixes how-to
     // if hasn't completed a solve, also open the solve how-to on top.
+    loadPuzzleAndGuesses('sixes')
 
     if (!user.played_sixes) { // Open Solve how-to if no puzzles completed at all
         openFullscreenModal('howToModal')
     }
-    loadPuzzleAndGuesses('sixes')
+    
     document.getElementById('gametype').innerText = 'Sixes'
 })
 
@@ -3937,7 +3938,7 @@ async function openFullscreenModal(e) {
 
     modal.classList.remove('opened')
 
-    if (modal_id == 'howToModal') {
+    if (modal_id == 'howToModal' || modal_id == 'howToSixes') {
         if (keyboard_default_open) {
             keyboard.style.display = 'flex'
         }
