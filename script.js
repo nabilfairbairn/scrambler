@@ -4248,6 +4248,9 @@ const zipf_to_freq = (zipf, shortened) => {
     if (suffix) {
         comma_string = comma_string.slice(0, 4)
         comma_string = comma_string.replace(',', '.')
+        if (comma_string.endsWith('.')) {
+            comma_string = comma_string.slice(0, 3)
+        }
         comma_string += suffix
     }
 
