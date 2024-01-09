@@ -3298,11 +3298,11 @@ function loadInRewardLeaderboard(data) {
         let leaderboard_tile;
         if (puzzle_type == 'solve') {
             let guesses = row['total_guesses']
-            leaderboard_tile = createTableRow({ username, duration, guesses, title_1, title_2 }, 'finisher', puzzle_type='solve')
+            leaderboard_tile = createTableRow({ username, duration, guesses, title_1, title_2 }, 'finisher', 'solve')
         }
         if (puzzle_type == 'sixes') {
             let avg_freq = row['avg_freq']
-            leaderboard_tile = createTableRow({ username, duration, title_1, title_2, avg_freq }, schema='finisher', puzzle_type='sixes')
+            leaderboard_tile = createTableRow({ username, duration, title_1, title_2, avg_freq }, 'finisher', 'sixes')
         }
         
 
