@@ -3258,7 +3258,7 @@ function createTableRow(input_list, schema, puzzle_type) {
         guess_tile.innerText = guesses
 
         if (puzzle_type == 'sixes') {
-            avg_freq = `Avg rarity: ${zipf_to_freq(avg_freq)}`
+            avg_freq = `Avg rarity: ${zipf_to_freq(avg_freq, true)}` //true for shortening
             guess_tile.innerText = avg_freq
         }
 
@@ -4222,8 +4222,35 @@ function evalTutorialSixes() {
     })
 }
 
-const zipf_to_freq = (zipf) => {
-    return parseInt(1000000000 / (Math.pow(10, zipf))).toLocaleString('en-US')
+const zipf_to_freq = (zipf, shortened) => {
+    // shortened is bool 250,329 -> 250k. 1,250,329 -> 1.25m
+
+    let comma_string = parseInt(1000000000 / (Math.pow(10, zipf))).toLocaleString('en-US')
+
+    if (!shortened) {
+        return comma_string
+    }
+
+    let string_len = comma_string.length
+
+    let suffix = ''
+    if (string_len > 5) {
+        suffix = 'k'
+    }
+    if (string_len > 7) {
+        suffix = 'm'
+    }
+    if (string_len > 11) {
+        suffix = 'b'
+    }
+
+    if (suffix) {
+        comma_string = comma_string.slice(0, 4)
+        comma_string = comma_string.replace(',', '.')
+        comma_string += suffix
+    }
+
+    return comma_string
 }
 
 let t_1_guesses = 0
