@@ -374,6 +374,15 @@
             close
             </span></button>
       </div>
+      <p><u>V1.3 - Jan 8 2024</u></p>
+
+      <ul>
+        <li><p>Added: Scrambler Sixes puzzle mode! Currently in beta while we balance the scoring.</p></li>
+        <li><p>Added: A small greeting popup that will be filled with more relevant stuff soon.</p></li>
+      </ul>
+
+      <br>
+
       <p><u>V1.2.7 - Dec 27 2023</u></p>
 
       <ul>
@@ -597,9 +606,8 @@
               <div id="profileNavButton" class="open-fs-modal-button nav-item" for="profile_modal">Profile</div>
               <div id="profileNavButton" class="open-fs-modal-button nav-item" for="achievements_modal">Achievements
                 <div id="achievements_notification" class="notification"></div></div>
+              <div id="changePuzzleNavButton" class="open-fs-modal-button nav-item" for="greeting_modal">Change Puzzle Mode</div>
               <div id="pastPuzzlesNavButton" class="nav-item disabled">Past Puzzles</div>
-              <div id="weeklyChallengeNavButton" class="nav-item disabled">Weekly Challenge</div>
-              <div id="socialNavButton" class="nav-item disabled">Social Leaderboard</div>
               <div id="roadmapNavButton" class="open-fs-modal-button nav-item" for="roadmapModal">Feature Roadmap</div>
               <div id="aboutNavButton" class="open-fs-modal-button nav-item" for="aboutModal">About</div>
               <div id="contactNavButton" class="open-fs-modal-button nav-item" for="contactModal">Contact</div>
@@ -686,7 +694,7 @@
       <div>
         <span>
           <h3>You're in for a treat!</h3>
-          <p>Scrambler Sixes is a solo challenge of speed versus creativity. Your goal is to fill in 6 new words as quickly as possible, and to choose the most uncommon words that will fit.</p>
+          <p>Scrambler Sixes is a solo challenge of speed versus creativity. Your goal is to fill in 6 new words as quickly as possible, while choosing the most <b>uncommon</b> words that will fit.</p>
           <p>Once you've put in your answer, your score will be determined by your time and the <i>appearance frequency</i> that your words have (more below). The lower your score, the higher your points.</p>
           <hr>
           <br>
@@ -721,13 +729,13 @@
         </div>
         <h3>Guess Frequencies:</h3>
         <div class="instruction" id="tutorial_word_freq">
-          <p>SMART : 4.83</p>
+          <p>SMART → One in 14,791 words</p>
         </div>
         <br>
         <p>As you fill in words, they will turn <span style="color: var(--correct-color);">GREEN</span> if they are valid words and have one letter changed. If a word isn't real or doesn't follow the rule, it'll turn <span style="color: var(--wrong-color)">ORANGE</span>. </p>
         <p>Lastly, there are blue indicators that will appear above or below a letter if you've changed that letter. If you change more than one letter by accident, the indicators will turn orange.</p>
         <hr>
-        <p>The frequency values are on a base-10 log scale (like a Richter scale for earthquakes) of the number of times a word appears per billion words. A value of 6 has a frequency of 1 per 1,000. A value of 3 has a frequency of 1 per 1,000,000</p>
+        <p>The frequency values are taken from a Python project called wordfreq which is powered by Luminoso. It draws from some very large langauge sources such as Google Books, Wikipedia, and OpenSubtitles.</p>
         <hr>
         <h3>Menu Legend</h3>
         <div class="horizontal-flex-cont one-child desc"><div class="flex-item mock neutralbutton"><div class="square has-img"><img src="keyboard.svg"/></div></div><span> - Keyboard Toggle</span></div>
@@ -921,16 +929,15 @@
       </button>
 
     </div> <!-- page header close -->
-    <div id="gametype_holder">
-      <span id="gametype"></span>
-      
+    <div id="gametype_holder" for="greeting_modal">
+      <span id="gametype" for="greeting_modal"></span>
     </div>
 
     <button id="open_login_button" class="open-fs-modal-button" for="login_modal">Login</button>
 
     <div id="gameBox" class='gameBox vertical-flex-cont'>
       <span id="share_results_home" class="material-symbols-outlined share invisible">share</span>
-      <div class="switch-field">
+      <div id="solve_difficulty_toggle" class="switch-field">
         <!-- checked can only apply to one radio per set of names -->
         <input type="radio" id="easy_radio" class="switch_diff_radio" name="switch-one" value="easy" checked="checked" autocomplete="off" /> 
         <label for="easy_radio" class="game-button">Easy</label>
@@ -1059,6 +1066,7 @@
       <div id="all_leaderboard_container" class="lb" ></div>
       <div id="easy_leaderboard_container" class="lb"></div>
       <div id="hard_leaderboard_container" class="lb" ></div>
+      <div id="sixes_leaderboard_container" class="lb" ></div>
 
     </div>
   </div>

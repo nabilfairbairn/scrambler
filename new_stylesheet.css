@@ -301,6 +301,7 @@ button {
   font-weight: 600;
   text-align: center;
   border-bottom: solid var(--accent-shadow) 0.15rem;
+  cursor: pointer;
 }
 
 #gameBox {

@@ -18,7 +18,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 
 const admin_ips = ['0.qv9u2ts9ew20231023']
 
-const version = 'V1.2.7'
+const version = 'V1.3'
 const windowHeight = window.innerHeight; // Document.documentElement.clientHeight gives document height, which can be larger than screen height on iPhones
 
 
@@ -918,16 +918,20 @@ function loadFullLeaderboard(httpResponse) {
     // Loaded 
     const easy_leaderboard = httpResponse.easy
     const hard_leaderboard = httpResponse.hard
+    // const sixes_leaderboard = httpResponse.sixes
     const week_leaderboard = httpResponse.week
     const all_leaderboard = httpResponse.all
 
+
     leaderboards.easy = easy_leaderboard
     leaderboards.hard = hard_leaderboard
+    // leaderboards.sixes = sixes_leaderboard
     leaderboards.week = week_leaderboard
     leaderboards.all = all_leaderboard
 
     loadDailyLeaderboard(easy_leaderboard, 'easy')
     loadDailyLeaderboard(hard_leaderboard, 'hard')
+    // loadDailyLeaderboard(sixes_leaderboard, 'sixes')
     loadLongerLeaderboard(week_leaderboard, 'week')
     loadLongerLeaderboard(all_leaderboard, 'all')
 
@@ -985,7 +989,14 @@ function loadDailyLeaderboard(lb, diff) {
         let title_1 = lb_entry['title_1']
         let title_2 = lb_entry['title_2']
 
-        let row = createTableRow({ rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2 }, 'single_result')
+        let row;
+        if (diff == 'sixes') {
+            row = createTableRow({ rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2 }, 'single_result', 'sixes')
+        } else {
+            row = createTableRow({ rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2 }, 'single_result')
+        }
+
+        
         lb_tbody.appendChild(row)
     }
     if (lb.length == 0) {
@@ -1346,28 +1357,44 @@ function finishLogin(httpResponse) {
 
 document.getElementById('start_solve_button').addEventListener('click', function() {
     closeFullscreenModal('greeting_modal')
-    loadPuzzleAndGuesses('solve')
 
-    // Need to know number of solve puzzles and number of sixes completed. Or if player has completed 1.
-    if (!user.played_solve) { // in otherwords, has not completed a puzzle
-        // if user hasn't completed a solve puzzle, open solve modal
-        openFullscreenModal('howToModal')
-    }
-    document.getElementById('gametype').innerText = 'Solve'
+    loadSolvePuzzle();
 })
 
 document.getElementById('start_sixes_button').addEventListener('click', function() {
     closeFullscreenModal('greeting_modal')
     // if user hasn't completed a sixes puzzle, open sixes how-to
     // if hasn't completed a solve, also open the solve how-to on top.
-    loadPuzzleAndGuesses('sixes')
+
+    loadSixesPuzzle();
+})
+
+function loadSixesPuzzle() {
+    loadPuzzleAndGuesses('sixes');
+
+    // hide easy/hard buttons
+    document.getElementById('solve_difficulty_toggle').classList.add('removed');
 
     if (!user.played_sixes) { // Open Solve how-to if no puzzles completed at all
-        openFullscreenModal('howToSixes')
+        openFullscreenModal('howToSixes');
     }
-    
-    document.getElementById('gametype').innerText = 'Sixes'
-})
+
+    document.getElementById('gametype').innerText = 'Sixes';
+}
+
+function loadSolvePuzzle() {
+    loadPuzzleAndGuesses('solve');
+
+    // show easy/hard buttons
+    document.getElementById('solve_difficulty_toggle').classList.remove('removed');
+
+    // Need to know number of solve puzzles and number of sixes completed. Or if player has completed 1.
+    if (!user.played_solve) { // in otherwords, has not completed a puzzle
+        // if user hasn't completed a solve puzzle, open solve modal
+        openFullscreenModal('howToModal');
+    }
+    document.getElementById('gametype').innerText = 'Solve';
+}
 
 function manageLoginError(errorResponse, errorParams) {
     // replace loader with original text
@@ -3993,7 +4020,7 @@ async function openFullscreenModal(e) {
         modal_id = target.getAttribute('for')
     }
     
-    
+    console.log(modal_id)
 
     if (['deleteModal', 'offline_modal'].includes(modal_id)) {
         document.getElementById('overlay').classList.add('higher')
@@ -4007,12 +4034,8 @@ async function openFullscreenModal(e) {
         logVersionSeen()
     }
     
-    if (modal_id == 'howToModal') {
+    if (['howToModal', 'howToSixes'].includes(modal_id)) {
         keyboard_default_open = window.getComputedStyle(document.getElementById('keyboard-cont'))['display'] == 'flex'
-
-        if (puzzle.puzzle_type == 'sixes') {
-            modal_id = 'howToSixes'
-        }
     }
 
     let modal = document.getElementById(modal_id)
@@ -4160,7 +4183,8 @@ function evalTutorialSixes() {
         s2 += element.firstElementChild.innerText
     }) 
 
-    if (user_states[getDiff()]['message']) {
+    let message = user_states[getDiff()]['message']
+    if (message) {
         toast(true, message, 7)
         user_states[getDiff()]['message'] = ''
         
@@ -4184,13 +4208,13 @@ function evalTutorialSixes() {
         tut_freq.innerHTML = ''
 
         let p = document.createElement('p')
-        p.innerText = 'SMART → One in 14791 words'
+        p.innerText = 'SMART → One in 14,791 words'
         tut_freq.appendChild(p)
-        for (let i = 0; i < word_freqs.length; i++) {
-            let j = i+1
-            if (words[j]) {
+        for (let i = 1; i < word_freqs.length; i++) {
+            
+            if (words[i]) {
                 let p = document.createElement('p')
-                p.innerText = `${words[j]} → One in ${zipf_to_freq(word_freqs[i])} words`
+                p.innerText = `${words[i]} → One in ${zipf_to_freq(word_freqs[i])} words`
                 tut_freq.appendChild(p)
             }
         }
@@ -4601,6 +4625,7 @@ window.onload = async function() {
         })
     })
     
+    document.getElementById('gametype_holder').addEventListener('click', openFullscreenModal)
 
     document.getElementById("tutorial-1-answer-button").addEventListener('click', evalTutorial1)
     document.getElementById('tutorial-2-answer-button').addEventListener('click', evalTutorial2)
@@ -4628,15 +4653,7 @@ window.onload = async function() {
     stats_banner = document.getElementById('stats-banner')
 
     document.getElementById('pastPuzzlesNavButton').addEventListener('click', (e) => {
-        toast(false, `Soon my friends. Soon.`)
-    })
-
-    document.getElementById('weeklyChallengeNavButton').addEventListener('click', (e) => {
-        toast(false, `Bigger puzzles, bigger rewards. Also bigger wait time D:`)
-    })
-
-    document.getElementById('socialNavButton').addEventListener('click', (e) => {
-        toast(false, `Maybe you'll want a separate leaderboard with only your friends?`)
+        toast(false, `Not a priority, but I promise we'll get there.`)
     })
 
     document.getElementById('leaderboardButton').addEventListener('click', (e) => {
