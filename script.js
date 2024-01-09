@@ -1024,62 +1024,82 @@ function loadLongerLeaderboard(lb, timespan) {
     }
 }
 
-function create_social_share_text(validity_list, daily_date, duration, diff) {
+function create_social_share_text(validity_list, daily_date, duration, diff, avg_freq, score) {
     let _green = '🟩'
     let _orange = '🟧'
     let _gray = '⬜'
 
-    let difficulty = diff == 'easy' ? 'Easy' : 'Hard'
+    let difficulty = diff.slice(0, 1).toUpperCase() + diff.slice(1)
     let date = daily_date.slice(0, 10)
 
-    let social_text = `${date} ${difficulty} Scrambler:\n`
+    let puzzle_name = difficulty == 'Sixes' ? 'Scrambler Sixes' : 'Scrambler Solve'
+    difficulty = difficulty == 'Sixes' ? '' : difficulty // remove name if sixes, since it will be after Scrambler in title
 
-    for (let i = 0; i < validity_list.length; i++) {
-        let guess_result = ``
-        let guess_validity = validity_list[i]
+    let social_text = `${date} ${difficulty} ${puzzle_name}:\n`
 
-        for (let j = 0; j < guess_validity.length; j++) {
-            let word_validity = guess_validity[j]
+    if (difficulty != 'Sixes') {
+        // Coloured boxes + number of guesses
 
-            switch (word_validity) { // parse through validity list for puzzle guesses and create boxes
-                case true:
-                    guess_result += _green
-                    break;
-                case false:
-                    guess_result += _orange
-                    break;
-                default:
-                    guess_result += _gray
-                    break;
+        for (let i = 0; i < validity_list.length; i++) {
+            let guess_result = ``
+            let guess_validity = validity_list[i]
+    
+            for (let j = 0; j < guess_validity.length; j++) {
+                let word_validity = guess_validity[j]
+    
+                switch (word_validity) { // parse through validity list for puzzle guesses and create boxes
+                    case true:
+                        guess_result += _green
+                        break;
+                    case false:
+                        guess_result += _orange
+                        break;
+                    default:
+                        guess_result += _gray
+                        break;
+                }
             }
+    
+            social_text += `${guess_result}\n`
         }
-
-        social_text += `${guess_result}\n`
+    
+        let guess_text = ''
+        if (validity_list.length == 1) {
+            guess_text = 'Guess!'
+        } else {
+            guess_text = 'Guesses'
+        }
+    
+        social_text += `${validity_list.length} ${guess_text}\n`
     }
-
-    let guess_text = ''
-    if (validity_list.length == 1) {
-        guess_text = 'Guess!'
-    } else {
-        guess_text = 'Guesses'
-    }
-
-    social_text += `${validity_list.length} ${guess_text}\n`
+    
 
     // turn hours into minutes. display minutes if >= 1, and seconds
 
     let hours = duration['hours'] ? duration['hours'] : 0
     let minutes = duration['minutes'] ? duration['minutes'] : 0
-    let seconds = duration['seconds']
+    let seconds = duration['seconds'] ? duration['seconds'] : 0
     minutes = minutes + hours*60
 
     let time = '';
     if (minutes) {
         time = `${minutes} minutes, `
     }
-    time += `${seconds} seconds`
+    if (seconds) {
+        time += `${seconds} seconds`
+    }
+    
+    social_text += `Time: ${time}\n`
 
-    social_text += `Time: ${time}\nhttps://scrambler.onrender.com`
+    if (difficulty == 'Sixes') {
+        // avg freq, score
+        avg_freq = `Average word rarity: ${zipf_to_freq(avg_freq)}\n`
+        score = `Score: ${score}\n`
+        social_text += avg_freq + score
+
+    }
+
+    social_text += 'https://scrambler.onrender.com'
 
     return social_text
 }
@@ -1172,34 +1192,21 @@ async function load_reward(diff) {
     let user_stats, fast_bonus, fast_points, guess_bonus, guess_points, total_points, bonus_points, base_points
     
 
-    if (user.id == 3) {
+    
+    user_stats = past_rewards[diff]['all_rewards'][user.id]
 
-        // load values
-        fast_bonus = create_medal(1)
-        fast_points = 1
+    // load values
+    fast_bonus = create_medal(user_stats['fast_bonus'])
+    fast_points = user_stats['fast_points']
 
-        guess_bonus = create_medal(1)
-        guess_points = 1
+    guess_bonus = create_medal(user_stats['guess_bonus'])
+    guess_points = user_stats['guess_points']
 
-        
-        total_points = 2
-        bonus_points = 3
-        base_points = total_points - bonus_points
-    } else {
-        user_stats = past_rewards[diff]['all_rewards'][user.id]
-
-        // load values
-        fast_bonus = create_medal(user_stats['fast_bonus'])
-        fast_points = user_stats['fast_points']
-
-        guess_bonus = create_medal(user_stats['guess_bonus'])
-        guess_points = user_stats['guess_points']
-
-        
-        total_points = user_stats['total_points']
-        bonus_points = user_stats['bonus_points']
-        base_points = total_points - bonus_points
-    }
+    
+    total_points = user_stats['total_points']
+    bonus_points = user_stats['bonus_points']
+    base_points = total_points - bonus_points
+    
     
 
     document.getElementById('fast_bonus').innerHTML = ''
@@ -1348,6 +1355,7 @@ document.getElementById('start_solve_button').addEventListener('click', function
     }
     document.getElementById('gametype').innerText = 'Solve'
 })
+
 document.getElementById('start_sixes_button').addEventListener('click', function() {
     closeFullscreenModal('greeting_modal')
     // if user hasn't completed a sixes puzzle, open sixes how-to
@@ -2918,8 +2926,16 @@ function copy_current_puzzle_results() {
     let daily_date = user_states[diff]['share_daily_date']
     let duration = user_states[diff]['share_duration']
 
+    let avg_freq;
+    let score;
 
-    let share_text = create_social_share_text(validity, daily_date, duration, diff)
+    if (diff == 'sixes') {
+        avg_freq = user_states[diff]['share_avg_freq']
+        score = user_states[diff]['share_score']
+    }
+
+
+    let share_text = create_social_share_text(validity, daily_date, duration, diff, avg_freq, score)
 
     navigator.clipboard.writeText(share_text);
 
@@ -2928,37 +2944,113 @@ function copy_current_puzzle_results() {
     // ***** Need to create shareable results even if not logged in. Make sure complete puzzle saves results. What does API do if no user_id only IP, etc.
 }
 
-function showPointsPopup(data) {
+function showPointsPopup(data, puzzle_type) {
     // Takes points summary from postgres, fills points popup to display to player
 
     // what to do if not logged in
     let reward_modal = document.getElementById('puzzle_reward')
     var base_points = data.puzzle_points - data.total_bonus
+    
 
     const congrat_title = document.getElementById("reward_title") // TODO: auto change title
     congrat_title.innerText = weightedRandomizer(null, 'celebration')
 
     // show time and guesses
     let duration = parse_duration(data['social_stats']['duration'])
-    let guesses = data['social_stats']['validity'].length
-
-    document.getElementById('finish_time').innerText = `Time: ${duration}`
-    document.getElementById('finish_guesses').innerText = `Guesses: ${guesses}`
-
-    
-    let reward_message;
-    if (!user.id) {
-        reward_message = `\nWant to find out where you rank?`
-        
-        if (!(document.getElementById("final_reward_message").nextElementSibling == create_button)) {
-            reward_modal.insertBefore(create_button, document.getElementById("final_reward_message").nextElementSibling)
-        }
-        
-    }  else {
-        reward_message = '\nCheck back then to see how you did!'
+    if (puzzle_type == 'solve') {
+        let guesses = data['social_stats']['validity'].length
+        document.getElementById('finish_guesses').innerText = `Guesses: ${guesses}`
     }
+    
+    document.getElementById('finish_time').innerText = `Time:\t ${duration}`
 
-    document.getElementById('final_reward_message').innerText = reward_message
+    if (puzzle_type == 'sixes') {
+        // show avg freq, score, and points
+        let avg_freq = `Average Frequency:\t 1 in ${zipf_to_freq(data['social_stats']['avg_freq'])}` // 1 in 287192 words
+        let score = `Score:\t ${data['social_stats']['score']}`
+        let points = `Points Earned:\t ${data['points']}`
+        let freqs = user_states[getDiff()].word_freqs.map(freq => zipf_to_freq(freq))
+
+        let avg_freq_banner = document.getElementById('finish_guesses')
+        avg_freq_banner.classList.add('larger_text')
+        avg_freq_banner.innerText = avg_freq
+
+        let points_banner = document.createElement('span') // last object inside result banner.
+        points_banner.classList.add('larger_text')
+        points_banner.innerText = points
+
+        let score_banner = document.createElement('span')
+        score_banner.classList.add('larger_text')
+        score_banner.innerText = score
+
+        let summary = document.getElementById('puzzle_summary_banner')
+        summary.appendChild(score_banner)
+        summary.appendChild(points_banner)
+
+        // time, avg freq, score, points in top banner
+        let holder = document.getElementById('final_reward_message')
+        holder.innerHTML = ''
+        holder.classList.add('vertical-flex-cont')
+
+        let word_col = document.createElement('div')
+        word_col.classList.add('vertical-flex-cont', 'sixes_word_col')
+
+        let freq_col = document.createElement('div')
+        freq_col.classList.add('vertical-flex-cont', 'sixes_freq_col')
+
+        holder.appendChild(word_col)
+        holder.appendChild(freq_col)
+
+        for (let i = 0; i < freqs.length; i++) {
+            // word list under share button
+
+            let word = get_word(i)
+            let word_holder = document.createElement('div')
+            word_holder.innerText = word
+            word_holder.classList.add('sixes_word')
+            // place word on left side
+            word_col.appendChild(word_holder)
+
+            
+            let freq = freqs[i]
+            let freq_holder = document.createElement('div')
+            
+            if (i == 0) {
+                freq_holder.innerText = `Starting Word`
+            } else {
+                freq_holder.innerText = `1 in ${freq}`
+            }
+
+            freq_holder.classList.add('sixes_freq')
+            
+            freq_col.appendChild(freq_holder)
+            
+            
+        }
+
+        // leaderboard with clickable tiles to see other people's choice
+        // tile has rank, name titles, points, score
+        // opening tile shows duration, avg freq, words chosen, and freq for each (in small tooltip centered on tile)
+
+    }
+    if (puzzle_type == 'solve') {
+        
+        let reward_message = 'Final points will be calculated at the end of day when the daily puzzle finishes.'
+        if (!user.username) {
+            reward_message += `\nWant to find out where you rank?`
+            
+            if (!(document.getElementById("final_reward_message").nextElementSibling == create_button)) {
+                reward_modal.insertBefore(create_button, document.getElementById("final_reward_message").nextElementSibling)
+            }
+            
+        }  else {
+            reward_message += '\nCheck back then to see how you did!'
+        }
+        let holder = document.getElementById('final_reward_message')
+        holder.innerText = reward_message
+    }
+    
+
     
     // Display the popup
     reward_modal.classList.add('opened')
@@ -2973,12 +3065,12 @@ function showPointsPopup(data) {
     fetchPostWrapper('/leaderboard/complete', params, loadInRewardLeaderboard) // hides loader
 }
 
-function createTableRow(input_list, schema) {
+function createTableRow(input_list, schema, puzzle_type) {
     // create tr (new row)
     let leaderboard_tile = document.createElement('div')
     leaderboard_tile.classList.add('leaderboard_tile')
 
-    let { rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2, n_puzzles, gold, silver, bronze } = input_list
+    let { rank, username, points, fast_bonus, guess_bonus, duration, guesses, title_1, title_2, n_puzzles, gold, silver, bronze, avg_freq } = input_list
 
     guesses = guesses == 1 ? `${guesses} Guess` : `${guesses} Guesses` 
     // no rank on finisher
@@ -3134,7 +3226,13 @@ function createTableRow(input_list, schema) {
 
         let guess_tile = document.createElement('div') // guesses
         guess_tile.classList.add('guess_tile')
+        
         guess_tile.innerText = guesses
+
+        if (puzzle_type == 'sixes') {
+            avg_freq = `Avg rarity: ${zipf_to_freq(row['avg_freq'])}`
+            guess_tile.innerText = avg_freq
+        }
 
         let lb_div_2 = document.createElement('div')
         lb_div_2.appendChild(time_tile)
@@ -3156,19 +3254,32 @@ function loadInRewardLeaderboard(data) {
     // No longer table, just div
     const table_body = document.getElementById("finisher_leaderboard")
     table_body.textContent = ''
+    
+    let puzzle_type = data[0]['puzzle_type']
 
     for (let i = 0; i < data.length; i++) {
         let row = data[i]
         let username = row['username']
 
         let duration = parse_duration(row['duration'])
-        let guesses = row['total_guesses']
+        
 
         let title_1 = row['title_1']
         let title_2 = row['title_2']
 
+        let leaderboard_tile;
+        if (puzzle_type == 'solve') {
+            let guesses = row['total_guesses']
+            leaderboard_tile = createTableRow({ username, duration, guesses, title_1, title_2 }, 'finisher', puzzle_type='solve')
+        }
+        if (puzzle_type == 'sixes') {
+            let avg_freq = row['avg_freq']
+            leaderboard_tile = createTableRow({ username, duration, title_1, title_2, avg_freq }, schema='finisher', puzzle_type='sixes')
+        }
+        
+
         // Add titles to sent data
-        let leaderboard_tile = createTableRow({ username, duration, guesses, title_1, title_2 }, 'finisher')
+        
 
         
         table_body.appendChild(leaderboard_tile)
@@ -4087,7 +4198,7 @@ function evalTutorialSixes() {
 }
 
 const zipf_to_freq = (zipf) => {
-    return parseInt(1000000000 / (Math.pow(10, zipf)))
+    return parseInt(1000000000 / (Math.pow(10, zipf))).toLocaleString('en-US')
 }
 
 let t_1_guesses = 0
@@ -4584,9 +4695,9 @@ window.onload = async function() {
 
         expiry_message_sent = true
         if (user.username && user_states[getDiff()].puzzle_attempt == 1 && !user_states[getDiff()].finished) { // proxy for is registered
-            addBannerMessage(true, `This puzzle is now over. Completing it will only earn base points. Refresh the page for the current puzzle.`)
+            goodBannerMessage(true, `This puzzle is now over. Completing it will only earn base points. Refresh the page for the current puzzle.`)
         } else {
-            addBannerMessage(true, `The next puzzle is available to play. Refresh the page to load it.`)
+            goodBannerMessage(true, `The next puzzle is available to play. Refresh the page to load it.`)
         }
         
         
