@@ -1363,7 +1363,7 @@ document.getElementById('start_sixes_button').addEventListener('click', function
     loadPuzzleAndGuesses('sixes')
 
     if (!user.played_sixes) { // Open Solve how-to if no puzzles completed at all
-        openFullscreenModal('howToModal')
+        openFullscreenModal('howToSixes')
     }
     
     document.getElementById('gametype').innerText = 'Sixes'
