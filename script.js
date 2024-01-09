@@ -3258,7 +3258,7 @@ function createTableRow(input_list, schema, puzzle_type) {
         guess_tile.innerText = guesses
 
         if (puzzle_type == 'sixes') {
-            avg_freq = `Avg rarity: ${zipf_to_freq(row['avg_freq'])}`
+            avg_freq = `Avg rarity: ${zipf_to_freq(avg_freq)}`
             guess_tile.innerText = avg_freq
         }
 
