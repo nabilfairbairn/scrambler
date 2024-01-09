@@ -1822,6 +1822,7 @@ function add_validity_styling() {
 
 async function loadPuzzleAndGuesses(puzzle_type) {
     // start current puzzle, update attempt
+    clear_puzzle()
     
     if (puzzle_type == 'sixes') {
         puzzle = todays_puzzles['sixes']
