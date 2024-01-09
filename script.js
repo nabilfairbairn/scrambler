@@ -3087,7 +3087,8 @@ function showPointsPopup(data, puzzle_type) {
     document.getElementById("reward_leaderboard_loader").style.display = 'block';
     // load Leaderboard
     const params = {
-        puzzle_id: puzzle.id
+        puzzle_id: puzzle.id,
+        puzzle_type: puzzle_type
     }
     fetchPostWrapper('/leaderboard/complete', params, loadInRewardLeaderboard) // hides loader
 }
