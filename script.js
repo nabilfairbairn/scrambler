@@ -4037,6 +4037,9 @@ async function openFullscreenModal(e) {
     }
     
     if (['howToModal', 'howToSixes'].includes(modal_id)) {
+        if (modal_id == 'howToModal' && puzzle.puzzle_type == 'sixes') {
+            modal_id = 'howToSixes'
+        }
         keyboard_default_open = window.getComputedStyle(document.getElementById('keyboard-cont'))['display'] == 'flex'
     }
 
