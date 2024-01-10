@@ -4720,8 +4720,11 @@ window.onload = async function() {
         var radio = switch_lb_radios[i]
         radio.addEventListener('click', changeLeaderboard)
     }
-    document.getElementById('easyLBRadio').addEventListener('click', showCheckedLeaderboard)
-    document.getElementById('hardLBRadio').addEventListener('click', showCheckedLeaderboard)
+
+    // Change difficulty in daily leaderboard when clicking radio button
+    document.querySelectorAll('.leaderboard_diff_radio').forEach(element => {
+        element.addEventListener('click', showCheckedLeaderboard)
+    })
 
   const next_game = document.getElementById('next_game')
 
