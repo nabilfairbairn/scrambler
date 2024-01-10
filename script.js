@@ -185,6 +185,7 @@ function clear_variables() {
     leaderboards = {
         'easy': null,
         'hard': null,
+        'sixes': null,
         'week': null,
         'all': null
     }
