@@ -3924,7 +3924,7 @@ function loadUserStats() {
 
     let active_leaderboard;
     let top_toggle_value = document.querySelector('input[name=switch-two]:checked').value
-    if (top_toggle_value == 'yesterday') {
+    if (top_toggle_value == 'today') { // html still says today. Refers to yesterday
         active_leaderboard = document.querySelector('input[name=switch-3]:checked').value
     } else {
         active_leaderboard = top_toggle_value
