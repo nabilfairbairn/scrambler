@@ -207,6 +207,7 @@ let user = {
 let leaderboards = {
     'easy': null,
     'hard': null,
+    'sixes': null,
     'week': null,
     'all': null
 }
@@ -918,20 +919,20 @@ function loadFullLeaderboard(httpResponse) {
     // Loaded 
     const easy_leaderboard = httpResponse.easy
     const hard_leaderboard = httpResponse.hard
-    // const sixes_leaderboard = httpResponse.sixes
+    const sixes_leaderboard = httpResponse.sixes
     const week_leaderboard = httpResponse.week
     const all_leaderboard = httpResponse.all
 
 
     leaderboards.easy = easy_leaderboard
     leaderboards.hard = hard_leaderboard
-    // leaderboards.sixes = sixes_leaderboard
+    leaderboards.sixes = sixes_leaderboard
     leaderboards.week = week_leaderboard
     leaderboards.all = all_leaderboard
 
     loadDailyLeaderboard(easy_leaderboard, 'easy')
     loadDailyLeaderboard(hard_leaderboard, 'hard')
-    // loadDailyLeaderboard(sixes_leaderboard, 'sixes')
+    loadDailyLeaderboard(sixes_leaderboard, 'sixes')
     loadLongerLeaderboard(week_leaderboard, 'week')
     loadLongerLeaderboard(all_leaderboard, 'all')
 
@@ -3922,7 +3923,7 @@ function loadUserStats() {
 
     let active_leaderboard;
     let top_toggle_value = document.querySelector('input[name=switch-two]:checked').value
-    if (top_toggle_value == 'today') {
+    if (top_toggle_value == 'yesterday') {
         active_leaderboard = document.querySelector('input[name=switch-3]:checked').value
     } else {
         active_leaderboard = top_toggle_value
@@ -3967,6 +3968,7 @@ function hideAllLeaderboards() {
     document.getElementById('all_leaderboard_container').classList.add('invisible')
     document.getElementById('easy_leaderboard_container').classList.add('invisible')
     document.getElementById('hard_leaderboard_container').classList.add('invisible')
+    document.getElementById('sixes_leaderboard_container').classList.add('invisible')
 }
 
 
