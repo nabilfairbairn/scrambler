@@ -657,8 +657,15 @@ async function toast_all_achievements(ach_list) {
 }
 
 async function switchDifficulty(e) {
-    const source_toggle = e.target
-    const new_diff = source_toggle.value
+    let source_toggle;
+    let new_diff;
+    if (typeof e == 'string') {
+        new_diff = e
+    } else {
+        source_toggle = e.target
+        new_diff = source_toggle.value
+    }
+    
 
     const current_puzzle_started = user_states[getDiff()]['started']
     const new_puzzle_started = user_states[new_diff]['started']
@@ -709,7 +716,7 @@ async function switchDifficulty(e) {
     if (current_puzzle_started && puzzle_loaded) {
         saveCurrentInput()
     }
-    let current_words = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
+    let current_words = puzzle.words.length
 
     // replace visible puzzle
     puzzle = todays_puzzles[new_diff]
@@ -726,7 +733,7 @@ async function switchDifficulty(e) {
     // display current puzzle
     await create_puzzle()
 
-    let new_words = puzzle.puzzle_type == 'sixes' ? 7 : puzzle.words.length
+    let new_words = puzzle.words.length
 
     if (new_puzzle_started) {
         if (current_words == new_words) { // spin button if button wont end up moving
@@ -883,8 +890,10 @@ async function fetchPuzzle() {
     http.open("GET", url)
     http.responseType = 'json'
     http.send() // Make sure to stringify
-    http.onload = function() {
-        declare_puzzle(http.response) // easy and hard Solve puzzles
+    http.onload = async function() {
+        await declare_puzzle(http.response) // easy and hard Solve puzzles
+        refreshLeaderboard()
+        loadAllGuesses()
     }
 }
 
@@ -1357,22 +1366,24 @@ function finishLogin(httpResponse) {
     // Send callback here to parse cookie
 }
 
-document.getElementById('start_solve_button').addEventListener('click', function() {
+document.getElementById('start_solve_button').addEventListener('click', e => {
     closeFullscreenModal('greeting_modal')
 
-    loadSolvePuzzle();
+    
+    loadSolvePuzzle(e);
+    
 })
 
-document.getElementById('start_sixes_button').addEventListener('click', function() {
+document.getElementById('start_sixes_button').addEventListener('click', e => {
     closeFullscreenModal('greeting_modal')
     // if user hasn't completed a sixes puzzle, open sixes how-to
     // if hasn't completed a solve, also open the solve how-to on top.
 
-    loadSixesPuzzle();
+    
+    loadSixesPuzzle(e);
 })
 
-function loadSixesPuzzle() {
-    loadPuzzleAndGuesses('sixes');
+function loadSixesPuzzle(e) {
 
     // hide easy/hard buttons
     document.getElementById('solve_difficulty_toggle').classList.add('removed');
@@ -1382,10 +1393,10 @@ function loadSixesPuzzle() {
     }
 
     document.getElementById('gametype').innerText = 'Sixes';
+    switchDifficulty('sixes')
 }
 
 function loadSolvePuzzle() {
-    loadPuzzleAndGuesses('solve');
 
     // show easy/hard buttons
     document.getElementById('solve_difficulty_toggle').classList.remove('removed');
@@ -1396,6 +1407,11 @@ function loadSolvePuzzle() {
         openFullscreenModal('howToModal');
     }
     document.getElementById('gametype').innerText = 'Solve';
+
+    if (['easy', 'hard'].includes(getDiff())) { // if already playing solve, nothing to change
+        return
+    }
+    switchDifficulty('easy') // if not playing solve, move to easy
 }
 
 function manageLoginError(errorResponse, errorParams) {
@@ -1837,13 +1853,8 @@ async function loadPuzzleAndGuesses(puzzle_type) {
     puzzle_loaded = true
 
     // load guesses for both puzzles
-    if (puzzle_type == 'solve') { // no prev guess to load for sixes
-        loadAllGuesses(puzzle_type)
-    }
     
-
-    // Get Leaderboard since puzzle_ids are in.
-    await refreshLeaderboard()
+    
     
 }
 
