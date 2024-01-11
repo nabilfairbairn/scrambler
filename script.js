@@ -670,6 +670,13 @@ async function switchDifficulty(e) {
         new_diff = source_toggle.value
     }
     
+    let current_words; // number of words. used to determine whether guess button needs to move
+    if (!puzzle.words) { // loading puzzle for first time
+        current_words = 0
+        loadAllGuesses()
+    } else {
+        current_words = puzzle.words.length
+    }
 
     const current_puzzle_started = user_states[getDiff()]['started']
     const new_puzzle_started = user_states[new_diff]['started']
@@ -721,12 +728,7 @@ async function switchDifficulty(e) {
         saveCurrentInput()
     }
     
-    let current_words; // number of words. used to determine whether guess button needs to move
-    if (!puzzle.words) {
-        current_words = 0
-    } else {
-        current_words = puzzle.words.length
-    }
+    
     
 
     // replace visible puzzle
@@ -905,7 +907,7 @@ async function fetchPuzzle() {
         await declare_puzzle(http.response) // easy and hard Solve puzzles
         if (user.id) {
             refreshLeaderboard()
-            loadAllGuesses()
+            
         }
         
     }
@@ -1381,7 +1383,6 @@ function finishLogin(httpResponse) {
 
     if (todays_puzzles['easy'].id) {
         refreshLeaderboard()
-        loadAllGuesses()
     }
 }
 
