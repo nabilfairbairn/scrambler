@@ -670,9 +670,13 @@ async function switchDifficulty(e) {
         new_diff = source_toggle.value
     }
     
+    let current_puzzle_started;
+    if (getDiff()) {
+        current_puzzle_started = user_states[getDiff()]['started']
+    } else {
+        current_puzzle_started = false
+    }
     
-
-    const current_puzzle_started = user_states[getDiff()]['started']
     const new_puzzle_started = user_states[new_diff]['started']
 
 
