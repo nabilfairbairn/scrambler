@@ -3755,7 +3755,7 @@ async function create_puzzle(puzzle_type) {
                     input.focus();
                 };
                 input.addEventListener('keydown', function myfunc(event) {
-                    process_input(input, event, puzzle_type);
+                    process_input(input, event, puzzle.puzzle_type);
                 });
                 input.setAttribute('depth', i);
                 input.setAttribute('order', j);
@@ -4832,7 +4832,7 @@ window.onload = async function() {
             key_val = key.value
         }
         blurred.focus()
-        process_input(blurred, key_val)
+        process_input(blurred, key_val, puzzle.puzzle_type)
     }
   })
 
