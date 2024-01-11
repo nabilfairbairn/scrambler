@@ -892,8 +892,11 @@ async function fetchPuzzle() {
     http.send() // Make sure to stringify
     http.onload = async function() {
         await declare_puzzle(http.response) // easy and hard Solve puzzles
-        refreshLeaderboard()
-        loadAllGuesses()
+        if (user.id) {
+            refreshLeaderboard()
+            loadAllGuesses()
+        }
+        
     }
 }
 
@@ -1364,6 +1367,11 @@ function finishLogin(httpResponse) {
     openFullscreenModal('greeting_modal')
     // TODO: visit request is first to be sent to server. Should return cookie if exists. 
     // Send callback here to parse cookie
+    
+    if (puzzle.id) {
+        refreshLeaderboard()
+        loadAllGuesses()
+    }
 }
 
 document.getElementById('start_solve_button').addEventListener('click', e => {
