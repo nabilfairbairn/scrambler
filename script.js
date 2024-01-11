@@ -1818,7 +1818,8 @@ function loadAllGuesses() {
         user_ip: user.ip,
         puzzle_ids: {
             easy: todays_puzzles['easy']['id'],
-            hard: todays_puzzles['hard']['id']
+            hard: todays_puzzles['hard']['id'],
+            sixes: todays_puzzles['sixes']['id']
         }
     }
 
@@ -2415,7 +2416,6 @@ async function process_input(element, event, puzzle_type) {
     // remove styling from any words after this one
     remove_lower_word_styling(word)
 
-    console.log(puzzle_type)
     if (puzzle_type == 'sixes') {
         check_validity_of_complete_words(depth)
     }
