@@ -302,11 +302,15 @@ let puzzle = {
 function getDiff() {
     var diff_scale = ['easy', 'hard']
 
+    if (!puzzle.difficulty) {
+        return null
+    }
+
     if (puzzle.difficulty == -1) {
         return 'sixes'
     }
 
-    if (!puzzle.difficulty || puzzle.difficulty > 2) { //custom puzzles are currently set to difficulty 3, but are sent by API as easy
+    if (puzzle.difficulty > 2) { //custom puzzles are currently set to difficulty 3, but are sent by API as easy
         return 'easy'
     }
     return diff_scale[puzzle.difficulty - 1] // 1 indexed difficulty
@@ -672,8 +676,8 @@ async function switchDifficulty(e) {
 
 
     if (new_diff == getDiff()) { // same difficulty clicked as current difficulty
-            return
-        }
+        return
+    }
     
     // hide share button
     document.getElementById('share_results_home').classList.add('invisible')
@@ -716,7 +720,14 @@ async function switchDifficulty(e) {
     if (current_puzzle_started && puzzle_loaded) {
         saveCurrentInput()
     }
-    let current_words = puzzle.words.length
+    
+    let current_words; // number of words. used to determine whether guess button needs to move
+    if (!puzzle.words) {
+        current_words = 0
+    } else {
+        current_words = puzzle.words.length
+    }
+    
 
     // replace visible puzzle
     puzzle = todays_puzzles[new_diff]
@@ -1846,25 +1857,6 @@ function add_validity_styling() {
     
 }
 
-async function loadPuzzleAndGuesses(puzzle_type) {
-    // start current puzzle, update attempt
-    clear_puzzle()
-    
-    if (puzzle_type == 'sixes') {
-        puzzle = todays_puzzles['sixes']
-    } else {
-        puzzle = todays_puzzles['easy']
-    }
-    
-
-    await create_puzzle(puzzle_type)
-    puzzle_loaded = true
-
-    // load guesses for both puzzles
-    
-    
-    
-}
 
 async function startPuzzle() {
     // starts current puzzle
