@@ -1367,8 +1367,8 @@ function finishLogin(httpResponse) {
     openFullscreenModal('greeting_modal')
     // TODO: visit request is first to be sent to server. Should return cookie if exists. 
     // Send callback here to parse cookie
-    
-    if (puzzle.id) {
+
+    if (todays_puzzles['easy'].id) {
         refreshLeaderboard()
         loadAllGuesses()
     }
