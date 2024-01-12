@@ -4044,7 +4044,6 @@ async function openFullscreenModal(e) {
         modal_id = target.getAttribute('for')
     }
     
-    console.log(modal_id)
 
     if (['deleteModal', 'offline_modal'].includes(modal_id)) {
         document.getElementById('overlay').classList.add('higher')
@@ -4126,6 +4125,9 @@ async function openFullscreenModal(e) {
         let params = {user_id: user.id, puzzle_ids: JSON.stringify(ids)}
 
         fetchPostWrapper('/rewards/seen', params, null)
+    }
+    if (modal_id == 'puzzle_reward') {
+        submit_star_ranking()
     }
     if (modal_id == 'achievements_modal') {
         mark_seen_achievements()
@@ -4647,6 +4649,39 @@ function rejectWord(e) { // DISCARD = TRUE IF DISCARDING
         n_words_reviewed++
         document.getElementById('n_completed').innerText = `${n_words_reviewed}/${total_to_review}`
     })
+}
+
+// star ratings
+document.querySelectorAll('.fa-star').forEach(e => {
+    e.addEventListener('click', e => {
+        let star = e.target
+        star.classList.add('checked')
+        let prev_star = star.previousElementSibling
+        while (prev_star) {
+            prev_star.classList.add('checked')
+            prev_star = prev_star.previousElementSibling
+        }
+
+        let next_star = star.nextElementSibling
+        while(next_star) {
+            next_star.classList.remove('checked')
+            next_star = next_star.nextElementSibling
+        }
+    })
+})
+
+function submit_star_ranking() {
+    
+    let enjoyment = document.getElementById('enjoyment_rating').querySelectorAll('.fa-star.checked').length
+    let difficulty = document.getElementById('difficulty_rating').querySelectorAll('.fa-star.checked').length
+    
+    let params = {
+        puzzle_id: puzzle.id,
+        user_id: user.id,
+        enjoyment: enjoyment,
+        difficulty: difficulty
+    }
+    fetchPostWrapper('/puzzles/rating')
 }
 
 let puzzle_date;

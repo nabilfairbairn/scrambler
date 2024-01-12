@@ -530,6 +530,30 @@ input[type="submit"], .input_button {
   font-size: 1.1em;
 }
 
+#puzzle_rating {
+  font-size: 1.25em;
+}
+
+#enjoyment_rating, #difficulty_rating {
+  font-size: 1.2em;
+  display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#enjoyment_rating span, #difficulty_rating span {
+  font-size: 1.6em;
+}
+
+.fa-star {
+  margin: 0.08em;
+}
+
+.fa-star.checked {
+  color: orange;
+}
+
 .between {
   justify-content: space-around !important;
   align-items: center;
