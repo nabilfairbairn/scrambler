@@ -4687,10 +4687,15 @@ function submit_star_ranking() {
 let puzzle_date;
 
 window.onload = async function() {
-    
-    await clear_puzzle()
+    let last_reload = localStorage.getItem("last_reload")
+    let last_reload_date = new Date.parse(last_reload)
 
-    clear_variables()
+    let time_now = new Date()
+
+    if (last_reload && (time_now - last_reload_date) > 86400000) { // 24 hrs
+        localStorage.setItem("last_reload", time_now.toString())
+        window.location.reload(true)
+    }
 
     let device_id = localStorage.getItem("device_id")
 
@@ -4698,6 +4703,10 @@ window.onload = async function() {
         device_id = create_random_device_id()
         localStorage.setItem("device_id", device_id)
     }
+
+    await clear_puzzle()
+
+    clear_variables()
 
     user.ip = device_id
 
