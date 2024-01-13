@@ -4681,7 +4681,7 @@ function submit_star_ranking() {
         enjoyment: enjoyment,
         difficulty: difficulty
     }
-    fetchPostWrapper('/puzzles/rating')
+    fetchPostWrapper('/puzzles/rating', params, null)
 }
 
 let puzzle_date;
