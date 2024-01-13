@@ -4688,11 +4688,11 @@ let puzzle_date;
 
 window.onload = async function() {
     let last_reload = localStorage.getItem("last_reload")
-    let last_reload_date = new Date.parse(last_reload)
+    
 
     let time_now = new Date()
 
-    if (last_reload && (time_now - last_reload_date) > 86400000) { // 24 hrs
+    if (last_reload && (time_now - Date.parse(last_reload)) > 86400000) { // 24 hrs
         localStorage.setItem("last_reload", time_now.toString())
         window.location.reload(true)
     }
