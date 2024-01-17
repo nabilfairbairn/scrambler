@@ -1182,6 +1182,7 @@ async function processAnyPastPuzzleRewards() {
 
     if (rewards) {
         Object.entries(rewards).forEach(([diff, reward_data]) => {
+            document.getElementById('last_puzzle_reward_date').innerText = reward_date['daily_date'].slice(0, 10)
 
             let difficulty = diff == 1 ? 'easy' : 'hard'
             past_rewards[difficulty] = reward_data
