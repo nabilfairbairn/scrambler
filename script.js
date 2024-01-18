@@ -1,6 +1,8 @@
 // 'https://scrambler-server-development.onrender.com'
 // 'https://scrambler-api.onrender.com'
 
+import campaign from './campaign_functions.js';
+
 const currentDomain = window.location.hostname;
 let api_url_base
 console.log(currentDomain)
@@ -4684,6 +4686,8 @@ function submit_star_ranking() {
     }
     fetchPostWrapper('/puzzles/rating', params, null)
 }
+
+document.getElementById('narrative_continue_button').addEventListener('click', campaign.current_dialogue.serveUpNextDialogue)
 
 let puzzle_date;
 

@@ -625,6 +625,7 @@
               <div id="profileNavButton" class="open-fs-modal-button nav-item" for="achievements_modal">Achievements
                 <div id="achievements_notification" class="notification"></div></div>
               <div id="changePuzzleNavButton" class="open-fs-modal-button nav-item" for="greeting_modal">Change Puzzle Mode</div>
+              <div id="campaignNavButton" class="open-fs-modal-button nav-item" for="campaign_modal">Campaign</div>
               <div id="pastPuzzlesNavButton" class="nav-item disabled">Past Puzzles</div>
               <div id="roadmapNavButton" class="open-fs-modal-button nav-item" for="roadmapModal">Feature Roadmap</div>
               <div id="aboutNavButton" class="open-fs-modal-button nav-item" for="aboutModal">About</div>
@@ -669,6 +670,21 @@
         <button id="enter_puzzle_number" class="accentButton">Open Puzzle</button>
       </form> 
         
+    </div>
+
+    <div id="campaign_modal" class="fullscreen-modal opened">
+      <div class="fullscreen-modal-content">
+        <button
+            type="button" class='button square minimal close-fs-modal-button' for="campaign_modal"><span class="material-icons-round">
+              close
+              </span></button>
+        
+        <div id="narrative_box">
+          <div id="npc_icon_box"><img src='alien.png'></div>
+          <div id="narrative_dialogue">The alien appears to turn in your direction and apprehend you. It waits.</div>
+          <div id="narrative_continue_button"><b><i>→</i></b></div>
+        </div>
+      </div>
     </div>
 
     <div id="analytics" class="fullscreen-modal">
